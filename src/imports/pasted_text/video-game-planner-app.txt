@@ -1,0 +1,424 @@
+Diseña una aplicación mobile-first de alta fidelidad en Figma, con estilo visual inspirado en Duolingo pero con identidad propia, académica y moderna, enfocada en una experiencia multimedia interactiva para ayudar a estudiantes universitarios a planear un proyecto de videojuego por etapas. La experiencia debe sentirse clara, progresiva, gamificada, amigable y muy visual. Quiero una app que combine aprendizaje guiado, toma de decisiones, progreso por stages, preguntas interactivas y retroalimentación inmediata.
+
+Objetivo general del producto
+
+La aplicación debe enseñar y acompañar al estudiante en el planeamiento integral de un videojuego, guiándolo paso a paso a través de varias etapas. Cada etapa representa una fase clave del proyecto, y el usuario solo puede avanzar cuando completa actividades, responde preguntas y demuestra comprensión básica. La app debe ofrecer sensación de progreso constante, motivación visual, metas alcanzables, recompensas y feedback claro cuando el usuario se equivoca.
+
+Inspiración visual y funcional
+
+Usa como inspiración el screenshot de referencia:
+
+tarjetas verticales
+progreso muy visible
+etapas bloqueadas/desbloqueadas
+misión actual destacada
+botón principal de continuar
+sistema de logros
+interfaz muy clara, limpia y amigable
+enfoque mobile con una sola columna
+componentes visualmente ordenados y altamente escaneables
+
+No quiero una copia exacta de Duolingo ni del screenshot, sino una reinterpretación más académica, más elegante y orientada al diseño de proyectos de videojuegos.
+
+Concepto del producto
+
+El producto debe sentirse como un viaje de creación de un videojuego, donde cada etapa representa una fase real del desarrollo. El tono debe ser:
+educativo + motivador + profesional + accesible + creativo.
+
+Nombre tentativo de la app dentro del diseño:
+“El viaje del videojuego”
+Subtítulo opcional:
+“Aprende a planear tu proyecto paso a paso”
+
+Estructura de etapas
+
+Crea una experiencia por etapas progresivas. Cada una debe tener identidad visual, objetivos, pequeñas tareas y evaluación final.
+
+Etapa 1: Concepto e Idea
+
+Objetivo: definir la visión base del videojuego.
+Contenidos:
+
+género del juego
+público objetivo
+propuesta principal
+problema que resuelve o emoción que busca provocar
+sinopsis breve
+referente o inspiración
+Etapa 2: Diseño y Mecánicas
+
+Objetivo: construir cómo se juega.
+Contenidos:
+
+core loop
+mecánica principal
+objetivos del jugador
+reglas básicas
+dificultad
+sistema de recompensas
+interacción jugador-entorno
+Etapa 3: Narrativa y Mundo
+
+Objetivo: construir el universo del juego.
+Contenidos:
+
+historia principal
+ambientación
+tono
+personajes
+conflicto principal
+mapa conceptual del mundo
+Etapa 4: Arte y Experiencia Visual
+
+Objetivo: definir identidad gráfica.
+Contenidos:
+
+estilo visual
+paleta de color
+referencias artísticas
+UI/HUD
+moodboard
+estilo de personajes y escenarios
+Etapa 5: Producción y Recursos
+
+Objetivo: identificar qué se necesita para desarrollar el juego.
+Contenidos:
+
+roles del equipo
+herramientas
+recursos técnicos
+tiempos
+presupuesto básico
+riesgos del proyecto
+Etapa 6: Validación y Pitch
+
+Objetivo: consolidar el proyecto.
+Contenidos:
+
+prueba de concepto
+fortalezas del proyecto
+debilidades
+usuario ideal
+pitch corto
+retroalimentación final
+checklist de viabilidad
+Flujo principal de la app
+
+Diseña el flujo completo de navegación. Quiero que Figma Make genere varias pantallas conectadas, no solo una landing.
+
+Pantallas que debe crear
+Splash / Bienvenida
+nombre de la app
+ilustración amigable relacionada con creación de videojuegos
+botón “Comenzar viaje”
+Onboarding de 3 pantallas
+explicar que el usuario aprenderá a planear un videojuego por etapas
+destacar progreso, feedback y recompensas
+mostrar que no necesita saberlo todo desde el inicio
+CTA final: “Empezar”
+Home / Dashboard principal
+Debe parecerse al screenshot:
+header con nombre del viaje actual
+bloque de progreso general
+barra de avance
+XP o puntos
+misión actual
+lista de tareas de la etapa actual
+lista de etapas del viaje
+indicador de etapa actual
+stages bloqueados
+sección de logros
+botón fijo o destacado: “Continuar el viaje”
+Pantalla de detalle de etapa
+nombre de la etapa
+objetivo de aprendizaje
+resumen breve de qué va a construir el usuario
+submódulos o mini-lecciones
+progreso interno de la etapa
+botón “Iniciar actividad”
+Pantallas de actividad interactiva
+Necesito varios tipos:
+selección múltiple
+arrastrar y soltar
+completar frase
+ordenar pasos
+elegir entre conceptos correctos e incorrectos
+mini ejercicio de reflexión guiada
+ejercicio de construcción corta: por ejemplo escribir sinopsis, definir mecánica, etc.
+Pantalla de feedback inmediato
+Cuando el usuario responde:
+si acierta: mostrar mensaje positivo, XP ganada, explicación breve de por qué está bien
+si falla: mostrar mensaje claro, nada agresivo, explicar por qué la respuesta no es correcta y dar una pista para reintentar
+incluir botones “Intentar de nuevo” y “Continuar”
+Quiz final de etapa
+5 a 8 preguntas
+progreso pregunta por pregunta
+barra superior
+feedback por cada respuesta
+calificación final
+mensaje de desbloqueo al aprobar
+si no aprueba, indicar qué reforzar
+Pantalla de desbloqueo de nueva etapa
+celebración visual
+“Etapa completada”
+nueva etapa desbloqueada
+recompensa obtenida
+resumen de lo aprendido
+Pantalla de perfil / progreso
+nombre del usuario
+porcentaje total completado
+etapas terminadas
+logros
+estadísticas
+fortalezas detectadas
+temas por reforzar
+Pantalla de resultados finales
+resumen del proyecto de videojuego construido a lo largo del proceso
+tarjetas con idea, mecánicas, narrativa, arte, producción y pitch
+opción conceptual de exportar o presentar
+mensaje de cierre motivador
+Interactividad esperada
+
+La app debe estar pensada como prototipo navegable en Figma. Por eso, diseña componentes y estados que faciliten prototipado.
+
+Comportamientos
+stages bloqueados en gris
+stage actual resaltado
+stage completado con check o color de éxito
+hover/tap states en botones
+barras de progreso animables
+tarjetas expandibles
+estados correcto / incorrecto / pendiente
+modales para feedback
+transición de una pregunta a otra
+pantalla de recompensa al completar una etapa
+Mecánica de progreso
+
+El usuario debe:
+
+completar actividades
+ganar XP
+desbloquear etapas
+recibir badges o logros
+obtener retroalimentación inmediata
+avanzar solo cuando termina el quiz final de cada stage
+Tipo de preguntas y feedback
+
+Quiero una app elaborada, así que incluye una lógica pedagógica visible en la interfaz.
+
+Ejemplos de preguntas por etapa
+
+Etapa 1: Concepto e Idea
+
+¿Cuál enunciado describe mejor una propuesta de valor para un videojuego?
+¿Qué público objetivo sería más coherente con este concepto?
+Ordena estos pasos para definir la idea principal
+
+Etapa 2: Diseño y Mecánicas
+
+¿Cuál de estas opciones sí corresponde a una mecánica principal?
+Arrastra los elementos correctos al core loop
+Identifica cuál regla haría el juego confuso
+
+Etapa 3: Narrativa y Mundo
+
+¿Qué elemento fortalece mejor el conflicto narrativo?
+Relaciona personaje con motivación
+Completa una estructura narrativa simple
+
+Etapa 4: Arte
+
+¿Qué paleta es más coherente con un juego de terror casual?
+Selecciona el estilo visual más alineado con el concepto
+Ordena elementos del moodboard
+
+Etapa 5: Producción
+
+¿Qué rol del equipo sería prioritario en esta fase?
+¿Cuál de estos riesgos es técnico y no creativo?
+Distribuye recursos según prioridad
+
+Etapa 6: Pitch
+
+Elige el pitch más claro
+Identifica una debilidad del proyecto
+Selecciona la mejor estrategia de validación
+Feedback
+
+Cuando una respuesta sea incorrecta, la app debe:
+
+explicar el error con lenguaje claro
+no solo decir “incorrecto”
+dar una pista útil
+reforzar el aprendizaje
+invitar a reintentar
+
+El feedback debe ser breve pero inteligente. Debe sentirse como tutor, no como castigo.
+
+Estilo visual
+
+Quiero un diseño visual pulido, moderno y académico, con personalidad amigable.
+
+Dirección de arte
+mobile app
+estética limpia, brillante y contemporánea
+tarjetas redondeadas
+sombras suaves
+jerarquía tipográfica marcada
+mucha claridad visual
+íconos simples y consistentes
+composición ordenada y aireada
+sensación de app educativa premium
+Paleta sugerida
+
+Toma como base la referencia visual del screenshot:
+
+verde como color principal de progreso o avance
+azul para misión actual y elementos informativos
+amarillo o naranja para logros y recompensas
+gris suave para estados bloqueados
+fondo blanco o gris muy claro
+texto oscuro, legible y limpio
+Tipografía
+
+Usa una tipografía sans serif moderna y altamente legible.
+Debe sentirse amigable, pero no infantil en exceso.
+
+Componentes que debe construir en Figma
+
+Crea un sistema de diseño básico reutilizable.
+
+Componentes
+botones primarios, secundarios y deshabilitados
+progress bars
+stage cards
+cards de misión
+cards de logro
+badges
+chips de estado
+inputs cortos
+respuestas múltiples
+tarjeta de feedback correcto
+tarjeta de feedback incorrecto
+bottom navigation opcional
+modales de recompensa
+header mobile
+tarjeta de resumen de etapa
+Variantes
+
+Cada componente debe tener variantes para:
+
+default
+pressed
+disabled
+success
+error
+locked
+completed
+current
+UX y accesibilidad
+
+Diseña la app para que sea intuitiva, clara y usable. El documento insiste en enfoque centrado en usuario, validación, claridad y accesibilidad, incluyendo referencia a validaciones de experiencia y accesibilidad digital.
+
+Requisitos UX
+navegación simple
+una tarea principal por pantalla
+evitar saturación visual
+progreso visible siempre que sea posible
+textos cortos y escaneables
+microcopy motivador
+instrucciones claras antes de cada actividad
+uso de color complementado con íconos y texto, no solo color
+contraste adecuado
+componentes suficientemente grandes para móvil
+Contenido textual ejemplo dentro del diseño
+
+Usa texto realista, no lorem ipsum.
+Genera contenido ejemplo dentro de las pantallas.
+
+Ejemplos de copy
+“Tu misión actual”
+“Define la base de tu videojuego”
+“Te falta una tarea para desbloquear la siguiente etapa”
+“¡Muy bien! Identificaste correctamente la mecánica principal”
+“Casi lo logras. Revisa la diferencia entre historia y mecánica”
+“Etapa completada”
+“Nuevo stage desbloqueado”
+“Tu proyecto va tomando forma”
+“Continúa el viaje”
+Microgamificación
+
+Incluye una capa de motivación similar a una app de aprendizaje:
+
+XP por actividad
+insignias por consistencia
+rachas opcionales
+mensajes de celebración
+logros por completar etapas sin errores
+medallas por creatividad, claridad o estructura
+
+Pero hazlo más universitario y menos infantil. Nada demasiado caricaturesco.
+
+Resultado esperado de Figma Make
+
+Quiero que generes:
+
+un flujo completo de app mobile
+varias pantallas conectadas
+diseño de alta fidelidad
+componentes reutilizables
+sistema visual consistente
+pantallas listas para prototipado
+experiencia suficientemente elaborada para una entrega académica seria
+
+La aplicación debe verse como una mezcla entre:
+
+app educativa interactiva
+planificador gamificado
+guía de aprendizaje por etapas
+prototipo de producto digital real
+
+Debe sentirse sólida, bien pensada, coherente y presentable.
+
+Instrucción final de estilo
+
+No hagas una interfaz infantil.
+Haz una experiencia académica, atractiva, moderna, clara, motivadora y profesional.
+Quiero que se note que está inspirada en dinámicas de gamificación tipo Duolingo, pero aplicada al planeamiento de videojuegos en contexto universitario.
+La app debe verse como un proyecto robusto de UX/UI, con pantallas suficientes, progresión clara y buena lógica de interacción.
+
+Versión aún más precisa para que Figma Make no se desvíe
+
+Además, respeta estas reglas:
+
+frame principal en formato mobile
+crea entre 10 y 16 pantallas
+usa Auto Layout
+usa componentes y variantes
+evita pantallas vacías o genéricas
+evita lorem ipsum
+conecta pantallas clave del flujo principal
+resalta el progreso y los stages bloqueados/desbloqueados
+incluye mínimo 1 quiz final de etapa
+incluye mínimo 2 pantallas de feedback
+incluye 1 dashboard principal muy parecido en estructura al screenshot de referencia
+incluye 1 pantalla final con resumen del proyecto del usuario
+Prompt corto alternativo
+
+Por si Figma Make responde mejor con algo menos largo, aquí tienes una versión resumida:
+
+Prompt corto:
+
+Diseña una app mobile-first de alta fidelidad en Figma llamada “El viaje del videojuego”, inspirada en Duolingo y en un sistema de stages como el screenshot de referencia. La app debe ayudar a estudiantes universitarios a planear un proyecto de videojuego por etapas: Concepto e Idea, Diseño y Mecánicas, Narrativa y Mundo, Arte, Producción y Pitch. Quiero dashboard principal con progreso, XP, misión actual, lista de tareas, etapas bloqueadas/desbloqueadas, logros y botón “Continuar el viaje”. Crea entre 10 y 16 pantallas conectadas: onboarding, home, detalle de etapa, actividades interactivas, feedback correcto/incorrecto, quiz final de etapa, desbloqueo de nueva etapa, perfil/progreso y resultados finales. Usa Auto Layout, componentes reutilizables, variantes, diseño limpio, moderno, académico y amigable. Debe verse como una app educativa premium, no infantil. Usa texto realista, no lorem ipsum, y asegúrate de que cada respuesta incorrecta tenga feedback pedagógico y pista de mejora.
+
+Recomendación
+
+Para que te salga mejor en Figma Make, pégale primero el prompt largo. Si ves que te genera algo demasiado genérico, luego usas el prompt corto como refinamiento.
+
+También te conviene agregar al inicio esta línea:
+“Use the provided screenshot only as structural inspiration, not as an exact copy.”
+
+Y al final esta otra:
+“Prioritize strong mobile UX, visual hierarchy, reusable components, and meaningful educational interactions.”
+
+Basé esto en tu idea del sistema por etapas y en elementos del documento como la experiencia multimedia educativa, la necesidad de interacción significativa, feedback, validación con usuarios, accesibilidad y uso de Figma dentro del flujo de diseño del proyecto.
