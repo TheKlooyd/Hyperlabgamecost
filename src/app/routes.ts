@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router";
+import { createHashRouter } from "react-router";
 import { SplashScreen } from "./screens/SplashScreen";
 import { OnboardingScreen } from "./screens/OnboardingScreen";
 import { HomeScreen } from "./screens/HomeScreen";
@@ -13,7 +13,7 @@ import { ResultsScreen } from "./screens/ResultsScreen";
 import { StagesListScreen } from "./screens/StagesListScreen";
 import PixelFlowDemo from "./screens/PixelFlowDemo";
 
-export const router = createBrowserRouter([
+export const router = createHashRouter([
   { path: "/", Component: SplashScreen },
   { path: "/onboarding", Component: OnboardingScreen },
   { path: "/home", Component: HomeScreen },
@@ -27,4 +27,4 @@ export const router = createBrowserRouter([
   { path: "/profile", Component: ProfileScreen },
   { path: "/results", Component: ResultsScreen },
   { path: "/pixel-demo", Component: PixelFlowDemo },
-], { basename: "/Hyperlabgamecost" });
+]);
