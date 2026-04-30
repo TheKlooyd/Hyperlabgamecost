@@ -27,4 +27,4 @@ export const router = createBrowserRouter([
   { path: "/profile", Component: ProfileScreen },
   { path: "/results", Component: ResultsScreen },
   { path: "/pixel-demo", Component: PixelFlowDemo },
-]);
+], { basename: "/Hyperlabgamecost" });
