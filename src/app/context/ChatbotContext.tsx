@@ -143,6 +143,7 @@ export const chatbotActions = {
       pixelState: "explaining",
       priority: "high",
       autoOpen: true,
+      showBubble: true,
     });
   },
 
@@ -185,6 +186,7 @@ export const chatbotActions = {
       pixelState: "encouraging",
       priority: "high",
       autoOpen: true,
+      showBubble: true,
     });
   },
 
@@ -215,6 +217,7 @@ export const chatbotActions = {
       pixelState: "completed",
       priority: "high",
       autoOpen: true,
+      showBubble: true,
     });
   },
 
@@ -245,6 +248,7 @@ export const chatbotActions = {
       pixelState: "welcome",
       priority: "high",
       autoOpen: true,
+      showBubble: true,
     });
   },
 
@@ -257,6 +261,7 @@ export const chatbotActions = {
       pixelState: "completed",
       priority: "high",
       autoOpen: true,
+      showBubble: true,
     });
   },
 
