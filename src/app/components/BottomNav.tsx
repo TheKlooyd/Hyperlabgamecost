@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router";
 import { Home, Layers, User } from "lucide-react";
+import { playNavigate } from "../utils/sounds";
 
 const navItems = [
   { path: "/home", icon: Home, label: "Inicio" },
@@ -26,7 +27,7 @@ export function BottomNav() {
         return (
           <button
             key={path}
-            onClick={() => navigate(path)}
+            onClick={() => { playNavigate(); navigate(path); }}
             className="flex flex-col items-center gap-1 px-4 py-1.5 rounded-xl transition-all"
             style={{
               color: isActive ? "#3b82f6" : "#94a3b8",

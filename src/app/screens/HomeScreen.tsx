@@ -10,6 +10,7 @@ import { PixelTutorialModal } from "../components/PixelTutorialModal";
 import { useApp } from "../context/AppContext";
 import { stages, achievementsList } from "../data/gameData";
 import { AppIcon } from "../components/ui/AppIcon";
+import { playNavigate, playClick } from "../utils/sounds";
 
 export function HomeScreen() {
   const navigate = useNavigate();
@@ -48,6 +49,7 @@ export function HomeScreen() {
 
   const handleContinue = () => {
     if (currentStageId) {
+      playNavigate();
       navigate(`/stage/${currentStageId}`);
     }
   };

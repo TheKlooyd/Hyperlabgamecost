@@ -7,6 +7,7 @@ import { BottomNav } from "../components/BottomNav";
 import { useApp } from "../context/AppContext";
 import { stages } from "../data/gameData";
 import { AppIcon } from "../components/ui/AppIcon";
+import { playNavigate, playClick } from "../utils/sounds";
 
 export function StagesListScreen() {
   const navigate = useNavigate();
@@ -80,7 +81,7 @@ export function StagesListScreen() {
                       initial={{ opacity: 0, x: 10 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.07 }}
-                      onClick={() => !isLocked && navigate(`/stage/${stage.id}`)}
+                      onClick={() => { if (!isLocked) { playNavigate(); navigate(`/stage/${stage.id}`); } else { playClick(); } }}
                       disabled={isLocked}
                       className="flex-1 rounded-3xl p-4 mb-3 text-left transition-all active:scale-98"
                       style={{

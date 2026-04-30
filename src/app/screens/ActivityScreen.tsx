@@ -7,6 +7,7 @@ import { PixelCompanion } from "../components/PixelCompanion";
 import { useApp } from "../context/AppContext";
 import { useChatbot } from "../context/ChatbotContext";
 import { stages, CrosswordData } from "../data/gameData";
+import { playSelect, playClick, playCorrect, playWrong, playNavigate, playComplete, playBack } from "../utils/sounds";
 
 /* ═══════════════════════════════════════════════════════════════════════════
    ACTIVITY SCREEN — Maneja todos los tipos de actividad
@@ -188,6 +189,7 @@ export function ActivityScreen() {
   const handleSubmit = () => {
     if (!canSubmit()) return;
     const correct = checkCorrect();
+    if (correct) playComplete(); else playWrong();
     completeActivity(activity.id, stage.id, correct, activity.xp);
     navigate("/feedback", {
       state: {
@@ -205,6 +207,7 @@ export function ActivityScreen() {
 
   // ── Order steps handlers ──────────────────────────────────────────────────
   const handleSelectOrderItem = (itemIndex: number) => {
+    playSelect();
     setAvailableItems(prev => prev.filter(i => i !== itemIndex));
     setSelectedOrder(prev => {
       const newOrder = [...prev, itemIndex];
@@ -213,6 +216,7 @@ export function ActivityScreen() {
     });
   };
   const handleRemoveOrderItem = (position: number) => {
+    playClick();
     const removedIndex = selectedOrder[position];
     setSelectedOrder(prev => prev.filter((_, i) => i !== position));
     setOrderedItems(prev => prev.filter((_, i) => i !== position));
@@ -221,6 +225,7 @@ export function ActivityScreen() {
 
   // ── Connect concepts handlers ─────────────────────────────────────────────
   const handleLeftTap = (idx: number) => {
+    playSelect();
     // If already connected, allow re-selecting to reconnect
     if (connections[idx] !== undefined) {
       // Remove this connection
@@ -237,6 +242,7 @@ export function ActivityScreen() {
   };
   const handleRightTap = (shuffledIdx: number) => {
     if (selectedLeft === null) return;
+    playSelect();
     // Check if this right slot is already taken by another left
     const existingLeft = Object.entries(connections).find(([, v]) => v === shuffledIdx);
     if (existingLeft) {
@@ -260,6 +266,7 @@ export function ActivityScreen() {
   // ── Word scramble handlers ─────────────────────────────────────────────────
   const handlePoolTap = (poolIdx: number) => {
     if (wordPoolUsed[poolIdx]) return;
+    playSelect();
     // Place letter in the first empty slot
     const firstEmpty = wordAnswer.findIndex(l => l === null);
     if (firstEmpty === -1) return;
@@ -277,6 +284,7 @@ export function ActivityScreen() {
   const handleSlotTap = (slotIdx: number) => {
     const val = wordAnswer[slotIdx];
     if (!val) return;
+    playClick();
     const poolIdx = parseInt(val.split("|")[1]);
     setWordAnswer(prev => {
       const next = [...prev];
@@ -290,6 +298,7 @@ export function ActivityScreen() {
     });
   };
   const handleClearWord = () => {
+    playClick();
     setWordAnswer(new Array(activity.word?.length ?? 0).fill(null));
     setWordPoolUsed(new Array(scrambledPool.length).fill(false));
   };
@@ -313,6 +322,7 @@ export function ActivityScreen() {
   };
 
   const handleCrosswordClueSelect = (wordIdx: number) => {
+    playSelect();
     setSelectedClue(wordIdx);
     setCrosswordInput("");
   };
@@ -323,6 +333,7 @@ export function ActivityScreen() {
     const answer = crosswordInput.toUpperCase().trim();
     const isCorrect = answer === word.answer;
     if (isCorrect) {
+      playCorrect();
       // Fill in the grid cells
       const newInputs = { ...crosswordInputs };
       for (let i = 0; i < word.answer.length; i++) {
@@ -336,6 +347,7 @@ export function ActivityScreen() {
       setCrosswordInput("");
     } else {
       // Shake effect — just clear input
+      playWrong();
       setCrosswordInput("");
     }
   };
@@ -363,7 +375,7 @@ export function ActivityScreen() {
           style={{ background: "white", borderBottom: "1px solid #e2e8f0" }}
         >
           <button
-            onClick={() => navigate(`/stage/${stageId}`)}
+            onClick={() => { playBack(); navigate(`/stage/${stageId}`); }}
             className="rounded-xl flex items-center justify-center"
             style={{ width: "36px", height: "36px", background: "#f1f5f9" }}
           >
@@ -405,7 +417,7 @@ export function ActivityScreen() {
                   <motion.button
                     key={option.id}
                     whileTap={{ scale: 0.98 }}
-                    onClick={() => !submitted && setSelectedOption(index)}
+                    onClick={() => { if (!submitted) { playSelect(); setSelectedOption(index); } }}
                     className="rounded-2xl p-4 flex items-start gap-3 w-full text-left transition-all"
                     style={{
                       background: isSelected ? `${stage.color}10` : "white",
@@ -543,7 +555,7 @@ export function ActivityScreen() {
               <div className="grid grid-cols-2 gap-3">
                 <motion.button
                   whileTap={{ scale: 0.96 }}
-                  onClick={() => setTrueFalseAnswer(true)}
+                  onClick={() => { playSelect(); setTrueFalseAnswer(true); }}
                   className="rounded-2xl p-5 flex flex-col items-center gap-2"
                   style={{
                     background: trueFalseAnswer === true ? "#ecfdf5" : "white",
@@ -564,7 +576,7 @@ export function ActivityScreen() {
 
                 <motion.button
                   whileTap={{ scale: 0.96 }}
-                  onClick={() => setTrueFalseAnswer(false)}
+                  onClick={() => { playSelect(); setTrueFalseAnswer(false); }}
                   className="rounded-2xl p-5 flex flex-col items-center gap-2"
                   style={{
                     background: trueFalseAnswer === false ? "#fef2f2" : "white",

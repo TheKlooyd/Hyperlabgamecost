@@ -7,6 +7,7 @@ import {
   Map, Check, Maximize2, BookOpen,
 } from "lucide-react";
 import { MobileLayout } from "../components/MobileLayout";
+import { playNavigate, playClick, playStart } from "../utils/sounds";
 
 /* ── Map background SVG (inline, no emoji) ─────────────────────────────────── */
 function MapBackground({ opacity = 0.06 }: { opacity?: number }) {
@@ -115,8 +116,10 @@ export function OnboardingScreen() {
 
   const handleNext = () => {
     if (current < slides.length - 1) {
+      playNavigate();
       setCurrent((c) => c + 1);
     } else {
+      playStart();
       localStorage.setItem("vgp-onboarded", "true");
       navigate("/home");
     }
@@ -170,6 +173,7 @@ export function OnboardingScreen() {
           {current < slides.length - 1 && (
             <button
               onClick={() => {
+                playClick();
                 localStorage.setItem("vgp-onboarded", "true");
                 navigate("/home");
               }}

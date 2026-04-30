@@ -65,7 +65,8 @@ export function ChatbotProvider({ children }: { children: ReactNode }) {
       timestamp: Date.now(),
     };
 
-    setNotifications((prev) => [...prev, newNotification]);
+    // Reemplazar todas las notificaciones anteriores con la nueva
+    setNotifications([newNotification]);
 
     // Si es de alta prioridad o tiene autoOpen, abrir automáticamente
     if (notification.autoOpen || notification.priority === "high") {

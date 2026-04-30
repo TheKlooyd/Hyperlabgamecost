@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { motion } from "motion/react";
 import { Gamepad2, Zap, Target, ArrowRight } from "lucide-react";
 import { MobileLayout } from "../components/MobileLayout";
+import { playStart } from "../utils/sounds";
 
 export function SplashScreen() {
   const navigate = useNavigate();
@@ -16,6 +17,7 @@ export function SplashScreen() {
   }, []);
 
   const handleStart = () => {
+    playStart();
     const onboarded = localStorage.getItem("vgp-onboarded");
     if (onboarded === "true") {
       navigate("/home");

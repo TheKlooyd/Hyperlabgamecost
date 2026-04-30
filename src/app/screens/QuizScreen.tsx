@@ -6,6 +6,7 @@ import { MobileLayout } from "../components/MobileLayout";
 import { useApp } from "../context/AppContext";
 import { stages } from "../data/gameData";
 import confetti from "canvas-confetti";
+import { playSelect, playCorrect, playWrong, playNavigate, playBack } from "../utils/sounds";
 
 type QuizPhase = "question" | "feedback" | "results";
 
@@ -40,13 +41,19 @@ export function QuizScreen() {
 
   const handleSelectAnswer = (index: number) => {
     if (confirmed) return;
+    playSelect();
     setSelectedAnswer(index);
   };
 
   const handleConfirm = () => {
     if (selectedAnswer === null) return;
     const correct = selectedAnswer === question.correctAnswer;
-    if (correct) setScore(prev => prev + 1);
+    if (correct) {
+      playCorrect();
+      setScore(prev => prev + 1);
+    } else {
+      playWrong();
+    }
     setAnswers(prev => [...prev, { selected: selectedAnswer, correct }]);
     setConfirmed(true);
     setPhase("feedback");
@@ -54,6 +61,7 @@ export function QuizScreen() {
 
   const handleNext = () => {
     if (currentQuestion + 1 < totalQuestions) {
+      playNavigate();
       setCurrentQuestion(prev => prev + 1);
       setSelectedAnswer(null);
       setConfirmed(false);
@@ -170,7 +178,7 @@ export function QuizScreen() {
           <div className="px-6 pb-12 flex flex-col gap-3">
             {!finalPassed && (
               <button
-                onClick={() => navigate(`/stage/${stage.id}`)}
+                onClick={() => { playBack(); navigate(`/stage/${stage.id}`); }}
                 className="w-full py-4 rounded-2xl transition-all active:scale-95"
                 style={{ background: "#fff7ed", color: "#f97316", fontSize: "15px", fontWeight: 700, border: "2px solid #fed7aa" }}
               >
@@ -178,7 +186,7 @@ export function QuizScreen() {
               </button>
             )}
             <button
-              onClick={() => navigate("/home")}
+              onClick={() => { playNavigate(); navigate("/home"); }}
               className="w-full py-4 rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-95"
               style={{ background: finalPassed ? "#10b981" : "#f97316", color: "white", fontSize: "15px", fontWeight: 700, border: "none" }}
             >
@@ -197,7 +205,7 @@ export function QuizScreen() {
         <div className="px-5 pt-12 pb-4" style={{ background: "white", borderBottom: "1px solid #e2e8f0" }}>
           <div className="flex items-center gap-3 mb-3">
             <button
-              onClick={() => navigate(`/stage/${stage.id}`)}
+              onClick={() => { playBack(); navigate(`/stage/${stage.id}`); }}
               className="rounded-xl flex items-center justify-center"
               style={{ width: "36px", height: "36px", background: "#f1f5f9" }}
             >

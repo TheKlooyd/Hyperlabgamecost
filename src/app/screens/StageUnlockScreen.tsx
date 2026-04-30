@@ -6,6 +6,7 @@ import { MobileLayout } from "../components/MobileLayout";
 import { stages } from "../data/gameData";
 import { AppIcon } from "../components/ui/AppIcon";
 import confetti from "canvas-confetti";
+import { playUnlock, playNavigate } from "../utils/sounds";
 
 export function StageUnlockScreen() {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ export function StageUnlockScreen() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
+      playUnlock();
       confetti({
         particleCount: 120,
         spread: 90,
@@ -301,7 +303,7 @@ export function StageUnlockScreen() {
         >
           {isAllDone ? (
             <button
-              onClick={() => navigate("/results")}
+              onClick={() => { playNavigate(); navigate("/results"); }}
               className="w-full py-4 rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-95"
               style={{
                 background: completedStage.color,
@@ -317,7 +319,7 @@ export function StageUnlockScreen() {
           ) : (
             <>
               <button
-                onClick={() => navigate(nextStage ? `/stage/${nextStage.id}` : "/home")}
+                onClick={() => { playNavigate(); navigate(nextStage ? `/stage/${nextStage.id}` : "/home"); }}
                 className="w-full py-4 rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-95"
                 style={{
                   background: nextStage ? nextStage.color : completedStage.color,
@@ -331,7 +333,7 @@ export function StageUnlockScreen() {
                 Comenzar Etapa {nextStage?.id} <ChevronRight size={18} />
               </button>
               <button
-                onClick={() => navigate("/home")}
+                onClick={() => { playNavigate(); navigate("/home"); }}
                 style={{ color: "#64748b", fontSize: "14px", fontWeight: 500, background: "transparent", border: "none" }}
               >
                 Volver al inicio

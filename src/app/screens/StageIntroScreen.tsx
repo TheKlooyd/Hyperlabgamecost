@@ -7,6 +7,7 @@ import { PixelCharacter } from "../components/PixelCharacter";
 import { useApp } from "../context/AppContext";
 import { stages } from "../data/gameData";
 import { AppIcon } from "../components/ui/AppIcon";
+import { playNavigate, playBack } from "../utils/sounds";
 
 /* ═══════════════════════════════════════════════════════════════════════════
    STAGE INTRO SCREEN — Explicación contextual antes de las actividades
@@ -28,11 +29,13 @@ export function StageIntroScreen() {
   const { intro } = stage;
 
   const handleBegin = () => {
+    playNavigate();
     markStageIntroSeen(stageId);
     navigate(`/stage/${stageId}`);
   };
 
   const handleBack = () => {
+    playBack();
     navigate("/stages");
   };
 
