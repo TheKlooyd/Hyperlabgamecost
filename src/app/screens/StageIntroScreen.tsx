@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate, useParams } from "react-router";
 import { motion } from "motion/react";
-import { ArrowLeft, BookOpen, Lightbulb, Target, Clock, ChevronRight, Sparkles } from "lucide-react";
+import { ArrowLeft, BookOpen, Target, Clock, ChevronRight, Sparkles } from "lucide-react";
 import { MobileLayout } from "../components/MobileLayout";
 import { PixelCharacter } from "../components/PixelCharacter";
 import { useApp } from "../context/AppContext";

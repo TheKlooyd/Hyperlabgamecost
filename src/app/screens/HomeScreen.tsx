@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { motion } from "motion/react";
-import { Zap, Flame, Trophy, ChevronRight, Lock, CheckCircle2, Circle, Bell, FileText, Star } from "lucide-react";
+import { Zap, Flame, Trophy, ChevronRight, Lock, CheckCircle2, Circle, Bell } from "lucide-react";
 import { MobileLayout } from "../components/MobileLayout";
 import { BottomNav } from "../components/BottomNav";
-import { DemoAccessButton } from "../components/DemoAccessButton";
-import { PixelCompanion } from "../components/PixelCompanion";
 import { PixelTutorialModal } from "../components/PixelTutorialModal";
 import { useApp } from "../context/AppContext";
 import { stages, achievementsList } from "../data/gameData";
 import { AppIcon } from "../components/ui/AppIcon";
-import { playNavigate, playClick } from "../utils/sounds";
+import { playNavigate } from "../utils/sounds";
 
 export function HomeScreen() {
   const navigate = useNavigate();
@@ -56,7 +54,6 @@ export function HomeScreen() {
 
   return (
     <MobileLayout noPadding>
-      <DemoAccessButton />
       <div className="flex flex-col min-h-screen">
         {/* Scrollable content */}
         <div className="flex-1 overflow-y-auto pb-24" style={{ background: "#f8fafc" }}>

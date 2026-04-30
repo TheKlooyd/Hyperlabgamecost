@@ -58,7 +58,6 @@ export function ActivityScreen() {
   // ── Shared ────────────────────────────────────────────────────────────────
   const [showHint, setShowHint] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [inactivityTimer, setInactivityTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
 
   const stage = stages.find(s => s.id === Number(stageId));
   const activity = stage?.activities.find(a => a.id === activityId);
@@ -76,7 +75,6 @@ export function ActivityScreen() {
           showBubble: true,
         });
       }, 30000);
-      setInactivityTimer(timer);
       return () => clearTimeout(timer);
     }
   }, [submitted, activity, addNotification]);

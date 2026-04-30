@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useNavigate } from "react-router";
 import { motion } from "motion/react";
 import { Gamepad2, Zap, Target, ArrowRight } from "lucide-react";
@@ -7,14 +7,6 @@ import { playStart } from "../utils/sounds";
 
 export function SplashScreen() {
   const navigate = useNavigate();
-
-  // If user has already onboarded, go to home
-  useEffect(() => {
-    const onboarded = localStorage.getItem("vgp-onboarded");
-    if (onboarded === "true") {
-      // Still show splash for 0.5s then go to home
-    }
-  }, []);
 
   const handleStart = () => {
     playStart();

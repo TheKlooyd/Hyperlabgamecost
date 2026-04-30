@@ -67,8 +67,6 @@ export function QuizScreen() {
       setConfirmed(false);
       setPhase("question");
     } else {
-      // Calculate final score
-      const finalScore = score + (selectedAnswer === question.correctAnswer ? 0 : 0);
       const allAnswers = [...answers];
       const totalCorrect = allAnswers.filter(a => a.correct).length;
 
