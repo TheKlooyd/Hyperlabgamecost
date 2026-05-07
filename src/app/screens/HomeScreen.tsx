@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router";
-import { motion } from "motion/react";
-import { Zap, Flame, Trophy, ChevronRight, Lock, CheckCircle2, Circle, Bell } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
+import { Zap, Flame, Trophy, ChevronRight, Lock, CheckCircle2, Circle, Bell, X, Luggage, Bus, Plane, Map as MapIcon, Tent, Cloud, Gamepad2, PartyPopper } from "lucide-react";
 import { MobileLayout } from "../components/MobileLayout";
 import { BottomNav } from "../components/BottomNav";
 import { PixelTutorialModal } from "../components/PixelTutorialModal";
@@ -10,10 +10,51 @@ import { stages, achievementsList } from "../data/gameData";
 import { AppIcon } from "../components/ui/AppIcon";
 import { playNavigate } from "../utils/sounds";
 
+const STAGE_VIDEOS: Record<number, string> = {
+  1: `${import.meta.env.BASE_URL}videosetapas/concepto.mp4`,
+  2: `${import.meta.env.BASE_URL}videosetapas/Alcance.mp4`,
+  3: `${import.meta.env.BASE_URL}videosetapas/equipo.mp4`,
+};
+
+type JourneyIcon = React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }>;
+const JOURNEY_STAGES: Record<number, { icon: JourneyIcon; name: string; sub: string }> = {
+  1: { icon: Luggage, name: "Preparamos las maletas", sub: "Concepto e Idea" },
+  2: { icon: Bus, name: "Agarramos el bus", sub: "Diseño de Mecánicas" },
+  3: { icon: Plane, name: "Subimos al avión", sub: "Narrativa y Mundo" },
+  4: { icon: MapIcon, name: "Exploramos el mapa", sub: "Planificación del Proyecto" },
+  5: { icon: Tent, name: "Montamos el campamento", sub: "Prototipado y Pruebas" },
+  6: { icon: Trophy, name: "¡Llegamos al destino!", sub: "Presentación del Proyecto" },
+};
+
 export function HomeScreen() {
   const navigate = useNavigate();
   const { state, getTotalProgress, getCompletedStages } = useApp();
   const [showTutorial, setShowTutorial] = useState(false);
+  const [videoStage, setVideoStage] = useState<number | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const handleStageClick = (stageId: number, isLocked: boolean) => {
+    if (isLocked) return;
+    if (STAGE_VIDEOS[stageId]) {
+      setVideoStage(stageId);
+    } else {
+      navigate(`/stage/${stageId}`);
+    }
+  };
+
+  const handleCloseVideo = () => {
+    if (videoRef.current) videoRef.current.pause();
+    const stageId = videoStage;
+    setVideoStage(null);
+    if (stageId !== null) { playNavigate(); navigate(`/stage/${stageId}`); }
+  };
+
+  const handleStartStage = () => {
+    if (videoRef.current) videoRef.current.pause();
+    const stageId = videoStage;
+    setVideoStage(null);
+    if (stageId !== null) { playNavigate(); navigate(`/stage/${stageId}`); }
+  };
 
   // Mostrar tutorial automáticamente en primera visita
   useEffect(() => {
@@ -55,6 +96,76 @@ export function HomeScreen() {
   return (
     <MobileLayout noPadding>
       <div className="flex flex-col min-h-screen">
+
+        {/* Video modal */}
+        <AnimatePresence>
+          {videoStage !== null && (
+            <motion.div
+              key="video-modal"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              style={{
+                position: "fixed",
+                inset: 0,
+                zIndex: 9999,
+                background: "rgba(0,0,0,0.92)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <div style={{ position: "relative", width: "100%", maxWidth: "480px", padding: "0 16px" }}>
+                <button
+                  onClick={handleCloseVideo}
+                  style={{
+                    position: "absolute",
+                    top: "-44px",
+                    right: "16px",
+                    zIndex: 10,
+                    background: "rgba(255,255,255,0.15)",
+                    border: "none",
+                    borderRadius: "50%",
+                    width: "36px",
+                    height: "36px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    cursor: "pointer",
+                  }}
+                >
+                  <X size={20} color="white" />
+                </button>
+                <video
+                  ref={videoRef}
+                  src={STAGE_VIDEOS[videoStage]}
+                  controls
+                  onEnded={handleStartStage}
+                  style={{ width: "100%", borderRadius: "12px", display: "block" }}
+                />
+                <button
+                  onClick={handleStartStage}
+                  style={{
+                    marginTop: "14px",
+                    width: "100%",
+                    padding: "14px",
+                    borderRadius: "14px",
+                    background: "linear-gradient(135deg, #3b82f6, #2563eb)",
+                    color: "white",
+                    fontSize: "16px",
+                    fontWeight: 700,
+                    border: "none",
+                    cursor: "pointer",
+                    boxShadow: "0 6px 20px rgba(59,130,246,0.45)",
+                  }}
+                >
+                  Iniciar etapa
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Scrollable content */}
         <div className="flex-1 overflow-y-auto pb-24" style={{ background: "#f8fafc" }}>
           {/* Header */}
@@ -259,105 +370,178 @@ export function HomeScreen() {
               )}
             </div>
 
-            {/* Stages List */}
-            <div>
-              <h3 style={{ color: "#0f172a", fontSize: "16px", fontWeight: 700, marginBottom: "12px" }}>
-                Las etapas del viaje
-              </h3>
-              <div className="flex flex-col gap-3">
-                {stages.map((stage, index) => {
-                  const status = state.stageStatuses[stage.id]?.status || "locked";
-                  const isLocked = status === "locked";
-                  const isCurrent = status === "current";
-                  const isCompleted = status === "completed";
+            {/* Journey Map */}
+            <div
+              className="rounded-3xl overflow-hidden"
+              style={{ boxShadow: "0 4px 20px rgba(0,0,0,0.12)" }}
+            >
+              {/* Header */}
+              <div
+                className="px-5 pt-5 pb-4"
+                style={{ background: "linear-gradient(135deg, #1e3a5f 0%, #1a4a7a 100%)" }}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="rounded-xl flex items-center justify-center" style={{ width: "32px", height: "32px", background: "rgba(255,255,255,0.12)" }}>
+                      <MapIcon size={17} color="white" strokeWidth={1.75} />
+                    </div>
+                    <h3 style={{ color: "white", fontSize: "16px", fontWeight: 800 }}>Las etapas del viaje</h3>
+                  </div>
+                  <div
+                    className="flex items-center gap-1 px-2.5 py-1 rounded-lg"
+                    style={{ background: "rgba(255,255,255,0.15)" }}
+                  >
+                    <span style={{ color: "rgba(255,255,255,0.85)", fontSize: "12px", fontWeight: 700 }}>{completedStages}/6</span>
+                    <CheckCircle2 size={13} color="rgba(255,255,255,0.85)" strokeWidth={2.5} />
+                  </div>
+                </div>
+                <p style={{ color: "rgba(255,255,255,0.45)", fontSize: "12px", marginTop: "4px" }}>
+                  {completedStages === 0 ? "¡El viaje comienza aquí!" : completedStages === 6 ? "¡Destino alcanzado!" : `${completedStages} destino${completedStages === 1 ? "" : "s"} visitado${completedStages === 1 ? "" : "s"}`}
+                </p>
+              </div>
 
-                  return (
-                    <motion.button
-                      key={stage.id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: index * 0.05 }}
-                      onClick={() => !isLocked && navigate(`/stage/${stage.id}`)}
-                      disabled={isLocked}
-                      className="rounded-3xl p-4 flex items-center gap-3 w-full text-left transition-all active:scale-98"
-                      style={{
-                        background: isLocked ? "#f1f5f9" : isCompleted ? "#ecfdf5" : "white",
-                        border: isCurrent ? `2px solid ${stage.color}` : isCompleted ? "1.5px solid #a7f3d0" : "1.5px solid transparent",
-                        boxShadow: isLocked ? "none" : "0 2px 12px rgba(0,0,0,0.06)",
-                        opacity: isLocked ? 0.7 : 1,
-                        cursor: isLocked ? "not-allowed" : "pointer",
-                      }}
-                    >
-                      {/* Stage icon */}
-                      <div
-                        className="rounded-2xl flex items-center justify-center flex-shrink-0"
+              {/* Travel path */}
+              <div
+                className="relative py-6 px-4"
+                style={{
+                  background: "linear-gradient(180deg, #dbeafe 0%, #bfdbfe 60%, #93c5fd 100%)",
+                  minHeight: "420px",
+                }}
+              >
+                {/* Decorative clouds */}
+                <div style={{ position: "absolute", top: "10px", left: "14px", opacity: 0.3, pointerEvents: "none" }}><Cloud size={24} color="white" strokeWidth={1.5} /></div>
+                <div style={{ position: "absolute", top: "20px", right: "18px", opacity: 0.22, pointerEvents: "none" }}><Cloud size={18} color="white" strokeWidth={1.5} /></div>
+                <div style={{ position: "absolute", bottom: "28px", left: "24px", opacity: 0.18, pointerEvents: "none" }}><Cloud size={16} color="white" strokeWidth={1.5} /></div>
+
+                {/* Center vertical path line */}
+                <div
+                  style={{
+                    position: "absolute",
+                    left: "50%",
+                    top: 0,
+                    bottom: 0,
+                    width: "4px",
+                    transform: "translateX(-50%)",
+                    background: "repeating-linear-gradient(to bottom, rgba(255,255,255,0.7) 0px, rgba(255,255,255,0.7) 10px, transparent 10px, transparent 20px)",
+                    zIndex: 0,
+                  }}
+                />
+
+                <div className="flex flex-col gap-5">
+                  {stages.map((stage, index) => {
+                    const status = state.stageStatuses[stage.id]?.status || "locked";
+                    const isLocked = status === "locked";
+                    const isCurrent = status === "current";
+                    const isCompleted = status === "completed";
+                    const journey = JOURNEY_STAGES[stage.id];
+                    const cardOnRight = index % 2 === 0;
+                    const statusLabel = isCompleted ? "COMPLETA" : isCurrent ? "EN CURSO" : "BLOQUEADA";
+                    const statusColor = isCompleted ? "#059669" : isCurrent ? stage.color : "#94a3b8";
+
+                    const card = (
+                      <motion.button
+                        initial={{ opacity: 0, x: cardOnRight ? -12 : 12 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.07, duration: 0.4 }}
+                        whileTap={!isLocked ? { scale: 0.96 } : {}}
+                        onClick={() => handleStageClick(stage.id, isLocked)}
+                        disabled={isLocked}
+                        className={`w-full rounded-2xl p-3 ${cardOnRight ? "text-left" : "text-right"}`}
                         style={{
-                          width: "48px",
-                          height: "48px",
-                          background: isLocked ? "#e2e8f0" : isCompleted ? "#ecfdf5" : stage.bgColor,
+                          background: isLocked ? "rgba(241,245,249,0.85)" : isCompleted ? "rgba(236,253,245,0.95)" : "rgba(255,255,255,0.95)",
+                          border: isCurrent
+                            ? `2px solid ${stage.color}`
+                            : isCompleted
+                            ? "1.5px solid #a7f3d0"
+                            : "1.5px solid rgba(226,232,240,0.8)",
+                          boxShadow: isLocked ? "none" : "0 3px 12px rgba(0,0,0,0.10)",
+                          opacity: isLocked ? 0.55 : 1,
+                          cursor: isLocked ? "not-allowed" : "pointer",
+                          backdropFilter: "blur(4px)",
                         }}
                       >
-                        {isLocked ? (
-                          <Lock size={20} color="#94a3b8" />
-                        ) : (
-                          <AppIcon
-                            iconKey={stage.icon}
-                            size={22}
-                            color={isCompleted ? "#10b981" : stage.color}
-                            strokeWidth={1.75}
-                          />
-                        )}
-                      </div>
-
-                      {/* Stage info */}
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1.5 mb-0.5">
-                          <span style={{ color: "#94a3b8", fontSize: "11px", fontWeight: 500 }}>
-                            ETAPA {stage.id}
-                          </span>
-                          {isCurrent && (
-                            <span
-                              className="px-1.5 py-0.5 rounded-md"
-                              style={{ background: stage.color, color: "white", fontSize: "9px", fontWeight: 700 }}
-                            >
-                              ACTUAL
-                            </span>
-                          )}
-                          {isCompleted && (
-                            <span
-                              className="px-1.5 py-0.5 rounded-md"
-                              style={{ background: "#10b981", color: "white", fontSize: "9px", fontWeight: 700 }}
-                            >
-                              ✓ COMPLETADA
-                            </span>
-                          )}
+                        <div className={`flex items-center gap-0.5 ${cardOnRight ? "" : "justify-end"}`}>
+                          {isCompleted && <CheckCircle2 size={9} color={statusColor} strokeWidth={2.5} />}
+                          {isLocked && <Lock size={9} color={statusColor} strokeWidth={2.5} />}
+                          <p style={{ fontSize: "9px", fontWeight: 800, color: statusColor, letterSpacing: "0.6px" }}>
+                            {statusLabel}
+                          </p>
                         </div>
-                        <p
-                          style={{
-                            color: isLocked ? "#94a3b8" : "#0f172a",
-                            fontSize: "14px",
-                            fontWeight: 700,
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                          }}
-                        >
-                          {stage.title}
+                        <p style={{ fontSize: "13px", fontWeight: 700, color: isLocked ? "#94a3b8" : "#0f172a", marginTop: "2px", lineHeight: 1.3 }}>
+                          {journey.name}
                         </p>
-                        <p style={{ color: "#64748b", fontSize: "12px" }}>
-                          {stage.topics.length} temas · {stage.xpReward} XP
+                        <p style={{ fontSize: "10px", color: "#94a3b8", marginTop: "2px" }}>
+                          {journey.sub} · {stage.xpReward} XP
                         </p>
-                      </div>
+                      </motion.button>
+                    );
 
-                      {/* Arrow or lock */}
-                      {isLocked ? (
-                        <Lock size={16} color="#cbd5e1" />
-                      ) : (
-                        <ChevronRight size={18} color={isCompleted ? "#10b981" : stage.color} />
-                      )}
-                    </motion.button>
-                  );
-                })}
+                    return (
+                      <div key={stage.id} className="relative flex items-center" style={{ zIndex: 1 }}>
+                        {/* Left slot */}
+                        <div className="flex-1 pr-2.5">
+                          {!cardOnRight && card}
+                        </div>
+
+                        {/* Center node */}
+                        <div className="flex-shrink-0 flex flex-col items-center" style={{ zIndex: 2 }}>
+                          <motion.button
+                            onClick={() => handleStageClick(stage.id, isLocked)}
+                            disabled={isLocked}
+                            animate={isCurrent ? { scale: [1, 1.13, 1] } : {}}
+                            transition={isCurrent ? { repeat: Infinity, duration: 1.8, ease: "easeInOut" } : {}}
+                            whileTap={!isLocked ? { scale: 0.88 } : {}}
+                            className="rounded-full flex items-center justify-center"
+                            style={{
+                              width: "54px",
+                              height: "54px",
+                              background: isCompleted
+                                ? "linear-gradient(135deg, #10b981, #059669)"
+                                : isCurrent
+                                ? `linear-gradient(135deg, ${stage.color}, ${stage.color}bb)`
+                                : "#c8d9ec",
+                              boxShadow: isCompleted
+                                ? "0 5px 16px rgba(16,185,129,0.5), 0 0 0 3px rgba(255,255,255,0.7)"
+                                : isCurrent
+                                ? `0 5px 20px ${stage.color}60, 0 0 0 3px rgba(255,255,255,0.8)`
+                                : "0 2px 8px rgba(0,0,0,0.12), 0 0 0 3px rgba(255,255,255,0.6)",
+                              cursor: isLocked ? "default" : "pointer",
+                              border: "none",
+                            }}
+                          >
+                            <journey.icon size={24} color="white" strokeWidth={1.75} />
+                          </motion.button>
+                        </div>
+
+                        {/* Right slot */}
+                        <div className="flex-1 pl-2.5">
+                          {cardOnRight && card}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Footer */}
+              <div
+                className="px-5 py-3 flex items-center gap-3"
+                style={{
+                  background: completedStages === 6 ? "#ecfdf5" : "#f8fafc",
+                  borderTop: "1px solid #e2e8f0",
+                }}
+              >
+                <div className="rounded-xl flex items-center justify-center" style={{ width: "32px", height: "32px", background: completedStages === 6 ? "#d1fae5" : "#e2e8f0", flexShrink: 0 }}>
+                  <Gamepad2 size={17} color={completedStages === 6 ? "#059669" : "#64748b"} strokeWidth={1.75} />
+                </div>
+                <p style={{ color: completedStages === 6 ? "#059669" : "#64748b", fontSize: "12px", fontWeight: 600, flex: 1 }}>
+                  {completedStages === 6 ? "¡Tu videojuego está completo!" : "Meta: tener tu videojuego presupuestado"}
+                </p>
+                {completedStages === 6 && (
+                  <div className="rounded-lg flex items-center justify-center" style={{ width: "28px", height: "28px", background: "#d1fae5" }}>
+                    <PartyPopper size={15} color="#059669" strokeWidth={1.75} />
+                  </div>
+                )}
               </div>
             </div>
 

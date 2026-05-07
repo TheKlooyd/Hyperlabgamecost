@@ -36,6 +36,20 @@ function injectStyles() {
   document.head.appendChild(style);
 }
 
+const PIXEL_GREETINGS = [
+  "¡Hola! Estoy aquí para acompañarte. Aparezco con consejos y celebraciones a lo largo del curso. ¿Listo para aprender?",
+  "En Hyperlabgamecost aprenderás a planificar y presupuestar un videojuego desde cero, etapa por etapa. ¡Vamos allá!",
+  "¿Sabías que la mayoría de proyectos indie fracasan por falta de planificación financiera? Este curso te enseña a evitar eso.",
+  "Cada etapa que completes te acerca más a tener un presupuesto real y viable para tu videojuego. ¡Tú puedes!",
+  "Tip: lee bien cada pregunta antes de responder. El contexto importa tanto como el concepto. 🎮",
+  "Este programa cubre 6 etapas clave: desde la idea hasta el pitch financiero. ¡Una a la vez!",
+  "Ganar XP no es solo diversión: refleja cuánto estás dominando el proceso de producción de un videojuego real.",
+  "¿Atascado en una actividad? Recuerda que cada pregunta tiene una explicación detallada al confirmar tu respuesta.",
+  "Los desarrolladores indie exitosos no solo saben programar o diseñar: saben gestionar su presupuesto. Eso aprenderás aquí.",
+  "Completa todas las actividades de una etapa para desbloquear su quiz final y avanzar. ¡Paso a paso!",
+  "Cada etapa tiene actividades prácticas y un quiz final. Necesitas 60 % o más para aprobar. ¡Confío en ti!",
+];
+
 export function PixelCompanion({ 
   position = "corner", 
   forceShow = false,
@@ -50,6 +64,8 @@ export function PixelCompanion({
   const [isVisible, setIsVisible] = useState(forceShow);
   // manualOpen: el usuario abrió manualmente sin notificación activa
   const [manualOpen, setManualOpen] = useState(false);
+  // índice del mensaje de saludo activo
+  const [greetingIndex, setGreetingIndex] = useState(0);
 
   /* ═══════════════════════════════════════════════════════════════════════
      MOSTRAR PIXEL CUANDO LLEGA CUALQUIER NOTIFICACIÓN (o forceShow)
@@ -83,6 +99,7 @@ export function PixelCompanion({
   const handleButtonClick = () => {
     setIsVisible(true);
     if (!currentNotification) {
+      setGreetingIndex(Math.floor(Math.random() * PIXEL_GREETINGS.length));
       setManualOpen(true);
     }
   };
@@ -95,10 +112,10 @@ export function PixelCompanion({
   const priority     = currentNotification?.priority   || "normal";
   const isLargeMsg   = (currentNotification?.message?.length ?? 0) > 120;
 
-  // Mensaje: el de la notificación, o un saludo si el usuario abrió manualmente
+  // Mensaje: el de la notificación, o un saludo rotativo si el usuario abrió manualmente
   const message = currentNotification?.message
     ?? (manualOpen
-        ? "¡Hola! Estoy aquí para acompañarte. Aparezco con consejos y celebraciones a lo largo del curso. ¿Listo para aprender?"
+        ? PIXEL_GREETINGS[greetingIndex]
         : "");
 
   // Tamaño de Pixel según prioridad

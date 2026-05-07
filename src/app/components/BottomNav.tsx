@@ -1,11 +1,12 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router";
-import { Home, Layers, User } from "lucide-react";
+import { Home, Layers, User, Bot } from "lucide-react";
 import { playNavigate } from "../utils/sounds";
 
 const navItems = [
   { path: "/home", icon: Home, label: "Inicio" },
   { path: "/stages", icon: Layers, label: "Etapas" },
+  { path: "/pixel", icon: Bot, label: "Pixel" },
   { path: "/profile", icon: User, label: "Perfil" },
 ];
 

@@ -6,9 +6,37 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>Hyperlab - Gamecost</title>
       <style>html, body { height: 100%; margin: 0; } #root { height: 100%; }</style>
-      <script type="module" crossorigin src="/Hyperlabgamecost/assets/index-Bklwp8wZ.js"></script>
-      <link rel="stylesheet" crossorigin href="/Hyperlabgamecost/assets/index-BGx9Nk2w.css">
-    </head>
+    <script>
+      (function (m, a, z, e) {
+        var s, t, u, v;
+        try {
+          t = m.sessionStorage.getItem('maze-us');
+        } catch (err) {}
+
+        if (!t) {
+          t = new Date().getTime();
+          try {
+            m.sessionStorage.setItem('maze-us', t);
+          } catch (err) {}
+        }
+
+        u = document.currentScript || (function () {
+          var w = document.getElementsByTagName('script');
+          return w[w.length - 1];
+        })();
+        v = u && u.nonce;
+
+        s = a.createElement('script');
+        s.src = z + '?apiKey=' + e;
+        s.async = true;
+        if (v) s.setAttribute('nonce', v);
+        a.getElementsByTagName('head')[0].appendChild(s);
+        m.mazeUniversalSnippetApiKey = e;
+      })(window, document, 'https://snippet.maze.co/maze-universal-loader.js', 'aeda9158-fb8e-4316-9f69-51e71a81cbe7');
+    </script>
+
+    <script type="module" crossorigin src="/Hyperlabgamecost/assets/index-C5W9mCW6.js"></script>
+    <link rel="stylesheet" crossorigin href="/Hyperlabgamecost/assets/index-BGx9Nk2w.css">
 
     <body>
       <div id="root"></div>

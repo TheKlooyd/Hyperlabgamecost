@@ -12,6 +12,7 @@ import { ProfileScreen } from "./screens/ProfileScreen";
 import { ResultsScreen } from "./screens/ResultsScreen";
 import { StagesListScreen } from "./screens/StagesListScreen";
 import PixelFlowDemo from "./screens/PixelFlowDemo";
+import { PixelChatScreen } from "./screens/PixelChatScreen";
 
 export const router = createHashRouter([
   { path: "/", Component: SplashScreen },
@@ -26,5 +27,6 @@ export const router = createHashRouter([
   { path: "/unlock/:stageId", Component: StageUnlockScreen },
   { path: "/profile", Component: ProfileScreen },
   { path: "/results", Component: ResultsScreen },
+  { path: "/pixel", Component: PixelChatScreen },
   { path: "/pixel-demo", Component: PixelFlowDemo },
 ]);

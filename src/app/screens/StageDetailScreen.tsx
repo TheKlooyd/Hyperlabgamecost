@@ -1,11 +1,20 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { motion } from "motion/react";
-import { ArrowLeft, CheckCircle2, Circle, Lock, Play, BookOpen, Target, Layers, FileText, ClipboardList } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Circle, Lock, Play, BookOpen, Target, Layers, FileText, ClipboardList, Volume2 } from "lucide-react";
 import { MobileLayout } from "../components/MobileLayout";
 import { useApp } from "../context/AppContext";
 import { stages } from "../data/gameData";
 import { AppIcon } from "../components/ui/AppIcon";
+
+const STAGE_AUDIOS: Record<number, string> = {
+  1: `${import.meta.env.BASE_URL}Audios/primeraetapa.mp3`,
+  2: `${import.meta.env.BASE_URL}Audios/segundaetapa.mp3`,
+  3: `${import.meta.env.BASE_URL}Audios/terceraetapa.mp3`,
+  4: `${import.meta.env.BASE_URL}Audios/cuartaetapa.mp3`,
+  5: `${import.meta.env.BASE_URL}Audios/quintaetapa.mp3`,
+  6: `${import.meta.env.BASE_URL}Audios/sextaetapa.mp3`,
+};
 
 export function StageDetailScreen() {
   const navigate = useNavigate();
@@ -15,6 +24,30 @@ export function StageDetailScreen() {
   const stageId = Number(id);
   const stage = stages.find(s => s.id === stageId);
   const stageStatus = state.stageStatuses[stageId];
+
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const handlePlayAudio = () => {
+    const src = STAGE_AUDIOS[stageId];
+    if (!src) return;
+    if (!audioRef.current) {
+      audioRef.current = new Audio(src);
+      audioRef.current.onended = () => setIsPlaying(false);
+    }
+    audioRef.current.currentTime = 0;
+    audioRef.current.play();
+    setIsPlaying(true);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, [stageId]);
 
   // Navigate to intro if not yet seen and stage is accessible
   useEffect(() => {
@@ -130,6 +163,79 @@ export function StageDetailScreen() {
             </div>
           )}
         </div>
+
+        {/* Audio button */}
+        {STAGE_AUDIOS[stageId] && !isLocked && (
+          <div className="px-5 pt-2 pb-4 flex justify-center" style={{ background: `${stage.color}08` }}>
+            <motion.button
+              onClick={handlePlayAudio}
+              animate={isPlaying ? { scale: 1 } : { scale: [1, 1.06, 1] }}
+              transition={isPlaying ? {} : { repeat: Infinity, duration: 1.4, ease: "easeInOut" }}
+              whileTap={{ scale: 0.92 }}
+              whileHover={{ scale: 1.05 }}
+              className="flex items-center gap-4 rounded-3xl px-6 py-4"
+              style={{
+                background: isPlaying
+                  ? `linear-gradient(135deg, ${stage.color}, ${stage.color}cc)`
+                  : `linear-gradient(135deg, ${stage.color}, ${stage.color}bb)`,
+                boxShadow: isPlaying
+                  ? `0 6px 24px ${stage.color}60, 0 2px 8px ${stage.color}30`
+                  : `0 8px 28px ${stage.color}50, 0 2px 8px ${stage.color}25`,
+                cursor: "pointer",
+                border: "none",
+                minWidth: "220px",
+              }}
+            >
+              {/* Pulse ring behind icon */}
+              <div className="relative flex items-center justify-center flex-shrink-0">
+                {!isPlaying && (
+                  <motion.div
+                    className="absolute rounded-full"
+                    style={{ width: "48px", height: "48px", background: "rgba(255,255,255,0.25)" }}
+                    animate={{ scale: [1, 1.6], opacity: [0.6, 0] }}
+                    transition={{ repeat: Infinity, duration: 1.4, ease: "easeOut" }}
+                  />
+                )}
+                <div
+                  className="rounded-2xl flex items-center justify-center"
+                  style={{ width: "44px", height: "44px", background: "rgba(255,255,255,0.22)" }}
+                >
+                  <Volume2 size={24} color="white" />
+                </div>
+              </div>
+
+              <div className="flex-1 text-left">
+                <p style={{ color: "white", fontSize: "15px", fontWeight: 800, letterSpacing: "-0.2px" }}>
+                  {isPlaying ? "Reproduciendo..." : "¡Presióname!"}
+                </p>
+                <p style={{ color: "rgba(255,255,255,0.75)", fontSize: "12px", marginTop: "1px" }}>
+                  {isPlaying ? "Escucha el resumen de esta etapa" : "Audio de esta etapa 🎧"}
+                </p>
+              </div>
+
+              {isPlaying ? (
+                <div className="flex items-end gap-1" style={{ height: "22px" }}>
+                  {[0, 0.18, 0.36, 0.54].map((delay) => (
+                    <motion.div
+                      key={delay}
+                      style={{ width: "3px", background: "rgba(255,255,255,0.9)", borderRadius: "2px" }}
+                      animate={{ height: ["5px", "18px", "5px"] }}
+                      transition={{ repeat: Infinity, duration: 0.75, delay }}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <motion.span
+                  style={{ fontSize: "20px" }}
+                  animate={{ x: [0, 4, 0] }}
+                  transition={{ repeat: Infinity, duration: 1.4, ease: "easeInOut" }}
+                >
+                  ▶
+                </motion.span>
+              )}
+            </motion.button>
+          </div>
+        )}
 
         {/* Content */}
         <div className="flex-1 overflow-y-auto px-5 pb-8 flex flex-col gap-4 pt-4">

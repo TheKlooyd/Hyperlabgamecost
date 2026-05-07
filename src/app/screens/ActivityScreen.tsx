@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
-import { ArrowLeft, Lightbulb, X, Check, RotateCcw, Delete } from "lucide-react";
+import { ArrowLeft, Lightbulb, X, Check, RotateCcw, Delete, Mic, MicOff, Type } from "lucide-react";
 import { MobileLayout } from "../components/MobileLayout";
 import { PixelCompanion } from "../components/PixelCompanion";
+import { QuestionIllustration } from "../components/QuestionIllustration";
 import { useApp } from "../context/AppContext";
 import { useChatbot } from "../context/ChatbotContext";
 import { stages, CrosswordData } from "../data/gameData";
@@ -35,6 +36,9 @@ export function ActivityScreen() {
 
   // ── Reflection ───────────────────────────────────────────────────────────
   const [reflectionText, setReflectionText] = useState("");
+  const [reflectionMode, setReflectionMode] = useState<"text" | "voice">("text");
+  const [isRecording, setIsRecording] = useState(false);
+  const [recognitionRef] = useState<{ current: SpeechRecognition | null }>({ current: null });
 
   // ── True/False ────────────────────────────────────────────────────────────
   const [trueFalseAnswer, setTrueFalseAnswer] = useState<boolean | null>(null);
@@ -121,6 +125,9 @@ export function ActivityScreen() {
   const isConnectConcepts = activity.type === "connect-concepts";
   const isWordScramble = activity.type === "word-scramble";
   const isCrossword = activity.type === "crossword";
+  const activityIllustrationText = isTrueFalse
+    ? (trueFalseStatements[activity.id] || activity.question)
+    : activity.question;
 
   // ── Order steps ──────────────────────────────────────────────────────────
   const [scrambled] = useState(() => {
@@ -401,6 +408,7 @@ export function ActivityScreen() {
             className="rounded-3xl p-5"
             style={{ background: "white", boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}
           >
+            <QuestionIllustration question={activityIllustrationText} stage={stage} />
             <p style={{ color: "#0f172a", fontSize: "16px", fontWeight: 600, lineHeight: 1.5 }}>
               {activity.question}
             </p>
@@ -508,19 +516,147 @@ export function ActivityScreen() {
           {/* ── REFLECTION ───────────────────────────────────────────────── */}
           {isReflection && (
             <div>
-              <textarea
-                value={reflectionText}
-                onChange={e => setReflectionText(e.target.value)}
-                placeholder={activity.placeholder || "Escribe tu reflexión aquí..."}
-                className="w-full rounded-2xl p-4 resize-none"
-                rows={6}
-                style={{
-                  background: "white",
-                  border: reflectionText.length > 20 ? `2px solid ${stage.color}` : "1.5px solid #e2e8f0",
-                  fontSize: "14px", color: "#1e293b", lineHeight: 1.6, outline: "none",
-                  fontFamily: "inherit", boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
-                }}
-              />
+              {/* Mode toggle */}
+              <div className="flex gap-2 mb-3">
+                <button
+                  onClick={() => {
+                    setReflectionMode("text");
+                    if (isRecording && recognitionRef.current) {
+                      recognitionRef.current.stop();
+                      setIsRecording(false);
+                    }
+                  }}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all"
+                  style={{
+                    background: reflectionMode === "text" ? stage.color : "#f1f5f9",
+                    color: reflectionMode === "text" ? "white" : "#64748b",
+                    border: `2px solid ${reflectionMode === "text" ? stage.color : "#e2e8f0"}`,
+                  }}
+                >
+                  <Type size={14} />
+                  Texto
+                </button>
+                <button
+                  onClick={() => setReflectionMode("voice")}
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-all"
+                  style={{
+                    background: reflectionMode === "voice" ? stage.color : "#f1f5f9",
+                    color: reflectionMode === "voice" ? "white" : "#64748b",
+                    border: `2px solid ${reflectionMode === "voice" ? stage.color : "#e2e8f0"}`,
+                  }}
+                >
+                  <Mic size={14} />
+                  Audio
+                </button>
+              </div>
+
+              {reflectionMode === "text" ? (
+                <textarea
+                  value={reflectionText}
+                  onChange={e => setReflectionText(e.target.value)}
+                  placeholder={activity.placeholder || "Escribe tu reflexión aquí..."}
+                  className="w-full rounded-2xl p-4 resize-none"
+                  rows={6}
+                  style={{
+                    background: "white",
+                    border: reflectionText.length > 20 ? `2px solid ${stage.color}` : "1.5px solid #e2e8f0",
+                    fontSize: "14px", color: "#1e293b", lineHeight: 1.6, outline: "none",
+                    fontFamily: "inherit", boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+                  }}
+                />
+              ) : (
+                <div
+                  className="w-full rounded-2xl p-4 flex flex-col items-center gap-4"
+                  style={{
+                    background: "white",
+                    border: reflectionText.length > 20 ? `2px solid ${stage.color}` : "1.5px solid #e2e8f0",
+                    minHeight: "160px",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+                  }}
+                >
+                  {/* Mic button */}
+                  <button
+                    onClick={() => {
+                      const SpeechRecognitionAPI =
+                        (window as unknown as { SpeechRecognition?: typeof SpeechRecognition; webkitSpeechRecognition?: typeof SpeechRecognition }).SpeechRecognition ||
+                        (window as unknown as { SpeechRecognition?: typeof SpeechRecognition; webkitSpeechRecognition?: typeof SpeechRecognition }).webkitSpeechRecognition;
+
+                      if (!SpeechRecognitionAPI) {
+                        alert("Tu navegador no soporta reconocimiento de voz. Intenta con Chrome.");
+                        return;
+                      }
+
+                      if (isRecording) {
+                        recognitionRef.current?.stop();
+                        setIsRecording(false);
+                      } else {
+                        const recognition = new SpeechRecognitionAPI();
+                        recognition.lang = "es-ES";
+                        recognition.continuous = true;
+                        recognition.interimResults = true;
+
+                        let finalTranscript = reflectionText;
+
+                        recognition.onresult = (event: SpeechRecognitionEvent) => {
+                          let interim = "";
+                          for (let i = event.resultIndex; i < event.results.length; i++) {
+                            const transcript = event.results[i][0].transcript;
+                            if (event.results[i].isFinal) {
+                              finalTranscript += (finalTranscript ? " " : "") + transcript;
+                              setReflectionText(finalTranscript);
+                            } else {
+                              interim = transcript;
+                            }
+                          }
+                          if (interim) {
+                            setReflectionText(finalTranscript + (finalTranscript ? " " : "") + interim);
+                          }
+                        };
+
+                        recognition.onend = () => {
+                          setReflectionText(finalTranscript);
+                          setIsRecording(false);
+                        };
+
+                        recognition.onerror = () => {
+                          setIsRecording(false);
+                        };
+
+                        recognitionRef.current = recognition;
+                        recognition.start();
+                        setIsRecording(true);
+                      }
+                    }}
+                    className="rounded-full flex items-center justify-center transition-all"
+                    style={{
+                      width: 72, height: 72,
+                      background: isRecording
+                        ? "linear-gradient(135deg, #ef4444, #dc2626)"
+                        : `linear-gradient(135deg, ${stage.color}, ${stage.color}cc)`,
+                      boxShadow: isRecording
+                        ? "0 0 0 8px rgba(239,68,68,0.2), 0 4px 16px rgba(239,68,68,0.4)"
+                        : `0 4px 16px ${stage.color}55`,
+                      animation: isRecording ? "pulse 1.5s infinite" : "none",
+                    }}
+                  >
+                    {isRecording ? <MicOff size={28} color="white" /> : <Mic size={28} color="white" />}
+                  </button>
+                  <p style={{ color: isRecording ? "#ef4444" : "#64748b", fontSize: "13px", fontWeight: 600, textAlign: "center" }}>
+                    {isRecording ? "Grabando... toca para detener" : "Toca el micrófono para hablar"}
+                  </p>
+                  {reflectionText.length > 0 && (
+                    <div
+                      className="w-full rounded-xl p-3"
+                      style={{ background: "#f8fafc", border: "1px solid #e2e8f0" }}
+                    >
+                      <p style={{ color: "#475569", fontSize: "13px", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>
+                        {reflectionText}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+
               <div className="flex items-center justify-between mt-2 px-1">
                 <p style={{ color: "#94a3b8", fontSize: "12px" }}>Mínimo 20 caracteres para continuar</p>
                 <p style={{ color: reflectionText.length > 20 ? stage.color : "#94a3b8", fontSize: "12px", fontWeight: 600 }}>

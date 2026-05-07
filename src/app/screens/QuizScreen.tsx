@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 import { X, ChevronRight, Lightbulb, CheckCircle, XCircle, BookOpen } from "lucide-react";
 import { MobileLayout } from "../components/MobileLayout";
+import { QuestionIllustration } from "../components/QuestionIllustration";
 import { useApp } from "../context/AppContext";
 import { stages } from "../data/gameData";
 import confetti from "canvas-confetti";
@@ -262,6 +263,7 @@ export function QuizScreen() {
                     </span>
                   </div>
                 </div>
+                <QuestionIllustration question={question.question} stage={stage} />
                 <p style={{ color: "#0f172a", fontSize: "16px", fontWeight: 600, lineHeight: 1.5 }}>
                   {question.question}
                 </p>

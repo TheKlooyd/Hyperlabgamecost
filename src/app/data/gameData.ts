@@ -313,95 +313,96 @@ export const stages: Stage[] = [
   },
 
   // ═══════════════════════════════════════════════════════
-  // ETAPA 2 — ALCANCE DEL PROYECTO
+  // ETAPA 2 — DISEÑO DE MECÁNICAS
   // ═══════════════════════════════════════════════════════
   {
     id: 2,
-    title: "Alcance del Proyecto",
-    subtitle: "Define qué tan grande será tu videojuego y su impacto en el costo",
-    icon: "maximize",
+    title: "Diseño de Mecánicas",
+    subtitle: "Define cómo interactúa el jugador con el sistema de juego",
+    icon: "gamepad-2",
     color: "#8b5cf6",
     bgColor: "#f5f3ff",
     borderColor: "#ddd6fe",
-    objective: "Comprender cómo el alcance del proyecto determina el presupuesto, los recursos necesarios y la viabilidad del desarrollo.",
+    objective: "Comprender cómo se diseñan las mecánicas de un videojuego para que la interacción sea clara, entretenida y alineada con la visión del proyecto.",
     topics: [
-      "Alcance pequeño, medio y grande",
-      "Duración estimada del proyecto",
-      "Cantidad de niveles y contenido",
-      "Complejidad técnica y de arte",
-      "Relación entre alcance y costo",
-      "Decisiones que encarecen la producción"
+      "Mecánica principal y mecánicas secundarias",
+      "Verbos del jugador",
+      "Bucle de juego (game loop)",
+      "Retroalimentación al jugador",
+      "Reglas y restricciones",
+      "Equilibrio y curva de dificultad"
     ],
     xpReward: 175,
     intro: {
-      summary: "Definir el alcance es decidir exactamente qué se va a construir y —igual de importante— qué NO se va a construir. Es la diferencia entre un proyecto que se termina y uno que nunca ve la luz. El alcance determina el presupuesto, el tiempo y el equipo necesario.",
+      summary: "Las mecánicas son el corazón de cualquier videojuego: son las acciones que el jugador puede realizar y las reglas que gobiernan el sistema. Un diseño de mecánicas claro define qué hace el jugador en cada momento, por qué lo hace y qué consecuencias tiene. Sin mecánicas bien pensadas, no hay experiencia de juego.",
       keyPoints: [
-        "Más contenido no es mejor: cada característica adicional suma costo, tiempo y complejidad de mantenimiento.",
-        "El 'scope creep' (expansión no controlada del proyecto) es la causa número uno de proyectos abandonados en desarrollo de videojuegos.",
-        "Un prototipo pequeño y bien ejecutado vale más que un concepto enorme incompleto. Enfoque sobre ambición.",
-        "Cada decisión de diseño tiene impacto directo en el presupuesto: pasar de 2D a 3D puede multiplicar el costo por 10.",
+        "La mecánica principal es la acción más repetida del juego. En plataformas es saltar; en shooters es disparar. Todo lo demás gira en torno a ella.",
+        "Los 'verbos del jugador' son las acciones disponibles: correr, saltar, atacar, construir. Menos verbos bien diseñados es mejor que muchos verbos confusos.",
+        "El game loop es el ciclo básico de juego: el jugador recibe un desafío, actúa, recibe retroalimentación y pasa al siguiente desafío.",
+        "La retroalimentación (feedback) es la respuesta del sistema a las acciones del jugador: sonidos, animaciones, puntos. Sin feedback claro, el jugador no sabe qué está haciendo bien o mal.",
       ],
-      realWorldContext: "Minecraft comenzó como un juego de un solo jugador con bloques básicos. No Man's Sky prometió un universo infinito y lanzó con características incompletas, generando una crisis de reputación enorme. El alcance realista no limita la creatividad; la enfoca. Los juegos más exitosos de estudios pequeños son los más enfocados.",
-      pixelTip: "Al evaluar preguntas de alcance, hazte siempre esta pregunta: ¿puede un equipo pequeño construir esto en el tiempo disponible con los recursos descritos? Si hay duda, el alcance es demasiado grande.",
+      realWorldContext: "Super Mario Bros tiene exactamente un verbo principal: saltar. Todo el diseño de sus 32 niveles gira en torno a esa mecánica. La genialidad no está en la cantidad de mecánicas sino en la profundidad con la que se explora una sola. Tetris solo tiene 4 acciones posibles y es uno de los juegos más jugados de la historia.",
+      pixelTip: "Al pensar en mecánicas, pregúntate: ¿qué hace el jugador en los primeros 30 segundos? Si no puedes responderlo en una sola frase, la mecánica no está suficientemente definida.",
       estimatedMinutes: 15,
     },
     activities: [
       {
         id: "2-1",
         type: "multiple-choice",
-        title: "¿Qué define el alcance?",
-        question: "Un equipo indie con 3 personas y 4 meses de desarrollo quiere hacer un juego. ¿Cuál de estas decisiones hace el proyecto MÁS costoso e inviable?",
+        title: "¿Cuál es la mecánica principal?",
+        question: "Un equipo diseña un juego donde el jugador resuelve acertijos moviendo cajas para abrir puertas, evitar enemigos y activar interruptores. ¿Cuál es la mecánica principal?",
         options: [
-          { id: "a", text: "Hacer un juego 2D con 5 niveles y mecánica principal de plataformas" },
-          { id: "b", text: "Hacer un RPG de mundo abierto en 3D con 30 horas de contenido y voces en varios idiomas" },
-          { id: "c", text: "Hacer un puzzle con 10 niveles y arte en pixel art" },
-          { id: "d", text: "Hacer un juego de un solo nivel con mecánica de rompecabezas simple" }
+          { id: "a", text: "Evitar a los enemigos que persiguen al personaje" },
+          { id: "b", text: "Mover objetos del escenario para modificar el estado del nivel" },
+          { id: "c", text: "Activar interruptores en el orden correcto" },
+          { id: "d", text: "Abrir puertas para llegar a la salida del nivel" }
         ],
         correctAnswer: 1,
-        explanation: "Un RPG de mundo abierto en 3D con 30 horas de contenido requiere decenas de profesionales, años de producción y presupuestos de millones. Para 3 personas en 4 meses, es completamente inviable. El alcance debe ajustarse a los recursos reales disponibles.",
-        hint: "Piensa en cuántos recursos (personas, tiempo, dinero) requiere cada opción. ¿Cuál es claramente desproporcionada?",
+        explanation: "Mover objetos es la acción central de la que derivan todas las demás interacciones: los interruptores se activan moviéndolos, las puertas se abren como consecuencia, y los enemigos se evitan reubicando cajas. La mecánica principal es el verbo del que dependen los demás.",
+        hint: "La mecánica principal es la acción más fundamental del juego. Las demás acciones son consecuencias o aplicaciones de esa acción base.",
         xp: 35
       },
       {
         id: "2-2",
         type: "multiple-choice",
-        title: "Decisiones que encarecen",
-        question: "¿Cuál de estas características añade MÁS costo al presupuesto de un videojuego indie?",
+        title: "Feedback al jugador",
+        question: "Un jugador derrota a un enemigo en un juego de acción. ¿Cuál de estas respuestas del sistema comunica mejor el resultado de forma clara e inmediata?",
         options: [
-          { id: "a", text: "Usar música gratuita con licencia Creative Commons" },
-          { id: "b", text: "Usar sprites 2D hechos por un miembro del equipo" },
-          { id: "c", text: "Agregar doblaje de voz profesional en 3 idiomas distintos" },
-          { id: "d", text: "Usar un motor gratuito como Godot o Unity Community" }
+          { id: "a", text: "Nada sucede visualmente; el contador de puntos sube en el menú de pausa" },
+          { id: "b", text: "El enemigo desaparece, suena un efecto de victoria, aparece +50 puntos flotando y el personaje hace un gesto de celebración" },
+          { id: "c", text: "Aparece un texto en pantalla que dice 'Enemigo eliminado. Consulta tu progreso en el menú principal'" },
+          { id: "d", text: "El juego se pausa automáticamente para mostrar las estadísticas actualizadas del jugador" }
         ],
-        correctAnswer: 2,
-        explanation: "El doblaje profesional en múltiples idiomas implica contratar actores de voz nativos, un estudio de grabación y producción de audio. Puede costar desde $5,000 hasta $50,000+ dependiendo del volumen de diálogos. Las otras opciones son formas inteligentes de reducir costos.",
-        hint: "¿Cuál de estas opciones requiere contratar profesionales externos y pagar por tiempo de estudio o licencias costosas?",
+        correctAnswer: 1,
+        explanation: "El buen feedback es inmediato, multisensorial y proporcional a la acción. La opción B combina visual (desaparición, puntos flotantes, animación), auditivo (efecto de sonido) e informativo (puntos). Las demás opciones interrumpen el flujo o son demasiado tardías para conectar con la acción del jugador.",
+        hint: "El feedback efectivo ocurre en el momento exacto de la acción y usa más de un canal (visual + sonido + animación).",
         xp: 35
       },
       {
         id: "2-3",
         type: "order-steps",
-        title: "Clasificando el alcance",
-        question: "Ordena estas características de videojuego de MENOR a MAYOR impacto en el presupuesto de producción:",
+        title: "El bucle de juego",
+        question: "Ordena los elementos del game loop básico de un videojuego de plataformas en el orden correcto:",
         items: [
-          "1 nivel, mecánica simple, sin audio, arte básico",
-          "5 niveles, mecánica central, efectos de sonido, pixel art propio",
-          "15 niveles, 2 mecánicas, música original, arte 2D ilustrado",
-          "Mundo abierto 3D, mecánicas complejas, banda sonora completa, cinemáticas"
+          "El jugador recibe el desafío del nivel (plataformas, enemigos, obstáculos)",
+          "El jugador decide una acción y la ejecuta (saltar, moverse, atacar)",
+          "El sistema evalúa la acción y actualiza el estado del juego",
+          "El juego da retroalimentación inmediata al jugador (sonido, animación, puntos)",
+          "Se presenta el siguiente desafío o se repite el ciclo"
         ],
-        correctOrder: [0, 1, 2, 3],
-        explanation: "El costo crece exponencialmente con la complejidad. Un juego simple puede desarrollarse con $0 adicionales; un juego de mundo abierto 3D puede costar millones. Elegir el alcance correcto es la decisión financiera más importante del proyecto.",
-        hint: "Piensa en cuántos recursos humanos, herramientas y tiempo requiere cada nivel de complejidad. De menos a más.",
+        correctOrder: [0, 1, 2, 3, 4],
+        explanation: "El game loop es el ciclo fundamental de toda experiencia de juego. Siempre comienza con un desafío que provoca una acción, el sistema evalúa esa acción, da retroalimentación y presenta el siguiente desafío. Este ciclo se repite cientos de veces en una sola sesión de juego.",
+        hint: "El game loop sigue la lógica: desafío → acción del jugador → evaluación del sistema → feedback → nuevo desafío.",
         xp: 40
       },
       {
         id: "2-4",
         type: "reflection",
-        title: "Define el alcance de tu proyecto",
-        question: "Describe el alcance de tu videojuego respondiendo: ¿cuántos niveles o pantallas tendrá?, ¿qué tan compleja es la mecánica principal?, ¿usarás arte propio o gratuito?, ¿cuánto tiempo de desarrollo estimas necesitar?",
-        placeholder: "Ejemplo: 'Mi juego tendrá 8 niveles con una mecánica de plataformas. El arte será pixel art hecho por un integrante del equipo. Estimamos 3 meses con un equipo de 2 personas...'",
-        explanation: "Definir el alcance desde el inicio es la base de cualquier presupuesto real. Sin claridad sobre QUÉ se va a construir, es imposible estimar CUÁNTO costará. Un alcance bien delimitado permite calcular tiempos, roles y gastos de forma realista.",
-        hint: "Sé específico: cuantifica niveles, personajes, mecánicas. Evita frases como 'muchos niveles' o 'arte bonito'. Los números concretos hacen el presupuesto manejable.",
+        title: "Define las mecánicas de tu juego",
+        question: "Describe las mecánicas de tu videojuego: ¿cuál es el verbo principal del jugador?, ¿qué reglas gobiernan esa acción?, ¿cómo sabe el jugador si lo está haciendo bien o mal?, ¿cómo aumenta la dificultad progresivamente?",
+        placeholder: "Ejemplo: 'El verbo principal es SALTAR. El jugador puede saltar sobre plataformas y enemigos. Si cae al vacío, pierde una vida. El feedback es un sonido de impacto y la pantalla parpadea en rojo. La dificultad aumenta reduciendo el tamaño de las plataformas y aumentando la velocidad de los enemigos...'",
+        explanation: "Definir mecánicas con precisión evita la trampa del 'ya lo implementamos después'. Un diseñador que no puede describir en palabras cómo funciona su juego tampoco podrá implementarlo ni comunicarlo al equipo. La descripción escrita es la primera prueba de que la mecánica funciona.",
+        hint: "Usa verbos concretos: el jugador SALTA, CONSTRUYE, DISPARA, CONECTA. Evita frases como 'el jugador interactúa con el entorno'.",
         xp: 50
       },
       {
@@ -409,831 +410,830 @@ export const stages: Stage[] = [
         type: "word-scramble",
         title: "Adivina el término",
         question: "Ordena las letras para formar el concepto clave de esta etapa:",
-        word: "ALCANCE",
-        wordClue: "Define qué características, niveles y funcionalidades tendrá el juego final. Sin él, no hay presupuesto confiable.",
-        explanation: "El ALCANCE es la delimitación exacta de lo que se va a construir. Todo lo que queda fuera del alcance no se presupuesta, no se desarrolla y no retrasa el proyecto. Dominarlo es el primer paso para controlar los costos.",
-        hint: "La palabra tiene 7 letras y empieza con A. Está relacionada con los límites y el tamaño del proyecto.",
+        word: "MECANICA",
+        wordClue: "Regla o sistema que define qué puede hacer el jugador dentro del juego y cómo responde el sistema a sus acciones.",
+        explanation: "Una MECÁNICA es el conjunto de reglas que define una interacción específica en el juego. El salto en plataformas, el turno en estrategia, el disparo en acción: cada uno es una mecánica con sus propias reglas, consecuencias y posibilidades.",
+        hint: "La palabra tiene 8 letras y empieza con M. Es el concepto más fundamental del diseño de videojuegos.",
         xp: 30,
       },
       {
         id: "2-6",
         type: "true-false",
-        title: "Verdadero o Falso: el alcance",
+        title: "Verdadero o Falso: mecánicas",
         question: "Determina si el siguiente enunciado es verdadero o falso:",
         isTrue: false,
-        explanation: "Más características no garantizan mejor experiencia. La sobrecarga de contenido puede confundir al jugador, dispersar el esfuerzo del equipo y elevar el costo de forma inmanejable. Flappy Bird, Undertale y Minecraft comenzaron con alcances mínimos y tuvieron éxito enorme. La calidad de una mecánica bien pulida supera a la cantidad de mecánicas a medias.",
-        hint: "Piensa en juegos exitosos con mecánica simple vs. juegos ambiciosos que fracasaron por prometer demasiado.",
+        explanation: "Más mecánicas no garantizan mejor experiencia. La sobrecarga de sistemas puede confundir al jugador y diluir la identidad del juego. Flappy Bird tiene una sola mecánica y fue el juego más descargado de su época. Tetris tiene cuatro acciones posibles. La profundidad de una mecánica bien diseñada supera en valor a la cantidad de mecánicas superficiales.",
+        hint: "Piensa en los juegos más exitosos con una sola mecánica central: ¿la simpleza les restó valor o les dio identidad?",
         xp: 25,
       },
       {
         id: "2-7",
         type: "connect-concepts",
-        title: "Tipos de alcance",
-        question: "Conecta cada nivel de alcance con sus características típicas de producción.",
+        title: "Elementos del diseño de mecánicas",
+        question: "Conecta cada concepto de diseño de mecánicas con su descripción correcta.",
         pairs: [
-          { left: "Alcance mínimo", right: "1 mecánica, pocos niveles, arte básico, equipo de 1-2 personas" },
-          { left: "Alcance mediano", right: "3-5 mecánicas, 10-20 niveles, arte propio, equipo de 3-6 personas" },
-          { left: "Alcance grande", right: "Múltiples sistemas, +30 niveles, cinemáticas, equipo de 10+ personas" },
-          { left: "Scope creep", right: "Expansión no planificada del proyecto que dispara costos y retrasos" },
+          { left: "Verbo del jugador", right: "La acción principal que ejecuta el jugador: saltar, construir, disparar" },
+          { left: "Game loop", right: "Ciclo repetitivo de desafío → acción → evaluación → feedback" },
+          { left: "Curva de dificultad", right: "Progresión gradual del desafío para mantener al jugador en estado de flujo" },
+          { left: "Feedback", right: "Respuesta inmediata del sistema ante la acción del jugador" },
         ],
-        explanation: "Reconocer a qué tipo de alcance pertenece cada característica es esencial para presupuestar correctamente. El scope creep no es un tipo de proyecto: es una trampa que convierte cualquier alcance en uno mayor sin planificación ni presupuesto.",
-        hint: "El scope creep es diferente a los otros: no es un tamaño de proyecto, sino un problema de gestión que sucede cuando el proyecto crece sin control.",
+        explanation: "Estos cuatro conceptos forman el núcleo del diseño de mecánicas. Sin verbos claros el jugador no sabe qué hacer; sin game loop no hay ritmo; sin curva de dificultad el juego se vuelve aburrido o frustrante; sin feedback el jugador no entiende las consecuencias de sus acciones.",
+        hint: "El verbo es la acción, el game loop es el ciclo, la curva es la progresión y el feedback es la respuesta. Cada uno cumple una función diferente.",
         xp: 40,
       },
     ],
     quiz: [
       {
         id: "q2-1",
-        question: "¿Qué es el 'scope' o alcance en un proyecto de videojuego?",
+        question: "¿Qué es la mecánica principal de un videojuego?",
         options: [
-          "El campo de visión de la cámara en juegos en primera persona",
-          "El conjunto definido de características, niveles y funcionalidades que tendrá el juego final",
-          "El rango de precios en que se venderá el juego en distintas plataformas",
-          "El número total de horas que tardará el jugador promedio en completarlo"
+          "El menú de inicio y las opciones de configuración del juego",
+          "La acción más fundamental y repetida que define la interacción central del jugador con el sistema",
+          "El motor gráfico que procesa las animaciones y efectos visuales del juego",
+          "La historia principal que el jugador sigue a lo largo de la campaña"
         ],
         correctAnswer: 1,
-        explanation: "El scope define qué ESTÁ y qué NO ESTÁ en el proyecto. Delimitar el alcance correctamente es lo que hace posible planificar tiempos y presupuestos realistas. Sin scope claro, no hay presupuesto confiable."
+        explanation: "La mecánica principal es el verbo central del juego: la acción que el jugador realiza más veces y que define la identidad del diseño. En plataformas es saltar, en shooters es apuntar y disparar, en puzzle es resolver. Todo el diseño de niveles y sistemas gira en torno a esta mecánica base."
       },
       {
         id: "q2-2",
-        question: "¿Qué es el 'scope creep' y por qué es un problema financiero?",
+        question: "¿Para qué sirve el 'game loop' en el diseño de un videojuego?",
         options: [
-          "Un error técnico que aumenta el tamaño del archivo del juego",
-          "La expansión no controlada del proyecto más allá del plan original, que dispara los costos y retrasos",
-          "Una técnica de diseño para añadir contenido extra después del lanzamiento",
-          "El proceso de reducir funcionalidades del juego para cumplir con el presupuesto"
+          "Para programar el ciclo de actualización del motor gráfico a 60 fotogramas por segundo",
+          "Para definir el ciclo repetitivo de desafío, acción, evaluación y retroalimentación que estructura la experiencia",
+          "Para crear un bucle infinito de niveles que evita que el juego tenga un final",
+          "Para sincronizar los controles del jugador con la animación del personaje"
         ],
         correctAnswer: 1,
-        explanation: "El scope creep ocurre cuando se añaden características no planificadas durante el desarrollo. Cada adición parece pequeña, pero sumadas extienden el tiempo y el costo significativamente. Es la causa #1 de proyectos que no se terminan."
+        explanation: "El game loop es la estructura fundamental de toda experiencia de juego: el jugador recibe un desafío, decide una acción, el sistema la evalúa y responde con feedback, y presenta el siguiente desafío. Este ciclo se repite cientos de veces por sesión y es lo que genera el ritmo y el engagement del juego."
       },
       {
         id: "q2-3",
-        question: "¿Cuál de estas características tiene el MAYOR impacto en el costo de producción de un videojuego?",
+        question: "¿Por qué es importante la retroalimentación (feedback) inmediata en un videojuego?",
         options: [
-          "El número de opciones en el menú de pausa del juego",
-          "El tipo de música de fondo (lofi vs. orquestal)",
-          "El motor gráfico elegido (Unity vs Godot)",
-          "Pasar de gráficos 2D pixel art a gráficos 3D renderizados en tiempo real"
+          "Porque los jugadores necesitan ver estadísticas detalladas de su rendimiento tras cada acción",
+          "Porque sin respuesta inmediata del sistema, el jugador no puede conectar sus acciones con las consecuencias y pierde orientación",
+          "Porque los efectos de sonido y animación hacen el juego visualmente más atractivo para marketing",
+          "Porque el feedback es un requisito técnico del motor para mantener el juego sincronizado"
         ],
-        correctAnswer: 3,
-        explanation: "El salto de 2D a 3D multiplica exponencialmente los costos: modelos 3D cuestan entre 5 y 20 veces más que sprites 2D, se necesitan animadores 3D especializados, y el tiempo de desarrollo se multiplica. Es una de las decisiones de alcance más costosas posibles."
+        correctAnswer: 1,
+        explanation: "El feedback conecta causa (acción del jugador) con efecto (respuesta del sistema). Sin esa conexión inmediata, el jugador no puede aprender, no puede mejorar y no siente agencia sobre lo que ocurre. Un buen feedback es inmediato, proporcional a la acción y usa múltiples canales (visual + sonido)."
       },
       {
         id: "q2-4",
-        question: "Un proyecto académico de videojuego tiene 5 meses y un equipo de 4 estudiantes. ¿Qué alcance es más viable?",
+        question: "Un diseñador quiere que su juego sea accesible para nuevos jugadores pero desafiante para veteranos. ¿Qué herramienta de diseño usa?",
         options: [
-          "Un MMORPG con economía virtual, gremios y 100 horas de contenido",
-          "Un juego de plataformas 2D con 6-8 niveles y una mecánica central bien pulida",
-          "Un simulador de ciudad en 3D con economía dinámica y IA avanzada",
-          "Un juego de mundo abierto con narrativa ramificada y 50 personajes con voces"
+          "Añadir más personajes jugables con habilidades diferentes para distintos niveles de habilidad",
+          "Diseñar una curva de dificultad progresiva que gradualmente introduce y complejiza los desafíos",
+          "Crear dos versiones del juego: una fácil para principiantes y una difícil para expertos",
+          "Incluir un modo tutorial obligatorio antes de acceder al juego principal"
         ],
         correctAnswer: 1,
-        explanation: "Un plataformas 2D con 6-8 niveles es alcanzable en 5 meses con 4 personas. Permite enfocarse en la calidad de una mecánica central en lugar de dispersar esfuerzo. Los proyectos más exitosos de estudiantes son los más enfocados, no los más ambiciosos."
+        explanation: "La curva de dificultad progresiva introduce primero los conceptos básicos y luego los combina y complejiza gradualmente. Esto permite que el jugador nuevo aprenda sin frustrarse y que el veterano encuentre desafíos crecientes. Es el principio de diseño que mantiene al jugador en 'estado de flujo'."
       },
       {
         id: "q2-5",
-        question: "¿Cómo afecta la cantidad de personajes jugables al presupuesto de un videojuego?",
+        question: "¿Qué significa diseñar 'menos mecánicas pero más profundas' en un videojuego?",
         options: [
-          "No afecta el presupuesto porque todos los personajes comparten la misma base de código",
-          "Cada personaje adicional requiere arte, animaciones, balanceo y testing específicos que incrementan el costo",
-          "Más personajes siempre significa un juego más exitoso, así que el costo adicional se justifica solo",
-          "Solo afecta el presupuesto si los personajes tienen voces en el doblaje del juego"
+          "Reducir el número de controles disponibles para que el juego sea más fácil de aprender",
+          "Crear pocas acciones pero con múltiples aplicaciones, combinaciones y consecuencias que el jugador puede explorar",
+          "Hacer niveles más cortos para que el jugador no tenga que aprender demasiado de una vez",
+          "Limitar las mecánicas al mínimo para terminar el desarrollo más rápidamente"
         ],
         correctAnswer: 1,
-        explanation: "Cada personaje jugable adicional implica sprites o modelos únicos, animaciones propias (caminar, atacar, morir), balanceo de habilidades y horas de testing para asegurar que funcione correctamente. Duplicar personajes puede casi duplicar el costo de arte y QA."
+        explanation: "Una mecánica profunda tiene muchas implicaciones a partir de una sola regla simple. En ajedrez, cada pieza tiene una regla de movimiento simple, pero sus combinaciones generan complejidad infinita. Diseñar pocas mecánicas con profundidad crea juegos más elegantes, más fáciles de aprender y más difíciles de dominar."
       }
     ]
   },
 
   // ═══════════════════════════════════════════════════════
-  // ETAPA 3 — RECURSOS Y EQUIPO
+  // ETAPA 3 — NARRATIVA Y MUNDO
   // ═══════════════════════════════════════════════════════
   {
     id: 3,
-    title: "Recursos y Equipo",
-    subtitle: "Identifica quién hace qué y cuánto cuesta el talento humano",
-    icon: "users",
+    title: "Narrativa y Mundo",
+    subtitle: "Construye la historia, los personajes y el universo de tu videojuego",
+    icon: "book-open",
     color: "#f97316",
     bgColor: "#fff7ed",
     borderColor: "#fed7aa",
-    objective: "Identificar los recursos humanos y técnicos necesarios para el proyecto y cómo se traducen en costos reales de producción.",
+    objective: "Diseñar la narrativa, los personajes y el mundo del videojuego de manera coherente y alineada con las mecánicas y la visión del proyecto.",
     topics: [
-      "Roles del equipo de desarrollo",
-      "Costo del talento humano",
-      "Herramientas gratuitas vs. de pago",
-      "Hardware y software necesario",
-      "Outsourcing vs. trabajo propio",
-      "Equipo mínimo viable (MVP de equipo)"
+      "Historia principal y arco narrativo",
+      "Diseño de personajes",
+      "Construcción del mundo (worldbuilding)",
+      "Narrativa ambiental",
+      "Coherencia entre narrativa y mecánicas",
+      "Tono y atmósfera del juego"
     ],
     xpReward: 175,
     intro: {
-      summary: "El talento humano es el recurso más valioso y costoso de cualquier producción de videojuego. Saber quién hace qué, cuánto cuesta cada rol y qué herramientas usar puede ser la diferencia entre un proyecto que avanza con claridad y uno que se estanca por falta de planificación.",
+      summary: "La narrativa de un videojuego no es solo la historia que se cuenta: es el conjunto de historia, mundo, personajes, tono y atmósfera que le dan sentido a las mecánicas. El mejor diseño narrativo hace que las mecánicas sean una extensión natural de la historia y el mundo que habita el jugador.",
       keyPoints: [
-        "El programador es el rol más crítico en cualquier equipo: sin código, el juego no existe. Todo lo demás viene después.",
-        "El equipo humano representa entre el 60% y el 80% del presupuesto total. Es el gasto dominante.",
-        "Herramientas gratuitas como Godot, Krita o Audacity son completamente profesionales y no limitan los ingresos del proyecto.",
-        "La polivalencia (una persona con varios roles) reduce costos pero tiene límites: hay un punto donde genera agotamiento y baja la calidad.",
+        "El arco narrativo estructura la historia: situación inicial, conflicto, desarrollo, clímax y resolución. Sin estructura, la narrativa se fragmenta.",
+        "Los personajes necesitan motivación clara: ¿qué quieren?, ¿qué los detiene?, ¿cómo cambian? Un personaje sin motivación es un muñeco con nombre.",
+        "El worldbuilding define las reglas del universo: física, historia, cultura, facciones. Todo lo que el jugador ve debe tener coherencia interna.",
+        "La narrativa ambiental cuenta la historia a través del entorno: un cartel roto, una ciudad abandonada, el tipo de vegetación. El mundo habla sin texto ni cinemáticas.",
       ],
-      realWorldContext: "Undertale fue creado por una sola persona (Toby Fox) en 2.5 años. Stardew Valley también fue obra de un solo desarrollador durante 4 años. La mayoría de juegos indie exitosos tienen equipos de 2-8 personas muy bien coordinadas, no decenas de especialistas.",
-      pixelTip: "Al evaluar roles y herramientas, piensa siempre en la relación costo-beneficio. No necesitas el software más caro ni el equipo más grande. Necesitas las personas correctas con las herramientas correctas para TU proyecto específico.",
+      realWorldContext: "Dark Souls construye su lore casi sin diálogos: la historia se narra a través de descripciones de objetos, arquitectura y la disposición de los enemigos. Hollow Knight usa el mismo principio. Estos juegos demuestran que la narrativa más efectiva a veces es la que el jugador descubre, no la que le explican.",
+      pixelTip: "Al diseñar tu narrativa, hazte siempre esta pregunta: ¿las mecánicas refuerzan la historia o contradicen al mundo? En un juego sobre la fragilidad de la vida, tener vidas infinitas rompe la coherencia narrativa.",
       estimatedMinutes: 15,
     },
     activities: [
       {
         id: "3-1",
         type: "multiple-choice",
-        title: "El rol más crítico",
-        question: "Para un juego indie 2D simple, ¿qué rol sería el MÁS indispensable para arrancar el proyecto?",
+        title: "Coherencia narrativa y mecánicas",
+        question: "Un juego tiene como tema central 'la soledad del último ser humano en la Tierra'. ¿Qué mecánica es MÁS coherente con ese tema?",
         options: [
-          { id: "a", text: "Community manager para manejar redes sociales desde el día 1" },
-          { id: "b", text: "Programador con experiencia en el motor elegido (Unity/Godot)" },
-          { id: "c", text: "Compositor de música orquestal para la banda sonora completa" },
-          { id: "d", text: "Especialista en monetización y estrategia de precios" }
+          { id: "a", text: "Modo multijugador cooperativo en línea con hasta 4 jugadores simultáneos" },
+          { id: "b", text: "Un sistema de exploración en solitario donde el silencio y el aislamiento son parte del gameplay" },
+          { id: "c", text: "Una tienda donde el jugador puede comprar aliados para que lo acompañen" },
+          { id: "d", text: "Misiones de rescate de otros supervivientes para construir una comunidad" }
         ],
         correctAnswer: 1,
-        explanation: "Sin programación, el juego no existe. El programador que domina el motor es el núcleo técnico que hace posible que todos los demás roles trabajen. El marketing, la música y la monetización vienen después de tener un juego funcional. Esta es la base del equipo mínimo viable.",
-        hint: "¿Qué rol construye el producto en sí? Piensa en el producto mínimo viable: ¿qué necesitas para que el juego exista y sea jugable?",
+        explanation: "La coherencia entre narrativa y mecánica es fundamental. Si el tema es la soledad, el gameplay debe hacer sentir esa soledad al jugador. Las opciones A, C y D contradicen el tema añadiendo compañía y comunidad. La opción B convierte el tema en una experiencia mecánica, que es el objetivo del diseño narrativo-mecánico.",
+        hint: "La mecánica debe ser una expresión física del tema. Pregúntate: ¿qué mecánica haría que el jugador SIENTA el tema central?",
         xp: 35
       },
       {
         id: "3-2",
         type: "order-steps",
-        title: "Roles por costo típico",
-        question: "Ordena estos roles de videojuego de MENOR a MAYOR costo típico por hora de trabajo freelance:",
+        title: "El arco narrativo",
+        question: "Ordena las etapas del arco narrativo clásico de un videojuego en el orden correcto:",
         items: [
-          "Tester de QA (control de calidad básico)",
-          "Artista 2D de sprites y fondos",
-          "Programador de gameplay senior",
-          "Director artístico / Lead Artist con portafolio AAA"
+          "Presentación del mundo y el protagonista en su estado inicial",
+          "Aparece el conflicto o desequilibrio que motiva la aventura",
+          "El protagonista enfrenta desafíos y crece a través de ellos",
+          "Clímax: el enfrentamiento decisivo que concentra toda la tensión acumulada",
+          "Resolución: el mundo cambia como consecuencia de las acciones del protagonista"
         ],
-        correctOrder: [0, 1, 2, 3],
-        explanation: "Los roles más especializados y con mayor demanda de mercado tienen tarifas más altas. Un tester puede trabajar por $8-15/hora; un artista 2D por $20-40/hora; un programador senior por $40-80/hora; y un director artístico reconocido puede cobrar $80-150+/hora.",
-        hint: "Piensa en el nivel de especialización y escasez de cada rol en el mercado de videojuegos. ¿Quién tiene la curva de aprendizaje más larga?",
+        correctOrder: [0, 1, 2, 3, 4],
+        explanation: "El arco narrativo clásico sigue la estructura del viaje del héroe: primero conocemos al personaje y su mundo, luego algo lo desestabiliza, enfrenta dificultades que lo transforman, llega al punto de mayor tensión y finalmente resuelve el conflicto transformando el mundo. Esta estructura está presente en la mayoría de juegos narrativos exitosos.",
+        hint: "La narrativa sigue una lógica emocional: primero presentas, luego generas conflicto, luego construyes tensión, llegas al pico y resuelves.",
         xp: 40
       },
       {
         id: "3-3",
         type: "multiple-choice",
-        title: "Herramientas y su costo",
-        question: "Un equipo indie quiere reducir costos de software al mínimo. ¿Cuál combinación de herramientas les da la mejor relación calidad-costo?",
+        title: "Narrativa ambiental",
+        question: "¿Qué es la 'narrativa ambiental' en el diseño de videojuegos?",
         options: [
-          { id: "a", text: "Adobe Creative Cloud ($60/mes), Unity Pro ($2,040/año), FMOD Studio Pro ($800/año)" },
-          { id: "b", text: "Godot Engine (gratis), Krita (gratis), Audacity (gratis), LMMS (gratis)" },
-          { id: "c", text: "Unreal Engine 5 (gratis hasta $1M ingresos), Maya ($1,700/año), Wwise (gratis con límites)" },
-          { id: "d", text: "Unity Personal (gratis con límites), Photoshop ($23/mes), Adobe Audition ($23/mes)" }
+          { id: "a", text: "Los diálogos y cinemáticas que explican la historia principal del juego" },
+          { id: "b", text: "Contar la historia y el lore del mundo a través del diseño del entorno, objetos y escenarios sin texto explícito" },
+          { id: "c", text: "Las descripciones del ambiente en el manual de usuario del juego" },
+          { id: "d", text: "El sistema de clima dinámico que cambia el entorno durante el juego" }
         ],
         correctAnswer: 1,
-        explanation: "Godot + Krita + Audacity + LMMS son herramientas profesionales completamente gratuitas y de código abierto, sin restricciones de ingresos ni marcas de agua. Para equipos estudiantiles o sin financiamiento, representan $0 en licencias de software.",
-        hint: "Busca la opción donde todas las herramientas son gratuitas sin restricciones de uso comercial o límites de ingresos.",
+        explanation: "La narrativa ambiental usa el entorno como narrador: una ciudad en ruinas dice que hubo una guerra, esqueletos alrededor de una puerta cerrada dicen que algo aterrador está detrás, una habitación con juguetes infantiles destruidos cuenta una historia de tragedia sin decir una sola palabra. Es la forma más inmersiva de narrar en videojuegos.",
+        hint: "¿Cómo cuenta una historia el escenario físico sin necesidad de texto, diálogo ni cinemáticas?",
         xp: 35
       },
       {
         id: "3-4",
         type: "reflection",
-        title: "Define tu equipo mínimo viable",
-        question: "Describe el equipo que necesitas para tu videojuego: ¿qué roles son indispensables?, ¿cuáles pueden ser cubiertos por un mismo miembro?, ¿qué tareas podrías externalizar (outsourcing) y cuáles deben hacerse internamente?",
-        placeholder: "Ejemplo: 'Necesitamos 1 programador (también hará diseño de niveles), 1 artista 2D (también hará UI), y externalizaríamos la música comprando packs de audio. El equipo central sería de 2 personas con apoyo puntual en audio...'",
-        explanation: "El equipo mínimo viable es el conjunto mínimo de personas con los roles necesarios para que el proyecto avance. Identificarlo correctamente es crucial porque los salarios y honorarios son el gasto más alto en cualquier producción de videojuego, representando entre el 60% y el 80% del presupuesto total.",
-        hint: "En proyectos estudiantiles, una persona puede tener varios roles. La clave es que los roles críticos estén cubiertos, aunque sea por la misma persona.",
+        title: "Diseña la narrativa de tu juego",
+        question: "Describe la narrativa de tu videojuego: ¿quién es el protagonista y qué quiere?, ¿cuál es el conflicto central?, ¿cómo es el mundo en el que ocurre la historia?, ¿cómo conecta la historia con las mecánicas del juego?",
+        placeholder: "Ejemplo: 'El protagonista es una IA que despertó sin saber quién la creó. Quiere descubrir su origen. El conflicto es que las respuestas están bloqueadas en archivos que solo puede acceder resolviendo acertijos de lógica. El mundo es una estación espacial abandonada. La mecánica de puzzle refleja directamente la búsqueda de la IA por comprender su propio código...'",
+        explanation: "Describir la narrativa en palabras es el primer paso para saber si tiene coherencia interna. Si no puedes explicar en pocas frases quién es el protagonista, qué quiere y qué se lo impide, la narrativa necesita más trabajo. La claridad en la descripción es síntoma de claridad en el diseño.",
+        hint: "Usa esta estructura: [Protagonista] quiere [objetivo] pero [obstáculo]. La historia ocurre en [mundo]. Las mecánicas hacen que el jugador sienta [emoción o conflicto central].",
         xp: 50
       },
       {
         id: "3-5",
         type: "connect-concepts",
-        title: "Roles del equipo",
-        question: "Conecta cada rol del equipo de desarrollo con su responsabilidad principal.",
+        title: "Elementos narrativos",
+        question: "Conecta cada elemento narrativo con su función en el diseño del videojuego.",
         pairs: [
-          { left: "Programador", right: "Implementa mecánicas, sistemas y lógica del juego en código" },
-          { left: "Artista 2D", right: "Crea sprites, fondos, animaciones y elementos visuales del juego" },
-          { left: "Diseñador de niveles", right: "Diseña la estructura, flujo, desafíos y ritmo de cada nivel" },
-          { left: "QA Tester", right: "Detecta y documenta errores y problemas antes del lanzamiento" },
+          { left: "Arco del personaje", right: "La transformación que sufre el protagonista a lo largo de la historia" },
+          { left: "Worldbuilding", right: "La construcción coherente del universo, sus reglas, historia y cultura" },
+          { left: "Narrativa ambiental", right: "Contar la historia a través del diseño del escenario y los objetos" },
+          { left: "Tono narrativo", right: "La atmósfera emocional que define cómo se siente el mundo del juego" },
         ],
-        explanation: "Conocer las responsabilidades exactas de cada rol ayuda a planificar el equipo y calcular los costos correctamente. En equipos pequeños, una persona puede cubrir varios roles, pero es importante saber qué tareas conlleva cada uno para estimar el tiempo necesario.",
-        hint: "Piensa en el producto final de cada rol: el programador entrega código funcional, el artista entrega assets visuales, el diseñador entrega niveles jugables, el tester entrega reportes de bugs.",
+        explanation: "Estos cuatro elementos trabajan juntos para crear mundos coherentes y experiencias narrativas memorables. El arco da dirección emocional al personaje, el worldbuilding da coherencia al universo, la narrativa ambiental hace el mundo vivo sin interrumpir el gameplay, y el tono unifica toda la experiencia estética y emocional.",
+        hint: "El arco es la transformación, el worldbuilding son las reglas del universo, la narrativa ambiental es el escenario que habla, y el tono es la atmósfera emocional.",
         xp: 40,
       },
       {
         id: "3-6",
         type: "true-false",
-        title: "Herramientas gratuitas",
+        title: "Verdadero o Falso: narrativa",
         question: "Determina si el siguiente enunciado es verdadero o falso:",
         isTrue: true,
-        explanation: "Godot Engine es completamente gratuito y de código abierto, sin restricciones de ingresos ni marcas de agua. A diferencia de Unity (que tiene planes gratuitos con límites), Godot permite desarrollo y publicación comercial sin costo. Es mantenido por una fundación sin fines de lucro y tiene una comunidad activa.",
-        hint: "Piensa en la diferencia entre 'gratuito con límites' y 'completamente gratuito sin restricciones'. No todos los motores gratuitos tienen las mismas condiciones.",
+        explanation: "Las mecánicas y la narrativa pueden y deben reforzarse mutuamente. En Journey, la mecánica de no poder comunicarse verbalmente con otros jugadores refuerza el tema de la conexión efímera. En Papers Please, la mecánica de revisar documentos repetitivamente refuerza la narrativa sobre la burocracia y el poder. Cuando mecánica y narrativa se alinean, la experiencia se vuelve significativa.",
+        hint: "Piensa en juegos donde lo que haces con los controles y lo que cuenta la historia son la misma cosa expresada de formas distintas.",
         xp: 25,
       },
       {
         id: "3-7",
         type: "crossword",
-        title: "Crucigrama del equipo",
-        question: "Completa el crucigrama con términos de recursos y equipo. Toca una pista para seleccionarla y escribe la respuesta.",
+        title: "Crucigrama de narrativa",
+        question: "Completa el crucigrama con términos de diseño narrativo. Toca una pista para seleccionarla y escribe la respuesta.",
         crossword: {
-          rows: 6,
+          rows: 7,
           cols: 7,
           words: [
             {
               number: 1,
               direction: "across",
-              clue: "Motor de videojuego gratuito y open source, creado en Latinoamérica",
-              answer: "GODOT",
+              clue: "Construcción del universo ficticio del juego: reglas, historia y cultura",
+              answer: "LORE",
               row: 0,
               col: 0,
             },
             {
               number: 2,
               direction: "down",
-              clue: "Rol que verifica la calidad y detecta errores antes del lanzamiento",
-              answer: "TESTER",
+              clue: "Evolución y cambio que experimenta el protagonista durante la historia",
+              answer: "ARCO",
               row: 0,
-              col: 4,
+              col: 2,
             },
             {
               number: 3,
               direction: "across",
-              clue: "Rol encargado del arte visual, sprites y diseño gráfico del juego",
-              answer: "ARTISTA",
-              row: 2,
-              col: 0,
+              clue: "Atmósfera emocional que define cómo se siente el mundo del juego",
+              answer: "TONO",
+              row: 3,
+              col: 1,
             },
           ],
         },
-        explanation: "GODOT es un motor de videojuegos gratuito y open source. Un TESTER es fundamental para el control de calidad. El ARTISTA crea todos los assets visuales. Estos tres elementos forman el núcleo de recursos técnicos y humanos de un equipo indie.",
-        hint: "GODOT tiene 5 letras (horizontal, fila 0). TESTER tiene 6 letras (vertical, columna 4). ARTISTA tiene 7 letras (horizontal, fila 2). La T de GODOT y la T de TESTER se cruzan. La S de ARTISTA y la S de TESTER se cruzan.",
+        explanation: "El LORE es el conjunto de conocimiento del universo del juego, el ARCO es la transformación del personaje y el TONO es la atmósfera emocional. Estos tres elementos forman la columna vertebral de cualquier diseño narrativo en videojuegos.",
+        hint: "LORE tiene 4 letras (horizontal, fila 0). ARCO tiene 4 letras (vertical, columna 2). La O de LORE y la O inicial de ARCO se cruzan. TONO tiene 4 letras (horizontal, fila 3).",
         xp: 55,
       },
     ],
     quiz: [
       {
         id: "q3-1",
-        question: "En promedio, ¿qué porcentaje del presupuesto total de un videojuego indie corresponde al costo del equipo humano?",
+        question: "¿Qué es el 'worldbuilding' en el diseño de un videojuego?",
         options: [
-          "Entre el 10% y el 20% del presupuesto total",
-          "Entre el 60% y el 80% del presupuesto total",
-          "Exactamente el 50% del presupuesto total siempre",
-          "Menos del 10% si el equipo es de estudiantes universitarios"
+          "El proceso técnico de construir los escenarios 3D del juego usando el motor gráfico",
+          "La creación coherente del universo ficticio del juego: su historia, reglas, cultura y geografía",
+          "El diseño del mapa o nivel por el que se desplaza el jugador durante el juego",
+          "La generación procedural de mundos infinitos como en Minecraft o No Man's Sky"
         ],
         correctAnswer: 1,
-        explanation: "El talento humano es el gasto dominante en cualquier proyecto de software, incluyendo videojuegos. Las personas —programadores, artistas, diseñadores— representan entre el 60% y el 80% del costo. Por eso, definir bien el equipo es la decisión presupuestal más impactante."
+        explanation: "El worldbuilding es la construcción del universo narrativo del juego: las leyes que lo rigen, su historia, las civilizaciones que lo habitan, su geografía y cultura. Un worldbuilding sólido hace que el mundo se sienta real y que cada elemento del diseño (arquitectura, enemigos, objetos) tenga coherencia interna."
       },
       {
         id: "q3-2",
-        question: "¿Qué es el 'outsourcing' en el contexto de producción de videojuegos?",
+        question: "¿Por qué es importante que un personaje tenga una motivación clara en el diseño narrativo?",
         options: [
-          "Lanzar el juego en mercados internacionales fuera del país de origen",
-          "Contratar externamente a terceros o freelancers para tareas específicas del proyecto",
-          "Usar inteligencia artificial para generar assets automáticamente sin intervención humana",
-          "Distribuir el trabajo entre los miembros del equipo interno según sus habilidades"
+          "Porque los evaluadores y jurados académicos siempre preguntan por la motivación del personaje",
+          "Porque sin motivación el jugador no entiende por qué el personaje actúa, perdiendo conexión emocional con la historia",
+          "Porque la motivación determina qué mecánicas puede usar el personaje en el juego",
+          "Porque sin motivación el personaje no puede tener diálogos ni cinemáticas en el juego"
         ],
         correctAnswer: 1,
-        explanation: "El outsourcing permite acceder a habilidades que el equipo no tiene internamente (ej: música, efectos de sonido, arte especializado) sin necesidad de contratar a tiempo completo. Es una estrategia común para controlar costos en proyectos indie y académicos."
+        explanation: "La motivación del personaje es el motor emocional de la historia: explica por qué hace lo que hace y qué tiene que perder. Sin motivación, el jugador no se conecta emocionalmente y la historia se siente vacía. Una motivación clara ('quiero salvar a mi hermana', 'quiero entender mi origen') da dirección a toda la narrativa."
       },
       {
         id: "q3-3",
-        question: "¿Cuál es el 'costo oculto' más común que los equipos novatos de videojuegos subestiman?",
+        question: "¿Cuál es la ventaja de la narrativa ambiental sobre las cinemáticas tradicionales?",
         options: [
-          "El costo de licencias de música con derechos de autor para el juego",
-          "El tiempo de iteración, corrección de bugs y revisiones que multiplican las horas reales de trabajo",
-          "El costo de marketing en redes sociales para promocionar el juego terminado",
-          "El precio de publicación en tiendas digitales como Steam o App Store"
+          "Que la narrativa ambiental es más barata de producir que las cinemáticas animadas",
+          "Que mantiene al jugador activo y en control mientras descubre la historia, sin interrumpir el flujo del gameplay",
+          "Que la narrativa ambiental puede contarse con menos trabajo de escritura y diseño",
+          "Que los jugadores modernos prefieren leer carteles en el juego que ver cinemáticas"
         ],
         correctAnswer: 1,
-        explanation: "Los equipos novatos calculan el tiempo 'ideal' pero no consideran que cada funcionalidad requiere correcciones, pruebas y revisiones. En la práctica, el tiempo real puede ser 2 o 3 veces el estimado inicial. Este 'tiempo oculto' es el mayor generador de sobrecostos en proyectos indie."
+        explanation: "La narrativa ambiental es no intrusiva: el jugador descubre la historia mientras juega, sin pausas forzadas. Dark Souls, Hollow Knight y Portal 2 usan este enfoque para construir mundos ricos sin cortar el flujo del gameplay. La historia se convierte en parte de la exploración, no un obstáculo entre sesiones de juego."
       },
       {
         id: "q3-4",
-        question: "Para un equipo de estudiantes sin presupuesto, ¿cuál es la mejor estrategia para cubrir el rol de músico/compositor?",
+        question: "Un videojuego tiene como tema central 'el costo de la ambición'. ¿Qué elemento de diseño narrativo refuerza mejor ese tema?",
         options: [
-          "No incluir música en el juego para eliminar ese costo completamente",
-          "Contratar a un compositor profesional a precio de mercado como primera inversión",
-          "Usar música con licencia Creative Commons o free-to-use de repositorios como OpenGameArt",
-          "Grabar música con el micrófono del celular para reducir costos de equipo"
+          "Un protagonista que siempre tiene éxito en todo lo que intenta gracias a su gran talento",
+          "Un sistema de progresión donde cuanto más poder obtiene el jugador, más pierde algo valioso",
+          "Un mundo lleno de color y optimismo que contrasta con el tema serio del juego",
+          "Un final múltiple donde todas las opciones llevan al mismo resultado positivo"
         ],
-        correctAnswer: 2,
-        explanation: "Repositorios como OpenGameArt, Freesound y itch.io tienen miles de piezas musicales gratuitas con licencias que permiten uso en proyectos comerciales. Es una forma profesional y ética de cubrir el audio sin costo. Muchos juegos indie exitosos usan música gratuita bien seleccionada."
+        correctAnswer: 1,
+        explanation: "Un sistema de progresión donde el poder tiene un costo hace que el jugador EXPERIMENTE el tema en lugar de solo verlo. El jugador toma la decisión de ambicionar más poder y paga las consecuencias mecánicamente. Esto es 'ludonarrativa coherente': la mecánica y la narrativa cuentan la misma historia."
       },
       {
         id: "q3-5",
-        question: "¿Qué significa que un miembro del equipo sea 'polivalente' en el contexto de producción indie?",
+        question: "¿Qué es la 'disonancia ludonarrativa' en el diseño de videojuegos?",
         options: [
-          "Que puede trabajar desde distintos países simultáneamente en el mismo proyecto",
-          "Que domina múltiples disciplinas (ej: programar Y hacer arte) reduciendo la cantidad de personas necesarias",
-          "Que tiene experiencia en varios géneros de videojuegos como jugador experto",
-          "Que puede trabajar en múltiples proyectos al mismo tiempo sin perder calidad"
+          "Cuando la música del juego no coincide con el tono visual de los escenarios",
+          "Cuando las mecánicas del juego contradicen o entran en conflicto con la narrativa o el tema",
+          "Cuando el jugador no entiende la historia por falta de información en el juego",
+          "Cuando los diálogos del juego no están sincronizados con las animaciones de los personajes"
         ],
         correctAnswer: 1,
-        explanation: "En equipos pequeños, la polivalencia es un recurso valioso. Un miembro que puede programar Y diseñar niveles, o que puede hacer arte Y UI, reduce la cantidad de personas necesarias. Sin embargo, hay límites: la polivalencia tiene un costo en tiempo y puede generar agotamiento si no se gestiona bien."
+        explanation: "La disonancia ludonarrativa ocurre cuando lo que haces (mecánica) contradice lo que se cuenta (narrativa). El ejemplo clásico es Nathan Drake en Uncharted: es descrito como una persona buena y graciosa, pero el jugador mata a cientos de enemigos por nivel. Esa contradicción crea una ruptura inmersiva que debilita la credibilidad de la historia."
       }
     ]
   },
 
   // ═══════════════════════════════════════════════════════
-  // ETAPA 4 — COSTOS DE PRODUCCIÓN
+  // ETAPA 4 — PLANIFICACIÓN DEL PROYECTO
   // ═══════════════════════════════════════════════════════
   {
     id: 4,
-    title: "Costos de Producción",
-    subtitle: "Aprende a clasificar, priorizar y controlar los gastos del desarrollo",
-    icon: "banknote",
+    title: "Planificación del Proyecto",
+    subtitle: "Organiza las etapas, tareas y flujo de trabajo del desarrollo",
+    icon: "clipboard-list",
     color: "#ec4899",
     bgColor: "#fdf2f8",
     borderColor: "#fbcfe8",
-    objective: "Distinguir los tipos de costos en producción de videojuegos, identificar cuáles son prescindibles y cómo priorizarlos para no exceder el presupuesto.",
+    objective: "Estructurar el proceso de desarrollo del videojuego en etapas claras, organizar tareas y visualizar el flujo de trabajo para que el proyecto avance de forma ordenada.",
     topics: [
-      "Costos fijos vs. costos variables",
-      "Categorías principales de gasto",
-      "Costos de arte, programación y sonido",
-      "Costos de licencias y publicación",
-      "Outsourcing y sus costos",
-      "Costos ocultos o subestimados",
-      "Priorización del gasto"
+      "Fases del desarrollo de videojuegos",
+      "Desglose de tareas por área",
+      "Priorización de funcionalidades",
+      "Producto Mínimo Viable (MVP)",
+      "Gestión del tiempo y milestones",
+      "Control del alcance del proyecto"
     ],
     xpReward: 200,
     intro: {
-      summary: "Un presupuesto no es solo una lista de gastos: es una herramienta de control y decisión. Entender la diferencia entre costos fijos y variables, y saber cuáles priorizar, es fundamental para mantener el proyecto dentro de sus posibilidades reales sin comprometer la calidad del núcleo del juego.",
+      summary: "Un proyecto de videojuego sin planificación es un proyecto que se abandona. Planificar significa dividir el trabajo en etapas, definir qué se hace primero, establecer metas intermedias y saber exactamente cuándo el proyecto está 'terminado'. Esta etapa enseña a organizar el desarrollo de forma que el equipo sepa siempre qué hacer y qué viene después.",
       keyPoints: [
-        "Los costos fijos se pagan siempre, independientemente de la producción (ej: suscripción mensual a la nube). Los variables cambian según el trabajo realizado (ej: pago por sprite entregado).",
-        "El arte y la programación son los gastos más altos en producción: juntos pueden representar el 70-80% del presupuesto total.",
-        "El costo del polish y corrección de bugs representa entre el 20-40% del tiempo total de producción, pero rara vez se presupuesta explícitamente.",
-        "Publicar en Steam cuesta $100 USD (tarifa única que se recupera al superar $1,000 en ventas). App Store cobra $99 USD/año.",
+        "El desarrollo de videojuegos sigue fases: pre-producción (concepto, diseño), producción (construcción), alpha (funcional pero incompleto), beta (completo pero con errores) y lanzamiento.",
+        "El MVP (Producto Mínimo Viable) es la versión más pequeña del juego que puede ser jugada y probada. Construirlo primero valida la idea antes de invertir más trabajo.",
+        "Los milestones son metas intermedias que permiten medir el avance: 'al final de la semana 3, el personaje principal debe moverse en todas las direcciones'.",
+        "La priorización es clave: no todas las tareas son igualmente urgentes. Las funcionalidades del núcleo del juego van primero; los extras van al final.",
       ],
-      realWorldContext: "Un juego indie promedio cuesta entre $10,000 y $500,000 dependiendo del alcance. El desglose típico: 60-70% equipo humano, 10-15% arte y assets, 5-10% audio, 5-10% marketing y publicación, 5-10% imprevistos y contingencia.",
-      pixelTip: "Al analizar costos, clasifícalos primero en dos preguntas: ¿Es fijo o variable? ¿Es esencial para el núcleo del juego o es un 'nice to have' que puede eliminarse? Esta clasificación simplifica cualquier decisión de recorte presupuestal.",
+      realWorldContext: "Minecraft lanzó como alfa con una sola mecánica: colocar y destruir bloques. No tenía objetivos, crafting complejo ni estructura. Esa versión mínima fue suficiente para validar que la idea funcionaba. El resto del juego se construyó sobre esa base a lo largo de años de desarrollo iterativo.",
+      pixelTip: "Al planificar, piensa en qué puedes tener JUGABLE lo antes posible. Un juego simple que funciona es infinitamente más valioso que un diseño perfecto en papel que nadie puede jugar todavía.",
       estimatedMinutes: 18,
     },
     activities: [
       {
         id: "4-1",
         type: "multiple-choice",
-        title: "Costo fijo o variable",
-        question: "¿Cuál de estos es un ejemplo de COSTO FIJO en la producción de un videojuego?",
+        title: "¿Cuál es el primer paso del desarrollo?",
+        question: "Un equipo quiere empezar a desarrollar su videojuego. ¿Cuál debería ser su primer paso?",
         options: [
-          { id: "a", text: "El pago por hora a un artista freelance por cada sprite que entrega" },
-          { id: "b", text: "La suscripción mensual a un servicio de almacenamiento en la nube del proyecto" },
-          { id: "c", text: "El costo de publicar actualizaciones adicionales después del lanzamiento" },
-          { id: "d", text: "El porcentaje de regalías que se paga a la tienda por cada venta del juego" }
+          { id: "a", text: "Diseñar todos los niveles del juego antes de escribir una sola línea de código" },
+          { id: "b", text: "Construir un prototipo jugable de la mecánica principal para validar que es divertida" },
+          { id: "c", text: "Crear todos los assets de arte e ilustraciones antes de empezar la programación" },
+          { id: "d", text: "Escribir el guion completo de la historia antes de empezar el diseño del juego" }
         ],
         correctAnswer: 1,
-        explanation: "Un costo fijo es aquel que se paga independientemente de cuánto se produzca. La suscripción mensual a la nube se paga siempre, haya mucha o poca actividad. Los pagos por sprite (variable), las actualizaciones (variable) y las regalías (variable según ventas) cambian según el uso o producción.",
-        hint: "Un costo fijo no cambia según la cantidad de trabajo realizado. ¿Cuál de las opciones se paga igual sin importar cuánto se produzca?",
+        explanation: "El prototipo de la mecánica principal es el primer paso porque valida la hipótesis más importante: ¿es divertido lo que el jugador hace? Si la mecánica no funciona, el resto del trabajo (arte, historia, niveles) no tiene sentido. Un prototipo rápido y feo que valide la diversión vale más que semanas de diseño sin probar.",
+        hint: "¿Cuál de estas tareas te permite descubrir si el juego es divertido lo más rápido posible?",
         xp: 35
       },
       {
         id: "4-2",
         type: "order-steps",
-        title: "Prioridad de gastos",
-        question: "Ordena estas categorías de gasto de MAYOR a MENOR prioridad para el núcleo del juego (la experiencia mínima jugable):",
+        title: "Fases del desarrollo",
+        question: "Ordena las fases del desarrollo de un videojuego en la secuencia correcta:",
         items: [
-          "Marketing y redes sociales antes del lanzamiento",
-          "Programación del gameplay y mecánica principal",
-          "Arte básico funcional para representar el juego",
-          "Música de menú y efectos de sonido esenciales"
+          "Pre-producción: definir concepto, mecánicas, narrativa y plan de desarrollo",
+          "Prototipado: construir la mecánica mínima para validar la idea",
+          "Producción: construir el juego completo con arte, audio y contenido",
+          "Alpha: versión funcional completa pero con errores y sin pulir",
+          "Beta y lanzamiento: corrección de errores, polish y publicación"
         ],
-        correctOrder: [1, 2, 3, 0],
-        explanation: "La programación del gameplay es lo primero porque sin código no hay juego. El arte básico funcional permite representar el mundo. Los efectos de sonido dan feedback al jugador. El marketing es el último paso porque no tiene sentido promocionar algo que no está listo o no existe aún.",
-        hint: "Piensa qué necesita existir PRIMERO para que el juego sea jugable. El marketing viene cuando hay algo que mostrar.",
+        correctOrder: [0, 1, 2, 3, 4],
+        explanation: "Las fases del desarrollo siguen una lógica progresiva: primero se define (pre-producción), luego se valida la idea central (prototipado), luego se construye todo el contenido (producción), se tiene una versión funcional aunque imperfecta (alpha) y finalmente se pule y se publica (beta/lanzamiento). Saltarse fases tempranas genera retrabajos costosos.",
+        hint: "El desarrollo va de lo abstracto (ideas en papel) a lo concreto (juego terminado), pasando por validaciones intermedias.",
         xp: 40
       },
       {
         id: "4-3",
         type: "multiple-choice",
-        title: "Reducir sin dañar el núcleo",
-        question: "Un equipo necesita recortar $2,000 de su presupuesto. ¿Qué gasto puede eliminarse sin afectar la experiencia central del juego?",
+        title: "¿Qué es el MVP?",
+        question: "¿Qué caracteriza correctamente al Producto Mínimo Viable (MVP) de un videojuego?",
         options: [
-          { id: "a", text: "El tiempo de programación del sistema de colisiones y física del juego" },
-          { id: "b", text: "Los efectos de sonido de las acciones principales del jugador" },
-          { id: "c", text: "Las cinemáticas animadas de introducción y créditos finales" },
-          { id: "d", text: "El arte de los niveles principales del juego" }
+          { id: "a", text: "La versión final del juego lista para publicar en tiendas digitales" },
+          { id: "b", text: "La versión más pequeña y jugable que incluye solo la mecánica principal y permite probar si la idea funciona" },
+          { id: "c", text: "Un documento de diseño que describe todas las características del juego terminado" },
+          { id: "d", text: "El primer nivel completo del juego con todos sus assets definitivos de arte y sonido" }
         ],
-        correctAnswer: 2,
-        explanation: "Las cinemáticas de introducción y créditos son elementos que enriquecen la experiencia pero no son parte del gameplay central. Pueden reemplazarse con imágenes estáticas o texto sin afectar la jugabilidad. La física, los sonidos de acción y el arte de niveles son esenciales para que el juego funcione.",
-        hint: "¿Cuál de estas opciones puede reemplazarse por una alternativa más barata (ej: texto estático en lugar de animación) sin que el juego deje de funcionar y ser divertido?",
+        correctAnswer: 1,
+        explanation: "El MVP es la versión más reducida del juego que aún puede ser jugada y evaluada. No necesita arte final, música, historia completa ni todos los niveles: necesita que la mecánica principal funcione y sea evaluable. Su propósito es validar la idea central antes de invertir semanas en construir algo que podría no funcionar.",
+        hint: "El MVP no es el juego terminado ni el diseño en papel: es el mínimo que permite JUGAR y EVALUAR la idea central.",
         xp: 35
       },
       {
         id: "4-4",
         type: "reflection",
-        title: "Mapea los costos de tu proyecto",
-        question: "Identifica al menos 5 costos concretos de tu proyecto de videojuego. Para cada uno, indica si es fijo o variable, si es esencial o prescindible, y una estimación aproximada en horas o dinero.",
-        placeholder: "Ejemplo: '1. Programación del sistema de movimiento — fijo/esencial — 40 horas. 2. Arte de personaje principal — variable/esencial — 20 horas. 3. Música de fondo — fijo/prescindible — $0 (Creative Commons). 4. Testing con usuarios — variable/esencial — 10 horas. 5. Trailer de lanzamiento — variable/prescindible — 8 horas...'",
-        explanation: "Listar y clasificar costos es el primer paso para construir un presupuesto real. No necesitas saber el costo exacto de cada ítem — una estimación informada te permite priorizar, identificar riesgos y tomar decisiones antes de comprometer recursos.",
-        hint: "Divide tu proyecto en áreas: programación, arte, audio, testing y marketing. Dentro de cada área, lista las tareas específicas con su clasificación.",
+        title: "Planifica el desarrollo de tu juego",
+        question: "Divide el desarrollo de tu videojuego en al menos 4 etapas o milestones. Para cada uno indica: qué estará terminado al final de esa etapa, quién es responsable de cada tarea y cuánto tiempo estimas que tomará.",
+        placeholder: "Ejemplo:\nSEMANA 1-2 (Pre-producción): Documento de diseño finalizado, mecánica principal definida, referencias de arte seleccionadas. Responsable: todo el equipo.\nSEMANA 3-4 (Prototipo): Personaje que se mueve y salta. Primer nivel de prueba funcional. Responsable: programador.\nSEMANA 5-8 (Producción): 5 niveles con arte definitivo, sistema de puntos y audio básico. Responsable: programador + artista.\nSEMANA 9-10 (Polish y cierre): Corrección de bugs, pantallas de inicio y fin, testing con usuarios. Responsable: todo el equipo.",
+        explanation: "Dividir el proyecto en milestones permite saber en todo momento si el proyecto va bien o está retrasado. Un equipo sin milestones no sabe cuándo terminará ni si tiene tiempo suficiente. Los milestones convierten un proyecto vago en una serie de metas concretas y verificables.",
+        hint: "Cada milestone debe terminar con algo VISIBLE y EVALUABLE, no con 'avanzamos el 40%'. Ejemplo: 'el personaje puede correr y saltar' es un milestone concreto.",
         xp: 60
       },
       {
         id: "4-5",
         type: "word-scramble",
         title: "Adivina el término",
-        question: "Ordena las letras para formar el concepto financiero de esta etapa:",
-        word: "VARIABLE",
-        wordClue: "Tipo de costo que sube o baja según la cantidad de trabajo o producción realizada. Contraste con los costos que se pagan siempre igual.",
-        explanation: "Un costo VARIABLE cambia según la producción. El pago a un artista freelance por cada sprite entregado es variable: más sprites = más costo. Distinguir costos variables de fijos es clave para planificar el flujo de caja y saber cuándo se generarán los gastos.",
-        hint: "La palabra tiene 8 letras. Empieza con V y termina con E. Es un adjetivo que describe algo que puede cambiar.",
+        question: "Ordena las letras para formar el concepto clave de esta etapa:",
+        word: "MILESTONE",
+        wordClue: "Meta intermedia del proyecto que marca un punto de avance verificable. Permite saber si el desarrollo va según lo planificado.",
+        explanation: "Un MILESTONE (hito) es un punto de verificación en el cronograma del proyecto. No es una tarea: es un estado del proyecto. 'El jugador puede moverse, saltar y atacar' es un milestone. 'Programar el movimiento' es una tarea. Los milestones permiten medir el progreso real del proyecto.",
+        hint: "La palabra tiene 9 letras, es un anglicismo del mundo de la gestión de proyectos y significa 'piedra milla' o 'hito'.",
         xp: 30,
       },
       {
         id: "4-6",
         type: "true-false",
-        title: "Verdadero o Falso: el equipo",
+        title: "Verdadero o Falso: planificación",
         question: "Determina si el siguiente enunciado es verdadero o falso:",
         isTrue: false,
-        explanation: "El talento humano representa entre el 60% y el 80% del presupuesto total en producción de videojuegos, no menos del 30%. Es el gasto dominante. Por eso, optimizar el equipo mediante polivalencia, outsourcing selectivo y herramientas gratuitas tiene el mayor impacto posible en el control de costos.",
-        hint: "Recuerda el dato clave de la etapa anterior: los programadores, artistas y diseñadores son el recurso más costoso en cualquier producción de software.",
+        explanation: "Cambiar el diseño durante la producción no es señal de creatividad: es señal de falta de planificación. Cada cambio durante la producción puede invalidar trabajo ya realizado, desalinear al equipo y extender los plazos. La pre-producción existe precisamente para tomar esas decisiones antes de que el cambio sea costoso. Iterar en papel es gratis; iterar en código y arte cuesta tiempo.",
+        hint: "Piensa en el costo de cambiar una decisión de diseño cuando ya hay arte, código y niveles construidos alrededor de ella.",
         xp: 25,
       },
       {
         id: "4-7",
         type: "connect-concepts",
-        title: "Clasifica los costos",
-        question: "Conecta cada gasto con su clasificación correcta según su tipo (fijo o variable).",
+        title: "Conceptos de planificación",
+        question: "Conecta cada concepto de gestión de proyectos con su descripción correcta.",
         pairs: [
-          { left: "Suscripción mensual a la nube", right: "Costo fijo — se paga igual independientemente de la producción" },
-          { left: "Pago por sprite entregado", right: "Costo variable — aumenta según la cantidad de trabajo realizado" },
-          { left: "Licencia anual de motor gráfico", right: "Costo fijo — se paga independientemente del avance del proyecto" },
-          { left: "Tarifa de publicación en Steam", right: "Costo fijo — pago único de $100 USD por juego publicado" },
+          { left: "Pre-producción", right: "Fase de diseño, planificación y definición antes de construir el juego" },
+          { left: "MVP", right: "Versión mínima jugable que valida la idea central del proyecto" },
+          { left: "Milestone", right: "Meta intermedia verificable que indica el avance del proyecto" },
+          { left: "Scope creep", right: "Expansión no controlada del proyecto que añade tareas sin planificación" },
         ],
-        explanation: "Clasificar los costos correctamente permite planificar el flujo de caja: los costos fijos se pagan siempre y deben estar presupuestados desde el inicio. Los variables se acumulan con la producción y permiten ajustar el gasto según el avance real del proyecto.",
-        hint: "La pregunta clave para clasificar: ¿este gasto cambia según cuánto trabajo se haga o cuánto se produzca? Si sí, es variable. Si se paga igual sin importar la producción, es fijo.",
+        explanation: "Estos cuatro conceptos definen el vocabulario básico de la planificación de proyectos de videojuegos. La pre-producción previene problemas, el MVP valida rápido, los milestones miden el avance y el scope creep es el enemigo de todo equipo que no sabe decir 'eso lo dejamos para la versión 2'.",
+        hint: "Pre-producción es la fase, MVP es el producto, milestone es la meta y scope creep es el riesgo.",
         xp: 40,
       },
     ],
     quiz: [
       {
         id: "q4-1",
-        question: "¿Cuál es la diferencia principal entre un costo fijo y un costo variable en producción de videojuegos?",
+        question: "¿Cuál es el propósito principal de la fase de pre-producción en el desarrollo de un videojuego?",
         options: [
-          "Los costos fijos son más caros; los variables son más económicos siempre",
-          "Los costos fijos no cambian independientemente del volumen de trabajo; los variables sí cambian según la producción",
-          "Los costos fijos se pagan al final del proyecto; los variables se pagan mensualmente",
-          "Los costos fijos son de software; los variables son de recursos humanos únicamente"
+          "Construir la primera versión jugable del juego con sus mecánicas principales",
+          "Definir el concepto, las mecánicas, la narrativa y el plan de trabajo antes de empezar a construir",
+          "Probar el juego con usuarios externos para identificar problemas de jugabilidad",
+          "Crear todos los assets de arte e ilustraciones que se usarán en el juego final"
         ],
         correctAnswer: 1,
-        explanation: "Un costo fijo (licencia de software mensual, alquiler de servidores) se paga igual sin importar cuánto se produzca. Un costo variable (pago a artista por sprite) aumenta o disminuye según la producción. Conocer esta diferencia permite planificar el flujo de caja del proyecto."
+        explanation: "La pre-producción es la fase de diseño y planificación: se define QUÉ se va a construir, CÓMO funcionará y en QUÉ orden se hará. Tomar estas decisiones antes de empezar a construir evita retrabajos costosos. Un equipo que salta la pre-producción generalmente termina rehaciendo trabajo varias veces."
       },
       {
         id: "q4-2",
-        question: "¿Cuánto cuesta aproximadamente publicar un juego en Steam (PC)?",
+        question: "¿Por qué es importante construir el MVP antes que el juego completo?",
         options: [
-          "Es completamente gratuito; Valve no cobra ninguna tarifa a los desarrolladores",
-          "Cuesta $100 USD como tarifa única de registro por juego publicado",
-          "Cuesta el 30% de todas las ganancias generadas por el juego antes de cualquier pago",
-          "Cuesta entre $500 y $1,000 USD dependiendo del tamaño del equipo de desarrollo"
+          "Porque el MVP es más fácil de mostrar en presentaciones y ferias de videojuegos",
+          "Porque permite validar que la mecánica principal es divertida antes de invertir semanas en construir contenido sobre ella",
+          "Porque los motores de videojuegos requieren una versión mínima antes de soportar proyectos más grandes",
+          "Porque el MVP sirve como documentación técnica del proyecto para el equipo"
         ],
         correctAnswer: 1,
-        explanation: "Steam cobra $100 USD por juego como tarifa de acceso a Steam Direct. Esta tarifa se reembolsa una vez que el juego genera más de $1,000 en ventas. Adicionalmente, Steam retiene el 30% de las ganancias (que baja al 25% o 20% con mayores ventas). Es un costo de publicación que debe incluirse en el presupuesto."
+        explanation: "El MVP responde la pregunta más importante: ¿es divertida la idea central? Si el prototipo de la mecánica no es divertido, construir 10 niveles y un sistema de historia completo sobre esa mecánica sería un error. El MVP reduce el riesgo de gastar tiempo en una dirección equivocada."
       },
       {
         id: "q4-3",
-        question: "¿Cuál es el costo más frecuentemente subestimado en proyectos indie de videojuegos?",
+        question: "Un equipo lleva 3 semanas desarrollando su juego y quiere saber si va bien. ¿Cuál es la mejor forma de evaluarlo?",
         options: [
-          "El costo de diseñar el logo y la identidad visual del juego",
-          "El tiempo y costo de corrección de bugs, iteraciones y polish del juego",
-          "El costo de registrar el nombre del juego como marca comercial",
-          "El precio de las licencias de música para el trailer oficial del juego"
+          "Contar cuántas horas totales ha trabajado el equipo durante las 3 semanas",
+          "Comparar el estado actual del proyecto con los milestones definidos en la planificación",
+          "Preguntar a cada miembro del equipo si siente que el proyecto avanza bien",
+          "Revisar cuántas líneas de código se han escrito hasta ese momento"
         ],
         correctAnswer: 1,
-        explanation: "El 'polish' (pulir el juego) y la corrección de bugs consumen entre el 20% y el 40% del tiempo total de producción, pero rara vez se presupuestan explícitamente. Los equipos planean 'terminar' el juego pero no cuentan el tiempo de hacer que todo funcione sin errores y se sienta bien."
+        explanation: "Los milestones son los puntos de verificación del proyecto. Si al final de la semana 3 el equipo planificó tener el movimiento del personaje funcionando y lo tiene, el proyecto va bien. Si no lo tiene, hay un retraso que debe gestionarse. Sin milestones definidos, la evaluación del avance es subjetiva e imprecisa."
       },
       {
         id: "q4-4",
-        question: "Si un artista freelance cobra $25 USD por hora y estimas necesitar 80 sprites para tu juego (cada sprite toma 2 horas), ¿cuánto costará el arte del juego?",
+        question: "¿Qué problema genera el 'scope creep' en un proyecto de videojuego?",
         options: [
-          "$1,000 USD (80 sprites × $12.50 promedio por sprite)",
-          "$2,000 USD (80 sprites × 2 horas × $12.50 por hora)",
-          "$4,000 USD (80 sprites × 2 horas × $25 por hora)",
-          "$6,000 USD (80 sprites × 3 horas promedio × $25 por hora)"
+          "Hace que el juego tenga demasiado contenido para que el jugador lo complete en una sola sesión",
+          "Añade tareas y funcionalidades no planificadas que extienden el tiempo de desarrollo y desorganizan el equipo",
+          "Genera conflictos entre los miembros del equipo por diferencias en la visión del proyecto",
+          "Hace que el motor del juego sea más lento porque tiene que procesar más elementos simultáneamente"
         ],
-        correctAnswer: 2,
-        explanation: "80 sprites × 2 horas/sprite = 160 horas totales de trabajo. 160 horas × $25/hora = $4,000 USD. Este tipo de cálculo simple pero preciso es exactamente lo que un presupuesto de videojuego necesita. Estimar horas por tarea y multiplicar por la tarifa es el método básico de presupuestación."
+        correctAnswer: 1,
+        explanation: "El scope creep es el crecimiento no controlado del proyecto: 'ya que estamos, añadamos también esto'. Cada adición parece pequeña pero suma tiempo, complejidad y decisiones de diseño no planificadas. La suma de muchos 'pequeños extras' es frecuentemente la razón por la que proyectos no se terminan en el tiempo previsto."
       },
       {
         id: "q4-5",
-        question: "¿Qué representa el costo de 'QA' (Quality Assurance) en producción de videojuegos?",
+        question: "¿En qué fase del desarrollo se debería decidir cuántos niveles tendrá el juego?",
         options: [
-          "El costo de adquirir equipos de alta calidad (computadoras, monitores, etc.) para el equipo",
-          "El tiempo y recursos invertidos en probar el juego para encontrar y documentar errores antes del lanzamiento",
-          "El costo de contratar diseñadores que aseguren que la interfaz sea de alta calidad visual",
-          "El presupuesto asignado para premios y certificaciones de calidad de la industria"
+          "Durante la fase alpha, cuando ya se puede evaluar cuántos niveles caben en el tiempo restante",
+          "Durante la pre-producción, para que toda la planificación posterior sea coherente con esa decisión",
+          "Al final de la producción, cuando el equipo puede medir cuánto tiempo les tomó cada nivel",
+          "Justo antes del lanzamiento, cuando se sabe exactamente qué está terminado y qué no"
         ],
         correctAnswer: 1,
-        explanation: "QA (control de calidad) es el proceso de probar sistemáticamente el juego para detectar bugs, problemas de usabilidad y situaciones inesperadas. En estudios grandes representa el 15-25% del presupuesto. En proyectos indie se subestima, pero lanzar sin QA adecuado puede destruir la reputación del producto."
+        explanation: "La cantidad de niveles debe definirse en pre-producción porque condiciona toda la planificación: cuánto tiempo tomará, qué assets se necesitan, cuántas mecánicas deben funcionar. Decidirlo al final es como empezar a construir una casa sin saber cuántos pisos tendrá."
       }
     ]
   },
 
   // ═══════════════════════════════════════════════════════
-  // ETAPA 5 — PRESUPUESTO Y VIABILIDAD
+  // ETAPA 5 — PROTOTIPADO Y PRUEBAS
   // ═══════════════════════════════════════════════════════
   {
     id: 5,
-    title: "Presupuesto y Viabilidad",
-    subtitle: "Construye y evalúa un presupuesto real para tu videojuego",
-    icon: "bar-chart",
+    title: "Prototipado y Pruebas",
+    subtitle: "Construye, prueba e itera para mejorar la experiencia de juego",
+    icon: "flask-conical",
     color: "#14b8a6",
     bgColor: "#f0fdfa",
     borderColor: "#99f6e4",
-    objective: "Construir un presupuesto básico estructurado, evaluar si el proyecto es viable con los recursos disponibles y tomar decisiones para ajustarlo si no lo es.",
+    objective: "Aprender a construir prototipos efectivos, realizar pruebas de jugabilidad y aplicar el proceso de iteración para mejorar el diseño del juego.",
     topics: [
-      "Estimación básica de costos",
-      "Distribución porcentual del presupuesto",
-      "Margen de contingencia",
-      "Análisis de viabilidad",
-      "Decisiones para reducir costos",
-      "Priorización por valor",
-      "Imprevistos y riesgos financieros"
+      "Tipos de prototipos",
+      "Pruebas de jugabilidad (playtesting)",
+      "Iteración y mejora continua",
+      "Identificar y documentar problemas",
+      "Feedback de usuarios",
+      "Criterios para tomar decisiones de diseño"
     ],
     xpReward: 200,
     intro: {
-      summary: "Un presupuesto bien construido es la diferencia entre un proyecto que se termina y uno que se abandona a medio camino. Esta etapa enseña a estructurar un presupuesto real, evaluar si el proyecto es viable con los recursos disponibles y tomar decisiones cuando los números no cuadran.",
+      summary: "Ningún juego sale bien en el primer intento. El prototipado y las pruebas son el proceso mediante el cual una idea se transforma en una experiencia real y disfrutable. Prototipar es construir versiones rápidas para aprender; testear es jugar para descubrir problemas; iterar es usar ese aprendizaje para mejorar. Este ciclo es el núcleo del diseño de juegos.",
       keyPoints: [
-        "Todo presupuesto comienza con el alcance: sin saber qué se construirá, es imposible estimar cuánto costará.",
-        "El margen de contingencia (10-20% del total) es un colchón financiero para absorber imprevistos sin cancelar el proyecto.",
-        "Viabilidad no es solo tener el dinero: también implica tener el tiempo, las personas y las herramientas necesarias.",
-        "Un presupuesto honesto incluye las horas de trabajo propio, aunque no haya pago en dinero. El tiempo tiene valor.",
+        "Un prototipo no necesita verse bien: necesita ser rápido de construir y fácil de probar. El objetivo es aprender, no impresionar.",
+        "El playtesting con personas reales revela problemas que el equipo no puede ver porque conoce demasiado bien su propio juego.",
+        "La iteración significa cambiar, probar, aprender y repetir. Un diseño que no se itera generalmente no es tan bueno como podría ser.",
+        "El feedback de usuarios debe interpretarse: los jugadores dicen qué les frustró, pero el diseñador debe entender POR QUÉ y decidir cómo resolverlo.",
       ],
-      realWorldContext: "El juego 'Papers, Please' (Lucas Pope, 2013) fue desarrollado con un presupuesto prácticamente de $0 en dinero, pero miles de horas de trabajo. Vendió más de 2 millones de copias. La viabilidad no solo depende del dinero: la planificación correcta de tiempo y recursos es igual de importante.",
-      pixelTip: "Cuando evalúes si un presupuesto es correcto, revisa que cubra TODAS las áreas esenciales y que incluya contingencia. Un presupuesto que concentra todo el dinero en una sola área está mal distribuido, sin importar el total.",
+      realWorldContext: "Shigeru Miyamoto, creador de Mario y Zelda, es famoso por sus sesiones de playtesting intensivas. Super Mario Bros fue rediseñado múltiples veces basándose en observar a personas jugarlo. El concepto de 'Game Feel' (cómo se siente el juego al controlar el personaje) solo puede evaluarse jugando, no diseñando en papel.",
+      pixelTip: "Al hacer playtesting, observa sin intervenir. Si el jugador se confunde, la solución no es explicarle: es rediseñar lo que lo confundió. Si necesitas explicar tu juego para que alguien lo entienda, hay un problema de diseño que resolver.",
       estimatedMinutes: 18,
     },
     activities: [
       {
         id: "5-1",
         type: "multiple-choice",
-        title: "¿Cuál presupuesto está mejor balanceado?",
-        question: "Un equipo tiene $5,000 para desarrollar un juego indie 2D. ¿Cuál distribución del presupuesto es más equilibrada y viable?",
+        title: "¿Qué prototipo construir primero?",
+        question: "Un equipo diseña un juego de sigilo donde el jugador debe evitar guardias usando sombras y sonido. ¿Cuál es el prototipo más útil para validar la idea primero?",
         options: [
-          { id: "a", text: "Arte: $4,500 (90%) | Programación: $500 (10%) | Audio: $0 | Testing: $0 | Contingencia: $0" },
-          { id: "b", text: "Arte: $1,500 (30%) | Programación: $2,000 (40%) | Audio: $500 (10%) | Testing: $500 (10%) | Contingencia: $500 (10%)" },
-          { id: "c", text: "Marketing: $3,000 (60%) | Arte: $1,000 (20%) | Programación: $1,000 (20%) | Audio: $0 | Testing: $0" },
-          { id: "d", text: "Programación: $5,000 (100%) | Arte: $0 | Audio: $0 | Testing: $0 | Contingencia: $0" }
+          { id: "a", text: "Un nivel completo con arte definitivo, música y todos los tipos de guardias planificados" },
+          { id: "b", text: "Una habitación simple con un personaje, una sombra y un guardia para probar si la mecánica de sigilo se siente bien" },
+          { id: "c", text: "Un documento de diseño detallado con todos los tipos de sigilo y sus variaciones" },
+          { id: "d", text: "Una maqueta en papel del primer nivel con todas las rutas posibles de los guardias" }
         ],
         correctAnswer: 1,
-        explanation: "La distribución B es la más equilibrada: 40% programación (núcleo técnico), 30% arte (identidad visual), 10% audio, 10% testing (calidad) y 10% contingencia (imprevistos). Ninguna área es ignorada y hay un margen de seguridad. Las demás opciones sacrifican áreas críticas o invierten desproporcionadamente en una sola.",
-        hint: "Un presupuesto sano cubre las áreas esenciales SIN ignorar ninguna. La contingencia (reserva para imprevistos) siempre debe existir.",
+        explanation: "El prototipo más útil es el que valida la hipótesis más importante con el menor trabajo posible. La pregunta clave es: ¿se siente bien el sigilo? Eso solo puede responderse jugándolo, no leyendo un documento. Una habitación simple con la mecánica básica es suficiente para saber si la dirección es correcta.",
+        hint: "El mejor prototipo inicial es el más pequeño que permite JUGAR la mecánica principal. Todo lo demás viene después de validar que esa mecánica funciona.",
         xp: 40
       },
       {
         id: "5-2",
         type: "order-steps",
-        title: "Pasos para construir un presupuesto",
-        question: "Ordena los pasos para construir un presupuesto básico de videojuego en el orden correcto:",
+        title: "El ciclo de iteración",
+        question: "Ordena las etapas del proceso de iteración en diseño de videojuegos en el orden correcto:",
         items: [
-          "Definir el alcance detallado del proyecto (qué se va a construir exactamente)",
-          "Listar todas las tareas necesarias por área (arte, código, audio, testing)",
-          "Estimar las horas o costo de cada tarea con el equipo",
-          "Sumar todos los costos y comparar con el presupuesto disponible",
-          "Ajustar el alcance o buscar alternativas si el costo supera el presupuesto"
+          "Diseñar o actualizar la versión del juego con la hipótesis de mejora",
+          "Construir el prototipo o actualizar la versión existente",
+          "Realizar sesiones de playtesting con usuarios",
+          "Analizar el feedback y documentar los problemas encontrados",
+          "Decidir qué cambiar y priorizar las mejoras más importantes"
         ],
         correctOrder: [0, 1, 2, 3, 4],
-        explanation: "El presupuesto siempre comienza con el alcance (qué se construirá), luego se listan tareas concretas, se estiman sus costos, se totaliza y finalmente se ajusta si es necesario. Hacer el presupuesto sin definir el alcance primero es como calcular el costo de un viaje sin saber a dónde vas.",
-        hint: "La secuencia lógica es: saber qué se hace → listar qué se necesita → estimar cuánto cuesta → verificar si alcanza → ajustar si no alcanza.",
+        explanation: "El ciclo de iteración es: diseñar → construir → testear → analizar → decidir → volver a diseñar. Este ciclo se repite hasta que el juego alcanza el nivel de calidad deseado. No existe un número 'correcto' de iteraciones: se itera hasta que el juego funciona como se espera.",
+        hint: "La iteración sigue la lógica: primero piensas qué hacer, luego lo construyes, luego lo pruebas, analizas los resultados y decides qué mejorar.",
         xp: 40
       },
       {
         id: "5-3",
         type: "multiple-choice",
-        title: "¿Cuál proyecto es viable?",
-        question: "Un equipo tiene 3 meses y un presupuesto de $0 (trabajo voluntario). ¿Cuál de estos proyectos es VIABLE en esas condiciones?",
+        title: "Leer el feedback correctamente",
+        question: "Durante un playtesting, varios jugadores dicen 'el personaje se mueve muy lento'. ¿Cuál es la respuesta más correcta del equipo diseñador?",
         options: [
-          { id: "a", text: "RPG de mundo abierto 3D, 50+ horas de contenido, voces en español e inglés" },
-          { id: "b", text: "Juego de plataformas 2D, 5 niveles, pixel art propio, sin audio externo" },
-          { id: "c", text: "Battle royale multijugador en línea con 100 jugadores simultáneos" },
-          { id: "d", text: "Simulador de ciudad con economía dinámica e inteligencia artificial avanzada" }
+          { id: "a", text: "Duplicar inmediatamente la velocidad de movimiento del personaje en el código" },
+          { id: "b", text: "Ignorar el feedback porque los testers no son el público objetivo del juego" },
+          { id: "c", text: "Investigar si el problema es realmente la velocidad o si hay otra causa (falta de feedback visual, niveles demasiado grandes, controles confusos)" },
+          { id: "d", text: "Añadir una opción de configuración en el menú para que cada jugador ajuste la velocidad manualmente" }
         ],
-        correctAnswer: 1,
-        explanation: "Con $0 y 3 meses, solo proyectos muy acotados son viables. Un plataformas 2D de 5 niveles en pixel art puede hacerse con herramientas gratuitas (Godot + Krita) por un equipo pequeño. Los otros proyectos requieren meses de trabajo de equipos de decenas de personas o infraestructura costosa.",
-        hint: "¿Cuál de estas opciones puede completarse con herramientas gratuitas, sin contratar a nadie y en 3 meses de trabajo a tiempo parcial?",
+        correctAnswer: 2,
+        explanation: "Los jugadores describen síntomas, no diagnósticos. 'Muy lento' puede significar velocidad baja, pero también puede significar que los niveles son demasiado grandes, que el feedback visual no comunica el movimiento correctamente, o que los controles no responden bien. El diseñador debe investigar la causa raíz antes de aplicar una solución.",
+        hint: "Los jugadores te dicen qué sintieron, no qué está mal. Tu trabajo como diseñador es interpretar el síntoma y encontrar la causa real.",
         xp: 35
       },
       {
         id: "5-4",
         type: "reflection",
-        title: "Construye tu estimación de presupuesto",
-        question: "Elabora una estimación básica del presupuesto de tu videojuego con al menos 4 categorías de gasto. Para cada categoría indica: el costo estimado, si usarás recursos gratuitos o pagos, y cómo justificas ese gasto en relación al proyecto.",
-        placeholder: "Ejemplo:\nPROGRAMACIÓN: 80 horas de trabajo propio ($0 en equipo). Motor: Godot (gratuito).\nARTE: 60 horas de trabajo propio + $200 en assets de itch.io.\nAUDIO: $0 — música Creative Commons + efectos de Freesound.\nTESTING: 10 horas con 5 compañeros como testers voluntarios ($0).\nCONTINGENCIA: $50 para imprevistos menores.\nTOTAL ESTIMADO: $250 + ~150 horas de trabajo.",
-        explanation: "Una estimación de presupuesto honesta incluye tanto el dinero como las horas de trabajo (tiempo = costo). Muchos proyectos estudiantiles tienen $0 en efectivo pero invierten cientos de horas. Documentar esas horas permite entender el costo real del proyecto aunque no se pague en dinero.",
-        hint: "No olvides incluir tu tiempo de trabajo como un costo, aunque no te paguen. Valora tu hora de trabajo al menos en $10-15 para entender el costo real del proyecto.",
+        title: "Diseña un plan de playtesting",
+        question: "Diseña un plan de pruebas para tu videojuego: ¿qué aspectos específicos quieres probar?, ¿con qué tipo de jugadores harías el test?, ¿qué preguntas les harías después de jugar?, ¿cómo documentarías los problemas encontrados?",
+        placeholder: "Ejemplo:\nASPECTOS A PROBAR: ¿La mecánica de salto es intuitiva? ¿El jugador entiende el objetivo sin que se lo expliquemos?\nPERFIL DE TESTERS: 3 personas que no conocen el juego, de 15-25 años, con experiencia básica en videojuegos.\nPREGUNTAS POST-TEST: ¿En qué momento te confundiste? ¿Qué parte te resultó más frustrante? ¿Qué parte disfrutaste más?\nDOCUMENTACIÓN: Tabla con: problema observado, frecuencia, posible causa, prioridad de corrección.",
+        explanation: "Un plan de playtesting estructurado genera información útil, no solo opiniones generales. Saber exactamente qué probar, con qué tipo de usuario y cómo documentar los hallazgos permite tomar decisiones de diseño basadas en evidencia, no en intuición.",
+        hint: "Observa a los jugadores sin intervenir. Si se confunden, no los ayudes: esa confusión es información valiosa que necesitas ver.",
         xp: 60
       }
     ],
     quiz: [
       {
         id: "q5-1",
-        question: "¿Qué es el 'margen de contingencia' en un presupuesto de videojuego?",
+        question: "¿Cuál es el objetivo principal de un prototipo en el desarrollo de videojuegos?",
         options: [
-          "El porcentaje de ganancias que se reserva para el equipo como bono al terminar el proyecto",
-          "Una reserva de recursos (tiempo/dinero) para absorber imprevistos sin comprometer el proyecto",
-          "El margen de error permitido en el balance final de ingresos vs. egresos del proyecto",
-          "El presupuesto extra que se pide a los inversores en caso de que el proyecto fracase"
+          "Crear una versión final del juego que pueda presentarse a inversores o evaluadores",
+          "Aprender lo más rápido posible si una idea de diseño funciona, con el menor trabajo posible",
+          "Demostrar las habilidades técnicas del programador del equipo en el motor elegido",
+          "Producir una versión del juego que pueda publicarse en tiendas digitales para probar el mercado"
         ],
         correctAnswer: 1,
-        explanation: "La contingencia es un colchón financiero (normalmente 10-20%) que cubre imprevistos: un miembro del equipo que se retira, una funcionalidad que tarda más de lo esperado, o un costo no anticipado. Sin contingencia, cualquier imprevisto pone en riesgo todo el proyecto."
+        explanation: "Un prototipo es una herramienta de aprendizaje rápido, no un producto terminado. Su propósito es responder una pregunta de diseño específica ('¿es divertida esta mecánica?') con el menor esfuerzo posible. Un buen prototipo puede ser feo, incompleto y lleno de placeholders; lo que importa es que permita evaluar la idea central."
       },
       {
         id: "q5-2",
-        question: "Un equipo estima que su juego costará $3,000. ¿Cuánto deberían añadir como margen de contingencia del 15%?",
+        question: "¿Por qué es importante hacer playtesting con personas externas al equipo?",
         options: [
-          "$150 adicionales (5% del presupuesto base)",
-          "$300 adicionales (10% del presupuesto base)",
-          "$450 adicionales (15% del presupuesto base)",
-          "$600 adicionales (20% del presupuesto base)"
+          "Porque los miembros del equipo no pueden jugar objetivamente su propio juego ya que conocen todos sus sistemas",
+          "Porque las reglas de las competencias académicas de videojuegos exigen testers externos",
+          "Porque los testers externos tienen más experiencia en videojuegos que los desarrolladores",
+          "Porque los usuarios externos pueden ayudar a programar las correcciones identificadas"
         ],
-        correctAnswer: 2,
-        explanation: "$3,000 × 0.15 = $450 de contingencia. El presupuesto total sería $3,450. Este cálculo es fundamental para no quedarse sin recursos ante cualquier imprevisto. Siempre es mejor sobrar presupuesto que quedarse corto a mitad del desarrollo."
+        correctAnswer: 0,
+        explanation: "El equipo tiene 'ceguera de diseñador': conoce tan bien el juego que no puede ver lo que confunde a alguien que lo juega por primera vez. Los problemas más obvios para un nuevo jugador son invisibles para quien diseñó el sistema. Los testers externos aportan la perspectiva del jugador real que el equipo ha perdido."
       },
       {
         id: "q5-3",
-        question: "¿Cuál es el indicador más claro de que un proyecto de videojuego NO es viable financieramente?",
+        question: "¿Qué significa 'iterar' en el proceso de diseño de videojuegos?",
         options: [
-          "El juego no tiene música original compuesta específicamente para él",
-          "El costo estimado de producción supera significativamente los recursos disponibles del equipo",
-          "El juego no tiene un plan de monetización claro para después del lanzamiento",
-          "El equipo no tiene experiencia previa publicando juegos en tiendas digitales"
+          "Repetir exactamente el mismo proceso de desarrollo para cada nivel del juego",
+          "Aplicar cambios basados en pruebas y feedback, volver a probar y repetir el ciclo hasta mejorar el diseño",
+          "Escribir el mismo código varias veces hasta que funcione correctamente sin errores",
+          "Crear múltiples versiones del juego en paralelo y elegir la mejor al final"
         ],
         correctAnswer: 1,
-        explanation: "Un proyecto no es viable cuando el costo supera los recursos. Querer hacer un juego de $50,000 con $2,000 no es un problema de creatividad sino de viabilidad financiera. La solución no es ignorar la brecha, sino ajustar el alcance hasta que el costo sea congruente con los recursos."
+        explanation: "La iteración es el ciclo diseñar → construir → probar → aprender → mejorar → volver a probar. No es repetición sin cambio: es refinamiento progresivo. Cada ciclo de iteración produce un diseño mejor porque incorpora lo aprendido en la prueba anterior. Los mejores juegos del mundo son el resultado de decenas de ciclos de iteración."
       },
       {
         id: "q5-4",
-        question: "¿Qué estrategia es más efectiva para reducir el presupuesto de un videojuego sin comprometer su calidad central?",
+        question: "Durante una sesión de playtesting, un jugador abandona el nivel a los 2 minutos sin completarlo. ¿Cuál es la interpretación más útil?",
         options: [
-          "Reducir el tiempo de testing para terminar más rápido y con menos horas de trabajo",
-          "Eliminar los efectos de sonido del juego para no pagar por diseño de audio",
-          "Usar assets gratuitos de calidad (OpenGameArt, itch.io) para arte secundario y enfocarse en pulir el gameplay",
-          "Quitar niveles intermedios del juego para reducir el tiempo de diseño de niveles"
+          "El jugador no es el público objetivo del juego, así que el dato no es válido",
+          "Hay un problema de diseño en esos primeros 2 minutos que debe identificarse y corregirse",
+          "El jugador no tiene suficiente experiencia en videojuegos para apreciar el diseño del juego",
+          "El nivel es demasiado largo y debe dividirse en partes más cortas"
         ],
-        correctAnswer: 2,
-        explanation: "Usar assets gratuitos de calidad para elementos secundarios (música de fondo, efectos genéricos, tiles de escenario) libera presupuesto para enfocarse en lo diferencial: el gameplay, los personajes principales y la experiencia central. Esto reduce costos sin comprometer la identidad del juego."
+        correctAnswer: 1,
+        explanation: "Si un jugador abandona temprano, la hipótesis de diseño más probable es que algo en esos primeros minutos no funcionó: la curva de aprendizaje fue muy empinada, la mecánica no se comunicó bien, el desafío inicial fue frustrante o el objetivo no estaba claro. Ese dato es valioso y debe investigarse, no descartarse."
       },
       {
         id: "q5-5",
-        question: "¿Qué significa 'análisis de riesgo' en el contexto de un presupuesto de videojuego?",
+        question: "¿Qué diferencia un buen prototipo de un mal prototipo en diseño de videojuegos?",
         options: [
-          "Calcular la probabilidad de que el juego tenga bugs graves que impidan su lanzamiento",
-          "Identificar los factores que podrían aumentar los costos o retrasar el proyecto, y planear cómo mitigarlos",
-          "Evaluar si el género del juego es demasiado competitivo en el mercado actual",
-          "Analizar si el equipo tiene suficiente experiencia técnica para usar el motor elegido"
+          "Un buen prototipo tiene arte definitivo y música; un mal prototipo usa placeholders visuales",
+          "Un buen prototipo responde una pregunta específica de diseño; un mal prototipo intenta mostrar todo el juego a la vez",
+          "Un buen prototipo es programado en el motor definitivo; un mal prototipo usa herramientas alternativas",
+          "Un buen prototipo tarda semanas en construirse; un mal prototipo se hace en horas"
         ],
         correctAnswer: 1,
-        explanation: "El análisis de riesgo presupuestal identifica qué podría salir mal financieramente: un miembro que abandona el proyecto, costos de arte que duplican la estimación, o un motor que no soporta lo necesario. Planear respuestas a esos riesgos ANTES de que ocurran es lo que separa proyectos exitosos de los que quedan incompletos."
+        explanation: "Un buen prototipo tiene un objetivo específico: probar si la mecánica de sigilo funciona, si la curva de dificultad del primer nivel es correcta, si el sistema de diálogos es claro. Un prototipo que intenta mostrar todo el juego al mismo tiempo no puede evaluar ninguna cosa bien. La especificidad es la clave de un prototipo útil."
       }
     ]
   },
 
   // ═══════════════════════════════════════════════════════
-  // ETAPA 6 — VALIDACIÓN, PRESENTACIÓN Y PITCH
+  // ETAPA 6 — PRESENTACIÓN DEL PROYECTO
   // ═══════════════════════════════════════════════════════
   {
     id: 6,
-    title: "Validación y Pitch",
-    subtitle: "Justifica tu presupuesto y presenta tu proyecto con claridad",
-    icon: "trending-up",
+    title: "Presentación del Proyecto",
+    subtitle: "Comunica y defiende el diseño de tu videojuego con claridad",
+    icon: "presentation",
     color: "#f59e0b",
     bgColor: "#fffbeb",
     borderColor: "#fde68a",
-    objective: "Aprender a justificar las decisiones presupuestales, comunicar el alcance y los costos del proyecto de forma clara y convincente, y presentar un pitch financiero estructurado.",
+    objective: "Aprender a comunicar el diseño del videojuego de forma clara, estructurada y convincente, y a defender las decisiones tomadas durante el proceso de desarrollo.",
     topics: [
-      "Justificación de decisiones presupuestales",
-      "Comunicar costos de forma clara",
-      "Argumentar prioridades de gasto",
-      "Presentar alcance realista",
-      "Reconocer limitaciones y riesgos",
-      "Fortalezas del presupuesto",
-      "Pitch financiero básico del videojuego"
+      "Estructura de una presentación de videojuego",
+      "Comunicar mecánicas y narrativa",
+      "Justificar decisiones de diseño",
+      "Demostrar el prototipo",
+      "Responder preguntas y críticas",
+      "Documentación del proyecto (GDD)"
     ],
     xpReward: 225,
     intro: {
-      summary: "Un presupuesto sin justificación es solo una lista de números. El verdadero valor profesional está en poder explicar cada decisión financiera, anticipar objeciones y comunicar con claridad por qué tu proyecto es viable. Esta etapa te prepara para el pitch final de tu videojuego.",
+      summary: "Un videojuego que no puede comunicarse es un videojuego que no puede crecer. La presentación del proyecto es la habilidad de traducir meses de trabajo, decisiones y aprendizajes en una narrativa clara y convincente para cualquier audiencia: compañeros, evaluadores, colaboradores potenciales. Esta etapa te prepara para esa presentación.",
       keyPoints: [
-        "Justificar un gasto significa conectar el costo con un resultado específico o una ventaja estratégica, no simplemente decir que era necesario.",
-        "Un pitch financiero convincente anticipa las preguntas difíciles: ¿por qué tan caro? ¿qué pasa si se acaba el dinero? ¿qué pueden recortar?",
-        "Reconocer los riesgos y tener un plan de mitigación genera más credibilidad que presentar un presupuesto que parece perfecto e infalible.",
-        "La estructura del pitch: contexto del proyecto → alcance → principales gastos justificados → riesgos y mitigación → por qué es viable.",
+        "Una buena presentación de videojuego sigue una estructura: qué es el juego, quién es el jugador ideal, cuál es la mecánica central, cuál es la narrativa, qué se ha construido hasta ahora y cuáles son los próximos pasos.",
+        "Justificar una decisión de diseño significa conectar esa decisión con la visión del juego y la experiencia del jugador, no solo decir 'nos pareció bien'.",
+        "El Game Design Document (GDD) es el documento que describe el juego completo: mecánicas, narrativa, niveles, personajes. Es la referencia central del equipo.",
+        "Al responder críticas, la clave es distinguir entre críticas al diseño (válidas, requieren reflexión) y preferencias personales (no siempre aplicables al proyecto).",
       ],
-      realWorldContext: "En la industria, los pitches financieros no son solo para buscar inversión: los estudios los usan internamente para aprobar proyectos entre departamentos. Riot Games, CD Projekt y cualquier estudio mediano requieren pitches estructurados para autorizar cualquier proyecto nuevo. Esta habilidad es directamente transferible al mundo laboral.",
-      pixelTip: "Cuando justifiques un gasto, sigue esta fórmula: 'Invertimos [monto] en [ítem] porque [razón específica que conecta con el éxito del proyecto]'. Evita justificaciones vagas como 'es necesario' o 'todo lo demás también lo hace'.",
+      realWorldContext: "En la industria, los pitches de videojuegos son el primer filtro para conseguir financiamiento, distribución o atención de publishers. Estudios como A44, Devolver Digital y Raw Fury deciden con qué proyectos trabajar en base a presentaciones de pocos minutos. La claridad en la comunicación puede ser tan importante como la calidad del juego.",
+      pixelTip: "Al presentar tu juego, empieza siempre por el 'por qué': ¿por qué alguien querría jugar esto? Si respondes esa pregunta en los primeros 30 segundos, ya tienes la atención de la audiencia.",
       estimatedMinutes: 20,
     },
     activities: [
       {
         id: "6-1",
         type: "multiple-choice",
-        title: "¿Qué pitch justifica mejor el presupuesto?",
-        question: "Un equipo presenta su videojuego. ¿Cuál de estos argumentos justifica mejor una inversión de $3,000 en arte?",
+        title: "¿Cómo empezar una presentación?",
+        question: "Un equipo presenta su videojuego ante evaluadores. ¿Cuál es la mejor forma de comenzar la presentación?",
         options: [
-          { id: "a", text: "'El arte es muy importante para todos los juegos y necesitamos que se vea bonito'" },
-          { id: "b", text: "'Invertimos $3,000 en arte porque nuestro género (plataformas casual) compite visualmente; la dirección de arte es el diferenciador clave que convierte a un visitante en comprador'" },
-          { id: "c", text: "'El artista cobró $3,000 y no podíamos pagar menos porque así son los precios del mercado'" },
-          { id: "d", text: "'Si no invertimos en arte ahora, tendremos que hacerlo después del lanzamiento, lo cual costará más'" }
+          { id: "a", text: "'Nuestro juego usa el motor Godot 4.2 con un sistema de físicas personalizado y shaders procedurales'" },
+          { id: "b", text: "'El jugador controla a un astronauta perdido que debe reconstruir su nave usando piezas de naves enemigas derrotadas. Cada pieza cambia sus capacidades'" },
+          { id: "c", text: "'Empezamos este proyecto hace 3 meses con un equipo de 4 personas y ha sido un proceso muy desafiante'" },
+          { id: "d", text: "'Nuestra presentación tiene 5 secciones: contexto, mecánicas, narrativa, proceso y conclusiones'" }
         ],
         correctAnswer: 1,
-        explanation: "La opción B justifica el gasto con argumentos específicos: el género del juego, la función del arte en la decisión de compra y la ventaja competitiva que aporta. Justificar un gasto es conectar el costo con un resultado medible o una decisión estratégica clara, no simplemente explicar que era necesario.",
-        hint: "La mejor justificación conecta el GASTO con un RESULTADO específico o una VENTAJA ESTRATÉGICA concreta para el proyecto.",
+        explanation: "La mejor apertura es la que comunica la esencia del juego en forma concisa y evocadora. La opción B presenta al personaje, la mecánica principal y el diferenciador en dos frases. Las otras opciones empiezan con detalles técnicos, proceso o estructura de la presentación, que son menos relevantes para captar la atención de la audiencia.",
+        hint: "La primera frase debe responder: ¿qué hace el jugador y qué lo hace único? Eso genera atención inmediata.",
         xp: 40
       },
       {
         id: "6-2",
         type: "order-steps",
-        title: "Estructura de un pitch financiero",
-        question: "Ordena los elementos de un pitch financiero de videojuego de la forma más efectiva y lógica:",
+        title: "Estructura de la presentación",
+        question: "Ordena los elementos de una presentación de videojuego de la forma más efectiva:",
         items: [
-          "Resumen del proyecto: qué es el juego y a quién va dirigido",
-          "Alcance definido: qué incluye y qué no incluye el proyecto",
-          "Desglose de costos por categoría con su justificación",
-          "Análisis de riesgos y cómo se mitigarán",
-          "Conclusión: por qué el proyecto es viable con este presupuesto"
+          "Apertura: qué es el juego y por qué alguien querría jugarlo",
+          "Mecánica principal: qué hace el jugador y cómo funciona el sistema",
+          "Narrativa y mundo: la historia y el universo del juego",
+          "Proceso y aprendizajes: qué se construyó, qué se aprendió y cómo se iteró",
+          "Demo o prototipo: mostrar el juego funcionando en tiempo real"
         ],
         correctOrder: [0, 1, 2, 3, 4],
-        explanation: "Un pitch financiero efectivo sigue una narrativa: primero contextualiza el proyecto (qué es), luego delimita su alcance (qué se hará), detalla los costos (cuánto costará y por qué), anticipa los riesgos (qué puede fallar) y cierra con la viabilidad (por qué va a funcionar). Esta estructura genera confianza y credibilidad.",
-        hint: "Piensa en el pitch como una historia: contexto → qué se hará → cuánto costará → qué puede salir mal → por qué funcionará de todas formas.",
+        explanation: "La estructura efectiva va de lo general a lo específico: primero enganchas con la esencia del juego, luego explicas cómo funciona, luego el mundo que habita, luego el proceso que llevó hasta aquí y finalmente lo demuestras en vivo. Terminar con la demo es poderoso porque permite que el juego hable por sí mismo.",
+        hint: "La presentación es una historia: primero genera interés, luego explica, luego muestra evidencia y finalmente demuestra.",
         xp: 40
       },
       {
         id: "6-3",
         type: "multiple-choice",
-        title: "Respondiendo a una crítica",
-        question: "Un evaluador dice: 'Su presupuesto de $200 en audio me parece insuficiente para un juego de aventura.' ¿Cuál es la mejor respuesta?",
+        title: "Justificar una decisión de diseño",
+        question: "Un evaluador pregunta: '¿Por qué el juego no tiene sistema de vidas y el jugador puede intentar los niveles infinitamente?' ¿Cuál es la mejor respuesta?",
         options: [
-          { id: "a", text: "'Tiene razón, debimos haber pedido más dinero para audio desde el inicio'" },
-          { id: "b", text: "'El audio no es importante en nuestro proyecto, así que $200 es más que suficiente'" },
-          { id: "c", text: "'Usaremos $150 en licencias de música específica para nuestras escenas clave y $50 en efectos de Freesound. La música de exploración vendrá de Creative Commons para mantener el costo bajo sin sacrificar momentos críticos'" },
-          { id: "d", text: "'Podemos subir el presupuesto de audio si usted nos da más financiamiento para el proyecto'" }
+          { id: "a", text: "'Porque era más fácil de programar sin el sistema de vidas'" },
+          { id: "b", text: "'Porque nos pareció más moderno y los juegos actuales no usan vidas'" },
+          { id: "c", text: "'Porque nuestro diseño prioriza el aprendizaje sobre el castigo: el juego es un puzzle de exploración y las vidas generarían frustración que interrumpiría el proceso de descubrimiento'" },
+          { id: "d", text: "'Podemos añadir vidas si el evaluador lo considera necesario para el proyecto'" }
         ],
         correctAnswer: 2,
-        explanation: "La respuesta C demuestra que el equipo pensó cómo optimizar el presupuesto de audio: priorizar la inversión donde más impacta (escenas clave) y usar recursos gratuitos donde se puede. Esta respuesta muestra planificación, conocimiento del tema y criterio financiero, que es exactamente lo que busca un evaluador.",
-        hint: "La mejor respuesta demuestra que pensaste en CÓMO usar ese presupuesto estratégicamente, no solo cuánto tienes disponible.",
+        explanation: "La respuesta C conecta la decisión de diseño con la visión del juego y la experiencia del jugador. Cada elección de diseño debe poder justificarse con su impacto en la experiencia: 'decidimos X porque produce Y en el jugador'. Las otras respuestas dan razones técnicas, de tendencia o simplemente capitulación, ninguna de las cuales demuestra criterio de diseño.",
+        hint: "Una buena justificación siempre conecta la decisión de diseño con el efecto que produce en la experiencia del jugador.",
         xp: 40
       },
       {
         id: "6-4",
         type: "reflection",
-        title: "Escribe tu pitch financiero",
-        question: "Redacta el pitch financiero de tu videojuego. Incluye: resumen del proyecto, alcance definido, los 3 gastos principales con su justificación, un riesgo financiero identificado y por qué el proyecto es viable con tu presupuesto.",
-        placeholder: "Ejemplo:\nPROYECTO: Plataformas 2D, 6 niveles, pixel art, sin multiplayer.\nALCANCE: Juego individual de ~1 hora, motor Godot, arte propio.\nPRINCIPALES GASTOS:\n  1. Arte de personajes ($200) — diferenciador visual clave.\n  2. Música licenciada ($80) — 3 pistas para zonas principales.\n  3. Testing con usuarios ($0) — 5 testers voluntarios.\nRIESGO: Retraso por bugs en el sistema de colisiones — mitigamos con 2 semanas de buffer.\nVIABILIDAD: El proyecto cuesta $280 + 160 horas de trabajo. Con nuestros recursos disponibles, es completamente realizable en 4 meses.",
-        explanation: "Un pitch financiero bien escrito no necesita ser perfecto, necesita ser honesto, claro y fundamentado. Demostrar que conoces tus costos, has pensado en los riesgos y tienes un plan para ser viable genera más confianza que presentar números perfectos sin respaldo argumentado.",
-        hint: "Sé específico con los números: di '$200 en arte' en lugar de 'algo de dinero para arte'. La especificidad demuestra que realmente planificaste.",
+        title: "Escribe tu presentación del proyecto",
+        question: "Redacta la presentación de tu videojuego cubriendo: apertura que capture la esencia del juego, descripción de la mecánica principal, resumen de la narrativa, una decisión de diseño que tomaste y cómo la justificas, y qué aprendiste durante el proceso de desarrollo.",
+        placeholder: "Ejemplo:\nAPERTURA: Un robot olvidado que reconstruye su memoria resolviendo los acertijos que él mismo diseñó antes de perderla.\nMECÁNICA: El jugador reorganiza fragmentos de circuitos para crear rutas lógicas. Cada puzzle cambia la historia que el robot recuerda.\nNARRATIVA: Estación espacial abandonada. El robot es el único ser consciente. La historia se descubre resolviendo los puzzles, no a través de diálogos.\nDECISIÓN DE DISEÑO: Eliminamos el sistema de pistas. Justificación: el juego es sobre descubrimiento; las pistas habrían reducido la satisfacción de resolver el puzzle por cuenta propia.\nAPRENDIZAJE: En el primer playtesting descubrimos que el primer nivel era demasiado críptico. Lo rediseñamos para enseñar la mecánica básica antes de complicarla.",
+        explanation: "Una presentación bien estructurada demuestra que el equipo tiene claridad sobre qué construyó, por qué tomó las decisiones que tomó y qué aprendió. Eso genera confianza. La confianza de un evaluador no viene de un juego perfecto: viene de un equipo que puede reflexionar honestamente sobre su proceso.",
+        hint: "Sé específico en la decisión de diseño que justificas: no digas 'tomamos buenas decisiones', describe una decisión concreta y su impacto en la experiencia del jugador.",
         xp: 70
       }
     ],
     quiz: [
       {
         id: "q6-1",
-        question: "¿Cuál es el objetivo principal de un pitch financiero de videojuego académico?",
+        question: "¿Qué es un Game Design Document (GDD)?",
         options: [
-          "Demostrar que el equipo puede gastar el presupuesto completo disponible",
-          "Convencer a evaluadores de que el proyecto es viable, bien planificado y que el presupuesto es coherente con el alcance",
-          "Mostrar el presupuesto más alto posible para demostrar ambición y escala del proyecto",
-          "Explicar con detalle técnico cómo se programará cada sistema del videojuego"
+          "Un contrato legal que protege la propiedad intelectual del videojuego ante terceros",
+          "Un documento que describe el diseño completo del juego: mecánicas, narrativa, niveles y sistemas de referencia para el equipo",
+          "Un manual de instrucciones que se incluye con el juego para que los jugadores entiendan cómo jugarlo",
+          "Un formulario requerido por las tiendas digitales para publicar el juego comercialmente"
         ],
         correctAnswer: 1,
-        explanation: "Un pitch financiero busca demostrar viabilidad y coherencia. Los evaluadores no buscan el presupuesto más grande ni el más pequeño, sino el más bien justificado: que cada peso invertido tenga una razón clara y que el alcance sea alcanzable con esos recursos."
+        explanation: "El GDD es la referencia central del equipo: describe qué es el juego, cómo funcionan sus mecánicas, cómo está estructurada su narrativa, qué contiene cada nivel y cuáles son las reglas del universo. No necesita ser perfecto desde el inicio: es un documento vivo que evoluciona con el proyecto."
       },
       {
         id: "q6-2",
-        question: "¿Qué elemento de un pitch financiero genera MÁS credibilidad ante un evaluador?",
+        question: "¿Cuál es la característica más importante de una buena presentación de videojuego ante evaluadores?",
         options: [
-          "Un presupuesto muy alto que demuestre ambición y alcance del proyecto",
-          "Reconocer honestamente las limitaciones del proyecto y explicar cómo se abordarán",
-          "Afirmar que el equipo terminará el proyecto antes de lo planificado con el presupuesto actual",
-          "Comparar el presupuesto con los de grandes estudios de videojuegos como referencia"
+          "Que incluya abundante terminología técnica para demostrar el conocimiento del equipo",
+          "Que sea larga y detallada para cubrir todos los aspectos del proyecto en profundidad",
+          "Que comunique claramente qué es el juego, qué hace el jugador y por qué la experiencia es valiosa",
+          "Que incluya comparaciones con juegos comerciales exitosos para demostrar el potencial del proyecto"
         ],
-        correctAnswer: 1,
-        explanation: "Los evaluadores valoran la madurez y el realismo. Reconocer limitaciones (tiempo, equipo, recursos) y explicar cómo se abordarán demuestra que el equipo ha pensado honestamente en el proyecto. La credibilidad viene de la honestidad, no de las promesas exageradas."
+        correctAnswer: 2,
+        explanation: "Una buena presentación responde tres preguntas: ¿qué es el juego?, ¿qué hace el jugador? y ¿por qué vale la pena jugarlo? Si la audiencia puede responder esas tres preguntas al final de la presentación, fue exitosa. La longitud, la terminología técnica y las comparaciones son secundarias a la claridad."
       },
       {
         id: "q6-3",
-        question: "¿Qué significa 'justificar un gasto' en un presupuesto de videojuego?",
+        question: "¿Cómo se justifica correctamente una decisión de diseño durante una presentación?",
         options: [
-          "Presentar recibos y facturas de todos los pagos realizados durante el proyecto",
-          "Explicar por qué ese gasto específico contribuye directamente a los objetivos o calidad del proyecto",
-          "Demostrar que el costo es más bajo que el precio de mercado promedio del sector",
-          "Obtener la aprobación escrita de todos los miembros del equipo antes de gastar"
+          "Explicando el proceso técnico que hizo necesaria esa decisión para el funcionamiento del motor",
+          "Conectando la decisión con su impacto en la experiencia del jugador y la visión del proyecto",
+          "Mostrando que otros juegos populares tomaron la misma decisión anteriormente",
+          "Describiendo el tiempo que el equipo invirtió en evaluar las alternativas antes de decidir"
         ],
         correctAnswer: 1,
-        explanation: "Justificar un gasto es conectar el costo con un beneficio concreto para el proyecto. '$500 en arte de personaje porque es el elemento visual más reconocible del juego y el que más aparece en marketing' es una justificación. '$500 porque lo necesitamos' no lo es."
+        explanation: "Justificar una decisión de diseño es conectar causa (la elección) con efecto (la experiencia del jugador). 'Decidimos X porque produce Y en el jugador, y eso es coherente con la visión del juego'. Una justificación que no menciona al jugador o la visión del proyecto no es una justificación de diseño."
       },
       {
         id: "q6-4",
-        question: "¿Cuál es la debilidad más importante que un equipo debe reconocer al presentar su presupuesto?",
+        question: "Un evaluador dice que la narrativa del juego es confusa. ¿Cuál es la respuesta más constructiva del equipo?",
         options: [
-          "Que los miembros del equipo no tienen suficiente experiencia profesional en la industria",
-          "Las limitaciones reales de alcance, tiempo o recursos que podrían afectar el resultado final",
-          "Que el juego podría no ser divertido para todos los tipos de jugadores del mercado",
-          "Que existen otros juegos similares en el mercado con mayores presupuestos de producción"
+          "'La narrativa es intencional: buscamos que el jugador la interprete de formas distintas'",
+          "'Agradecemos el feedback. ¿Puedes indicar en qué momento específico se generó la confusión? Eso nos ayuda a identificar qué necesita más claridad'",
+          "'Creemos que el problema es que los evaluadores no son el público objetivo del juego'",
+          "'Podemos reescribir la narrativa completamente si el evaluador lo considera necesario'"
         ],
         correctAnswer: 1,
-        explanation: "Las limitaciones de alcance, tiempo y recursos son las más importantes de reconocer porque afectan directamente si el proyecto puede completarse. Un evaluador prefiere escuchar 'sabemos que tenemos solo 4 meses, por eso limitamos el proyecto a X' que descubrirlo después de que el proyecto no se entregó a tiempo."
+        explanation: "La respuesta constructiva reconoce el feedback, pide información específica para poder actuar sobre él y lo enmarca como una oportunidad de mejora. Ni defensa a ultranza ni capitulación inmediata: investigación para entender la causa del problema y actuar desde esa comprensión."
       },
       {
         id: "q6-5",
-        question: "¿Qué hace que un presupuesto de videojuego sea considerado 'bien distribuido'?",
+        question: "¿Qué demuestra un equipo que puede explicar claramente qué aprendió durante el proceso de desarrollo?",
         options: [
-          "Que todas las categorías de gasto tengan exactamente el mismo porcentaje del presupuesto total",
-          "Que la mayor parte del presupuesto esté en marketing para garantizar visibilidad al lanzamiento",
-          "Que los gastos estén alineados con las prioridades del proyecto y que ninguna área crítica quede desfinanciada",
-          "Que el presupuesto total sea el más alto posible para tener margen de error en todas las áreas"
+          "Que el proceso fue especialmente difícil y que el equipo superó muchos obstáculos",
+          "Que el equipo tiene capacidad de reflexión, iteración y mejora, que son las habilidades centrales del diseño de juegos",
+          "Que el proyecto requirió más tiempo del planificado y que el equipo trabajó más horas de lo normal",
+          "Que el equipo tiene experiencia previa en proyectos similares de videojuegos"
         ],
-        correctAnswer: 2,
-        explanation: "Un presupuesto bien distribuido no busca igualdad entre áreas, sino coherencia con las prioridades. Un juego que compite en arte debe invertir más en arte; uno que compite en gameplay debe invertir más en programación. La clave es que las áreas críticas para el éxito del proyecto estén bien financiadas y ninguna quede completamente desatendida."
+        correctAnswer: 1,
+        explanation: "La capacidad de reflexionar sobre el proceso propio es la señal más clara de madurez en un diseñador de videojuegos. Los evaluadores buscan equipos que pueden aprender de sus errores, ajustar su dirección y mejorar iterativamente. Esas habilidades son más valiosas que un resultado perfecto obtenido sin dificultades."
       }
     ]
   }
@@ -1242,11 +1242,11 @@ export const stages: Stage[] = [
 export const achievementsList = [
   { id: "first-step", title: "Primer Paso", description: "Completa tu primera actividad", icon: "star" },
   { id: "concept-master", title: "Ideador", description: "Aprueba el quiz de Concepto e Idea", icon: "lightbulb" },
-  { id: "scope-pro", title: "Estratega de Alcance", description: "Completa la etapa de Alcance del Proyecto", icon: "maximize" },
-  { id: "team-builder", title: "Líder de Equipo", description: "Completa la etapa de Recursos y Equipo", icon: "users" },
-  { id: "cost-master", title: "Controlador de Costos", description: "Completa la etapa de Costos de Producción", icon: "banknote" },
-  { id: "budget-pro", title: "Gestor de Presupuesto", description: "Completa la etapa de Presupuesto y Viabilidad", icon: "bar-chart" },
-  { id: "pitcher", title: "Game Pitcher", description: "Completa todas las etapas del viaje", icon: "trending-up" },
+  { id: "mechanics-pro", title: "Diseñador de Mecánicas", description: "Completa la etapa de Diseño de Mecánicas", icon: "gamepad-2" },
+  { id: "storyteller", title: "Narrador de Mundos", description: "Completa la etapa de Narrativa y Mundo", icon: "book-open" },
+  { id: "planner", title: "Planificador Maestro", description: "Completa la etapa de Planificación del Proyecto", icon: "clipboard-list" },
+  { id: "prototyper", title: "Prototipador Ágil", description: "Completa la etapa de Prototipado y Pruebas", icon: "flask-conical" },
+  { id: "pitcher", title: "Game Presenter", description: "Completa todas las etapas del viaje", icon: "presentation" },
   { id: "perfect-quiz", title: "Sin Errores", description: "Pasa un quiz completo sin fallar ninguna pregunta", icon: "gem" },
   { id: "streak-3", title: "En Racha", description: "3 respuestas correctas consecutivas", icon: "flame" },
 ];
