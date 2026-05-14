@@ -59,6 +59,11 @@ export function ActivityScreen() {
   const [crosswordInput, setCrosswordInput] = useState(""); // current word input
   const [crosswordCorrect, setCrosswordCorrect] = useState<Record<number, boolean>>({}); // wordIdx → correct
 
+  // ── Word builder ──────────────────────────────────────────────────────────
+  const [wordBuilderSentence, setWordBuilderSentence] = useState<string[]>([]);
+  const [wordBuilderPool, setWordBuilderPool] = useState<string[]>([]);
+  const [showWordBuilderExample, setShowWordBuilderExample] = useState(false);
+
   // ── Shared ────────────────────────────────────────────────────────────────
   const [showHint, setShowHint] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -108,6 +113,16 @@ export function ActivityScreen() {
     }
   }, [activity?.id]);
 
+  // ── Init word-builder ─────────────────────────────────────────────────────
+  useEffect(() => {
+    if (activity?.type === "word-builder" && activity.wordChips) {
+      const shuffled = [...activity.wordChips].sort(() => Math.random() - 0.5);
+      setWordBuilderPool(shuffled);
+      setWordBuilderSentence([]);
+      setShowWordBuilderExample(false);
+    }
+  }, [activity?.id]);
+
   if (!stage || !activity) {
     return (
       <MobileLayout>
@@ -125,6 +140,7 @@ export function ActivityScreen() {
   const isConnectConcepts = activity.type === "connect-concepts";
   const isWordScramble = activity.type === "word-scramble";
   const isCrossword = activity.type === "crossword";
+  const isWordBuilder = activity.type === "word-builder";
   const activityIllustrationText = isTrueFalse
     ? (trueFalseStatements[activity.id] || activity.question)
     : activity.question;
@@ -159,6 +175,7 @@ export function ActivityScreen() {
       const wordCount = activity.crossword?.words.length ?? 0;
       return Object.keys(crosswordCorrect).length === wordCount && Object.values(crosswordCorrect).every(Boolean);
     }
+    if (isWordBuilder) return wordBuilderSentence.length > 0;
     return false;
   };
 
@@ -187,6 +204,11 @@ export function ActivityScreen() {
     }
     if (isCrossword) {
       return Object.values(crosswordCorrect).every(Boolean);
+    }
+    if (isWordBuilder) {
+      if (!activity.correctSentence) return true;
+      if (wordBuilderSentence.length !== activity.correctSentence.length) return false;
+      return activity.correctSentence.every((chip, i) => chip === wordBuilderSentence[i]);
     }
     return false;
   };
@@ -308,6 +330,30 @@ export function ActivityScreen() {
     setWordPoolUsed(new Array(scrambledPool.length).fill(false));
   };
 
+  // ── Word builder handlers ───────────────────────────────────────────────────
+  const handleWordBuilderChipTap = (chip: string, poolIdx: number) => {
+    playSelect();
+    setWordBuilderSentence(prev => [...prev, chip]);
+    setWordBuilderPool(prev => {
+      const next = [...prev];
+      next.splice(poolIdx, 1);
+      return next;
+    });
+  };
+  const handleWordBuilderSentenceTap = (sentenceIdx: number) => {
+    playClick();
+    const chip = wordBuilderSentence[sentenceIdx];
+    setWordBuilderSentence(prev => prev.filter((_, i) => i !== sentenceIdx));
+    setWordBuilderPool(prev => [...prev, chip]);
+  };
+  const handleWordBuilderClear = () => {
+    playClick();
+    if (activity.wordChips) {
+      setWordBuilderPool(prev => [...prev, ...wordBuilderSentence]);
+    }
+    setWordBuilderSentence([]);
+  };
+
   // ── Crossword helpers ─────────────────────────────────────────────────────
   const getCellNumber = (data: CrosswordData, row: number, col: number): number | null => {
     const match = data.words.find(w => w.row === row && w.col === col);
@@ -366,6 +412,7 @@ export function ActivityScreen() {
     "connect-concepts": "Conectar conceptos",
     "word-scramble": "Adivinar palabra",
     "crossword": "Crucigrama",
+    "word-builder": "Mini Juego",
   };
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -1072,6 +1119,143 @@ export function ActivityScreen() {
             </div>
           )}
 
+          {/* ── WORD BUILDER ─────────────────────────────────────────────── */}
+          {isWordBuilder && (
+            <div className="flex flex-col gap-4">
+
+              {/* Sentence build area */}
+              <div>
+                <p style={{ color: "#64748b", fontSize: "12px", fontWeight: 700, marginBottom: "10px" }}>
+                  TU OBJETIVO ({wordBuilderSentence.length} palabras):
+                </p>
+                <div
+                  className="rounded-2xl p-4 flex flex-wrap gap-2 min-h-16"
+                  style={{
+                    background: wordBuilderSentence.length > 0 ? `${stage.color}06` : "white",
+                    border: wordBuilderSentence.length > 0 ? `2px solid ${stage.color}30` : "2px dashed #e2e8f0",
+                    transition: "all 0.2s",
+                  }}
+                >
+                  {wordBuilderSentence.length === 0 ? (
+                    <p style={{ color: "#94a3b8", fontSize: "13px", alignSelf: "center" }}>
+                      Toca las palabras de abajo para construir el objetivo
+                    </p>
+                  ) : (
+                    wordBuilderSentence.map((chip, i) => (
+                      <motion.button
+                        key={`sentence-${i}-${chip}`}
+                        initial={{ opacity: 0, scale: 0.85 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        whileTap={{ scale: 0.92 }}
+                        onClick={() => handleWordBuilderSentenceTap(i)}
+                        className="rounded-2xl px-3 py-2 flex items-center gap-1"
+                        style={{
+                          background: stage.color,
+                          boxShadow: `0 3px 10px ${stage.color}40`,
+                          border: "none",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <span style={{ color: "white", fontSize: "13px", fontWeight: 600 }}>{chip}</span>
+                        <X size={12} color="rgba(255,255,255,0.7)" />
+                      </motion.button>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              {/* Example toggle */}
+              <AnimatePresence>
+                {showWordBuilderExample && activity.exampleSentence && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="rounded-2xl p-4"
+                    style={{ background: "#f0fdf4", border: "1.5px solid #86efac" }}
+                  >
+                    <p style={{ color: "#15803d", fontSize: "11px", fontWeight: 700, marginBottom: "6px" }}>EJEMPLO:</p>
+                    <p style={{ color: "#166534", fontSize: "14px", lineHeight: 1.6, fontStyle: "italic" }}>
+                      "{activity.exampleSentence}"
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Pool */}
+              {wordBuilderPool.length > 0 && (
+                <div>
+                  <p style={{ color: "#64748b", fontSize: "12px", fontWeight: 700, marginBottom: "10px" }}>
+                    ELEMENTOS DISPONIBLES:
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {wordBuilderPool.map((chip, idx) => (
+                      <motion.button
+                        key={`pool-${idx}-${chip}`}
+                        whileTap={{ scale: 0.92 }}
+                        onClick={() => handleWordBuilderChipTap(chip, idx)}
+                        className="rounded-2xl px-3 py-2"
+                        style={{
+                          background: "white",
+                          border: `1.5px solid ${stage.color}50`,
+                          boxShadow: `0 2px 8px ${stage.color}15`,
+                          cursor: "pointer",
+                        }}
+                      >
+                        <span style={{ color: stage.color, fontSize: "13px", fontWeight: 600 }}>{chip}</span>
+                      </motion.button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Controls */}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowWordBuilderExample(prev => !prev)}
+                  className="flex-1 py-2.5 rounded-xl"
+                  style={{
+                    background: showWordBuilderExample ? "#f0fdf4" : "#f1f5f9",
+                    color: showWordBuilderExample ? "#16a34a" : "#64748b",
+                    fontSize: "13px", fontWeight: 600,
+                    border: showWordBuilderExample ? "1.5px solid #86efac" : "1.5px solid #e2e8f0",
+                  }}
+                >
+                  Ver ejemplo
+                </button>
+                {wordBuilderSentence.length > 0 && (
+                  <button
+                    onClick={handleWordBuilderClear}
+                    className="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl"
+                    style={{
+                      background: "#f1f5f9", color: "#64748b",
+                      fontSize: "13px", fontWeight: 600, border: "1.5px solid #e2e8f0",
+                    }}
+                  >
+                    <RotateCcw size={14} />
+                    Limpiar
+                  </button>
+                )}
+              </div>
+
+              {/* Pixel chatbot hint */}
+              <div
+                className="rounded-2xl p-4 flex items-start gap-3"
+                style={{ background: "#f0f9ff", border: "1.5px solid #bae6fd" }}
+              >
+                <div
+                  className="flex-shrink-0 rounded-xl flex items-center justify-center"
+                  style={{ width: "36px", height: "36px", background: stage.color }}
+                >
+                  <span style={{ fontSize: "18px" }}>🤖</span>
+                </div>
+                <p style={{ color: "#0c4a6e", fontSize: "13px", lineHeight: 1.6 }}>
+                  Recuerda que un buen objetivo responde: <strong>¿qué?</strong>, <strong>¿para qué?</strong> y <strong>¿a quién?</strong>
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* ── HINT ─────────────────────────────────────────────────────── */}
           <AnimatePresence>
             {showHint && (
@@ -1128,7 +1312,7 @@ export function ActivityScreen() {
               transition: "all 0.2s",
             }}
           >
-            {isReflection ? "Guardar reflexión" : isCrossword ? "Verificar crucigrama" : "Comprobar respuesta"}
+            {isReflection ? "Guardar reflexión" : isCrossword ? "Verificar crucigrama" : isWordBuilder ? "Validar objetivo" : "Comprobar respuesta"}
           </button>
         </div>
       </div>

@@ -6,7 +6,8 @@ export type ActivityType =
   | "true-false"
   | "connect-concepts"
   | "word-scramble"
-  | "crossword";
+  | "crossword"
+  | "word-builder";
 
 export interface ActivityOption {
   id: string;
@@ -63,6 +64,10 @@ export interface Activity {
   wordClue?: string;
   // crossword
   crossword?: CrosswordData;
+  // word-builder
+  wordChips?: string[];
+  correctSentence?: string[];
+  exampleSentence?: string;
 }
 
 export interface QuizQuestion {
@@ -126,18 +131,21 @@ export const stages: Stage[] = [
     activities: [
       {
         id: "1-1",
-        type: "multiple-choice",
-        title: "La propuesta de valor",
-        question: "¿Cuál enunciado describe mejor una propuesta de valor para un videojuego?",
-        options: [
-          { id: "a", text: "El juego tiene gráficos en 3D de alta resolución" },
-          { id: "b", text: "El juego permite que el jugador tome decisiones que afectan el destino de una civilización completa" },
-          { id: "c", text: "El juego tiene muchos niveles y personajes jugables" },
-          { id: "d", text: "El juego funciona en múltiples plataformas" }
+        type: "word-builder",
+        title: "Construye un objetivo general",
+        question: "Presiona las palabras para construir un objetivo general correcto para un videojuego educativo.",
+        wordChips: [
+          "Desarrollar", "un videojuego", "educativo", "para",
+          "mejorar", "el aprendizaje", "en", "estudiantes", "universitarios",
+          "que permita", "de matemáticas", "innovador", "en niños", "que enseñe"
         ],
-        correctAnswer: 1,
-        explanation: "Una propuesta de valor describe la experiencia única que ofrece el juego al jugador. La mecánica de decisiones narrativas es un diferenciador significativo que apela directamente a la emoción y agencia del jugador.",
-        hint: "Piensa en qué hace ÚNICO a este juego desde la perspectiva del jugador, no en sus características técnicas o de producción.",
+        correctSentence: [
+          "Desarrollar", "un videojuego", "educativo", "para",
+          "mejorar", "el aprendizaje", "en", "estudiantes", "universitarios"
+        ],
+        exampleSentence: "Crear un videojuego de rol para desarrollar habilidades de pensamiento crítico en jóvenes adolescentes.",
+        explanation: "Un buen objetivo general comienza con un verbo en infinitivo (Desarrollar), describe el producto (un videojuego educativo), su propósito (para mejorar el aprendizaje) y a quién va dirigido (en estudiantes universitarios). Las palabras distractoras introducen elementos que no corresponden al contexto universitario del proyecto.",
+        hint: "Recuerda que un buen objetivo responde: ¿qué?, ¿para qué? y ¿a quién?. Usa solo las palabras que formen una oración coherente y contextualizada.",
         xp: 30
       },
       {

@@ -13,6 +13,8 @@ import { ResultsScreen } from "./screens/ResultsScreen";
 import { StagesListScreen } from "./screens/StagesListScreen";
 import PixelFlowDemo from "./screens/PixelFlowDemo";
 import { PixelChatScreen } from "./screens/PixelChatScreen";
+import { ActivitiesScreen } from "./screens/ActivitiesScreen";
+import { DiaryScreen } from "./screens/DiaryScreen";
 
 export const router = createHashRouter([
   { path: "/", Component: SplashScreen },
@@ -29,4 +31,6 @@ export const router = createHashRouter([
   { path: "/results", Component: ResultsScreen },
   { path: "/pixel", Component: PixelChatScreen },
   { path: "/pixel-demo", Component: PixelFlowDemo },
+  { path: "/activities", Component: ActivitiesScreen },
+  { path: "/diary", Component: DiaryScreen },
 ]);

@@ -102,7 +102,7 @@ export function StageDetailScreen() {
           />
           {/* Back button */}
           <button
-            onClick={() => navigate("/stages")}
+            onClick={() => navigate("/home")}
             className="flex items-center gap-1.5 mb-4 rounded-xl px-3 py-2"
             style={{
               position: "relative",

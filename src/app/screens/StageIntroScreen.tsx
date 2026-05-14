@@ -36,7 +36,7 @@ export function StageIntroScreen() {
 
   const handleBack = () => {
     playBack();
-    navigate("/stages");
+    navigate("/home");
   };
 
   const activityTypeIcons: Record<string, string> = {

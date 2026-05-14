@@ -16,6 +16,16 @@ const STAGE_VIDEOS: Record<number, string> = {
   3: `${import.meta.env.BASE_URL}videosetapas/equipo.mp4`,
 };
 
+// Zonas clickeables rectangulares para cada etapa en la imagen del mapa
+const HOME_STAGE_POSITIONS = [
+  { left: "0%",  top: "0%",   width: "55%", height: "18%" }, // Etapa 1
+  { left: "45%", top: "18%",  width: "55%", height: "18%" }, // Etapa 2
+  { left: "0%",  top: "36%",  width: "55%", height: "18%" }, // Etapa 3
+  { left: "45%", top: "54%",  width: "55%", height: "17%" }, // Etapa 4
+  { left: "0%",  top: "67%",  width: "55%", height: "17%" }, // Etapa 5
+  { left: "45%", top: "82%",  width: "55%", height: "18%" }, // Etapa 6
+];
+
 type JourneyIcon = React.ComponentType<{ size?: number; color?: string; strokeWidth?: number }>;
 const JOURNEY_STAGES: Record<number, { icon: JourneyIcon; name: string; sub: string }> = {
   1: { icon: Luggage, name: "Preparamos las maletas", sub: "Concepto e Idea" },
@@ -400,127 +410,36 @@ export function HomeScreen() {
                 </p>
               </div>
 
-              {/* Travel path */}
-              <div
-                className="relative py-6 px-4"
-                style={{
-                  background: "linear-gradient(180deg, #dbeafe 0%, #bfdbfe 60%, #93c5fd 100%)",
-                  minHeight: "420px",
-                }}
-              >
-                {/* Decorative clouds */}
-                <div style={{ position: "absolute", top: "10px", left: "14px", opacity: 0.3, pointerEvents: "none" }}><Cloud size={24} color="white" strokeWidth={1.5} /></div>
-                <div style={{ position: "absolute", top: "20px", right: "18px", opacity: 0.22, pointerEvents: "none" }}><Cloud size={18} color="white" strokeWidth={1.5} /></div>
-                <div style={{ position: "absolute", bottom: "28px", left: "24px", opacity: 0.18, pointerEvents: "none" }}><Cloud size={16} color="white" strokeWidth={1.5} /></div>
-
-                {/* Center vertical path line */}
-                <div
-                  style={{
-                    position: "absolute",
-                    left: "50%",
-                    top: 0,
-                    bottom: 0,
-                    width: "4px",
-                    transform: "translateX(-50%)",
-                    background: "repeating-linear-gradient(to bottom, rgba(255,255,255,0.7) 0px, rgba(255,255,255,0.7) 10px, transparent 10px, transparent 20px)",
-                    zIndex: 0,
-                  }}
+              {/* Imagen del mapa con zonas clickeables */}
+              <div style={{ position: "relative", width: "100%" }}>
+                <img
+                  src={`${import.meta.env.BASE_URL}questions_img/Homelevesimage.png`}
+                  alt="Mapa de las etapas del viaje"
+                  style={{ width: "100%", display: "block" }}
                 />
-
-                <div className="flex flex-col gap-5">
-                  {stages.map((stage, index) => {
-                    const status = state.stageStatuses[stage.id]?.status || "locked";
-                    const isLocked = status === "locked";
-                    const isCurrent = status === "current";
-                    const isCompleted = status === "completed";
-                    const journey = JOURNEY_STAGES[stage.id];
-                    const cardOnRight = index % 2 === 0;
-                    const statusLabel = isCompleted ? "COMPLETA" : isCurrent ? "EN CURSO" : "BLOQUEADA";
-                    const statusColor = isCompleted ? "#059669" : isCurrent ? stage.color : "#94a3b8";
-
-                    const card = (
-                      <motion.button
-                        initial={{ opacity: 0, x: cardOnRight ? -12 : 12 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.07, duration: 0.4 }}
-                        whileTap={!isLocked ? { scale: 0.96 } : {}}
-                        onClick={() => handleStageClick(stage.id, isLocked)}
-                        disabled={isLocked}
-                        className={`w-full rounded-2xl p-3 ${cardOnRight ? "text-left" : "text-right"}`}
-                        style={{
-                          background: isLocked ? "rgba(241,245,249,0.85)" : isCompleted ? "rgba(236,253,245,0.95)" : "rgba(255,255,255,0.95)",
-                          border: isCurrent
-                            ? `2px solid ${stage.color}`
-                            : isCompleted
-                            ? "1.5px solid #a7f3d0"
-                            : "1.5px solid rgba(226,232,240,0.8)",
-                          boxShadow: isLocked ? "none" : "0 3px 12px rgba(0,0,0,0.10)",
-                          opacity: isLocked ? 0.55 : 1,
-                          cursor: isLocked ? "not-allowed" : "pointer",
-                          backdropFilter: "blur(4px)",
-                        }}
-                      >
-                        <div className={`flex items-center gap-0.5 ${cardOnRight ? "" : "justify-end"}`}>
-                          {isCompleted && <CheckCircle2 size={9} color={statusColor} strokeWidth={2.5} />}
-                          {isLocked && <Lock size={9} color={statusColor} strokeWidth={2.5} />}
-                          <p style={{ fontSize: "9px", fontWeight: 800, color: statusColor, letterSpacing: "0.6px" }}>
-                            {statusLabel}
-                          </p>
-                        </div>
-                        <p style={{ fontSize: "13px", fontWeight: 700, color: isLocked ? "#94a3b8" : "#0f172a", marginTop: "2px", lineHeight: 1.3 }}>
-                          {journey.name}
-                        </p>
-                        <p style={{ fontSize: "10px", color: "#94a3b8", marginTop: "2px" }}>
-                          {journey.sub} · {stage.xpReward} XP
-                        </p>
-                      </motion.button>
-                    );
-
-                    return (
-                      <div key={stage.id} className="relative flex items-center" style={{ zIndex: 1 }}>
-                        {/* Left slot */}
-                        <div className="flex-1 pr-2.5">
-                          {!cardOnRight && card}
-                        </div>
-
-                        {/* Center node */}
-                        <div className="flex-shrink-0 flex flex-col items-center" style={{ zIndex: 2 }}>
-                          <motion.button
-                            onClick={() => handleStageClick(stage.id, isLocked)}
-                            disabled={isLocked}
-                            animate={isCurrent ? { scale: [1, 1.13, 1] } : {}}
-                            transition={isCurrent ? { repeat: Infinity, duration: 1.8, ease: "easeInOut" } : {}}
-                            whileTap={!isLocked ? { scale: 0.88 } : {}}
-                            className="rounded-full flex items-center justify-center"
-                            style={{
-                              width: "54px",
-                              height: "54px",
-                              background: isCompleted
-                                ? "linear-gradient(135deg, #10b981, #059669)"
-                                : isCurrent
-                                ? `linear-gradient(135deg, ${stage.color}, ${stage.color}bb)`
-                                : "#c8d9ec",
-                              boxShadow: isCompleted
-                                ? "0 5px 16px rgba(16,185,129,0.5), 0 0 0 3px rgba(255,255,255,0.7)"
-                                : isCurrent
-                                ? `0 5px 20px ${stage.color}60, 0 0 0 3px rgba(255,255,255,0.8)`
-                                : "0 2px 8px rgba(0,0,0,0.12), 0 0 0 3px rgba(255,255,255,0.6)",
-                              cursor: isLocked ? "default" : "pointer",
-                              border: "none",
-                            }}
-                          >
-                            <journey.icon size={24} color="white" strokeWidth={1.75} />
-                          </motion.button>
-                        </div>
-
-                        {/* Right slot */}
-                        <div className="flex-1 pl-2.5">
-                          {cardOnRight && card}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
+                {stages.map((stage, index) => {
+                  const status = state.stageStatuses[stage.id]?.status || "locked";
+                  const isLocked = status === "locked";
+                  const pos = HOME_STAGE_POSITIONS[index];
+                  return (
+                    <button
+                      key={stage.id}
+                      onClick={() => handleStageClick(stage.id, isLocked)}
+                      style={{
+                        position: "absolute",
+                        left: pos.left,
+                        top: pos.top,
+                        width: pos.width,
+                        height: pos.height,
+                        background: "transparent",
+                        border: "none",
+                        cursor: isLocked ? "not-allowed" : "pointer",
+                        padding: 0,
+                        outline: "none",
+                      }}
+                    />
+                  );
+                })}
               </div>
 
               {/* Footer */}
