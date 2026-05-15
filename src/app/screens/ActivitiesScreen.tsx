@@ -175,123 +175,253 @@ export function ActivitiesScreen() {
           </div>
         </div>
 
-        {/* ── Activity list ─────────────────────────────────────────────────── */}
-        <div className="flex-1 overflow-y-auto px-5 pt-4 pb-36 flex flex-col gap-3">
+        {/* ── Activity list (grouped) ──────────────────────────────────────── */}
+        <div className="flex-1 overflow-y-auto px-5 pt-4 pb-36 flex flex-col gap-5">
           <p
             style={{
               color: "#94a3b8",
               fontSize: "11px",
               fontWeight: 700,
               letterSpacing: "0.6px",
-              marginBottom: "4px",
+              marginBottom: "0px",
             }}
           >
             LISTADO DE ACTIVIDADES
           </p>
 
-          {stage.activities.map((activity, index) => {
-            const done = stageStatus.activitiesCompleted.includes(activity.id);
-            const isNextToComplete = !done && stageStatus.activitiesCompleted.length === index;
-            const activityLocked =
-              stageStatus.status === "locked" ||
-              (index > 0 &&
-                !stageStatus.activitiesCompleted.includes(stage.activities[index - 1].id));
+          {/* Chunk activities into groups of 3 */}
+          {Array.from(
+            { length: Math.ceil(stage.activities.length / 3) },
+            (_, groupIndex) => {
+              const groupActivities = stage.activities.slice(
+                groupIndex * 3,
+                groupIndex * 3 + 3
+              );
+              const groupStartIndex = groupIndex * 3;
+              const groupDoneCount = groupActivities.filter((a) =>
+                stageStatus.activitiesCompleted.includes(a.id)
+              ).length;
+              const groupComplete = groupDoneCount === groupActivities.length;
+              const groupLabel =
+                stage.activityGroupTitles?.[groupIndex] ??
+                `Módulo ${groupIndex + 1}`;
 
-            const cfg = TYPE_CONFIG[activity.type] ?? TYPE_CONFIG["multiple-choice"];
-            const TypeIcon = cfg.icon;
-
-            return (
-              <motion.button
-                key={activity.id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                onClick={() => handleActivityClick(index, activityLocked)}
-                disabled={activityLocked}
-                className="rounded-2xl p-4 flex items-center gap-3 w-full text-left"
-                style={{
-                  background: done ? "#ecfdf5" : "white",
-                  border: done
-                    ? "1.5px solid #a7f3d0"
-                    : isNextToComplete
-                    ? `2px solid ${stage.color}`
-                    : "1.5px solid #e2e8f0",
-                  boxShadow: activityLocked || done ? "none" : "0 2px 8px rgba(0,0,0,0.05)",
-                  opacity: activityLocked ? 0.55 : 1,
-                  cursor: activityLocked ? "not-allowed" : "pointer",
-                }}
-              >
-                {/* Icono del tipo */}
-                <div
-                  className="flex-shrink-0 rounded-2xl flex items-center justify-center"
+              return (
+                <motion.div
+                  key={groupIndex}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: groupIndex * 0.08 }}
+                  className="rounded-3xl overflow-hidden"
                   style={{
-                    width: 48,
-                    height: 48,
-                    background: done ? "#d1fae5" : activityLocked ? "#f1f5f9" : cfg.bg,
+                    background: "white",
+                    border: `1.5px solid ${groupComplete ? "#a7f3d0" : stage.color + "30"}`,
+                    boxShadow: `0 3px 12px ${stage.color}12`,
                   }}
                 >
-                  {done ? (
-                    <CheckCircle2 size={22} color="#10b981" />
-                  ) : activityLocked ? (
-                    <Lock size={18} color="#94a3b8" />
-                  ) : (
-                    <TypeIcon size={22} color={cfg.color} strokeWidth={1.75} />
-                  )}
-                </div>
-
-                {/* Texto */}
-                <div className="flex-1 min-w-0">
-                  <p
+                  {/* ── Group header ── */}
+                  <div
+                    className="flex items-center gap-4 px-4 pt-4 pb-3"
                     style={{
-                      color: done ? "#065f46" : activityLocked ? "#94a3b8" : "#0f172a",
-                      fontSize: "14px",
-                      fontWeight: 600,
-                      lineHeight: 1.3,
+                      borderBottom: `1px solid ${groupComplete ? "#a7f3d0" : stage.color + "20"}`,
+                      background: groupComplete
+                        ? "linear-gradient(135deg, #ecfdf5, #d1fae510)"
+                        : `linear-gradient(135deg, ${stage.color}12, ${stage.color}04)`,
                     }}
                   >
-                    {activity.title}
-                  </p>
-                  <p style={{ color: done ? "#059669" : "#94a3b8", fontSize: "12px", marginTop: "2px" }}>
-                    {TYPE_LABELS[activity.type]} · +{activity.xp} XP
-                  </p>
-
-                  {/* Barra de progreso para la siguiente actividad disponible */}
-                  {isNextToComplete && (
-                    <div className="flex items-center gap-2 mt-2">
-                      <div
-                        className="flex-1 h-1.5 rounded-full"
-                        style={{ background: `${stage.color}25` }}
-                      />
-                      <Star size={11} color={stage.color} />
+                    {/* Group icon */}
+                    <div
+                      className="flex-shrink-0 relative rounded-2xl flex items-center justify-center overflow-visible"
+                      style={{
+                        width: 90,
+                        height: 90,
+                        background: groupComplete ? "#d1fae5" : stage.bgColor,
+                        border: `2px solid ${groupComplete ? "#a7f3d0" : stage.borderColor}`,
+                      }}
+                    >
+                      {stage.activityGroupIcons?.[groupIndex] ? (
+                        <img
+                          src={`${import.meta.env.BASE_URL}${stage.activityGroupIcons[groupIndex].replace(/^\//, '')}`}
+                          alt=""
+                          style={{ width: 72, height: 72, objectFit: "contain" }}
+                        />
+                      ) : (
+                        <Lightbulb size={30} color={stage.color} strokeWidth={1.75} />
+                      )}
+                      {/* Small completion badge */}
+                      {groupComplete && (
+                        <div
+                          style={{
+                            position: "absolute",
+                            bottom: -4,
+                            right: -4,
+                            width: 20,
+                            height: 20,
+                            borderRadius: "50%",
+                            background: "#10b981",
+                            border: "2px solid white",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <CheckCircle2 size={12} color="white" strokeWidth={2.5} />
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
 
-                {/* Estado derecho */}
-                {done && (
-                  <div
-                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-full flex-shrink-0"
-                    style={{ background: "#d1fae5", border: "1px solid #a7f3d0" }}
-                  >
-                    <CheckCircle2 size={13} color="#10b981" />
-                    <span style={{ color: "#059669", fontSize: "11px", fontWeight: 600 }}>
-                      Completada
-                    </span>
+                    {/* Group info */}
+                    <div className="flex-1 min-w-0">
+                      <p
+                        style={{
+                          color: groupComplete ? "#065f46" : stage.color,
+                          fontSize: "10px",
+                          fontWeight: 700,
+                          letterSpacing: "0.5px",
+                          marginBottom: "2px",
+                        }}
+                      >
+                        GRUPO {groupIndex + 1} · {groupDoneCount}/{groupActivities.length} completadas
+                      </p>
+                      <p
+                        style={{
+                          color: groupComplete ? "#065f46" : "#0f172a",
+                          fontSize: "15px",
+                          fontWeight: 700,
+                          lineHeight: 1.25,
+                        }}
+                      >
+                        {groupLabel}
+                      </p>
+                    </div>
                   </div>
-                )}
-                {!done && !activityLocked && (
-                  <ChevronRight size={18} color={stage.color} className="flex-shrink-0" />
-                )}
-                {activityLocked && (
-                  <span
-                    style={{ color: "#94a3b8", fontSize: "11px", flexShrink: 0 }}
-                  >
-                    0/1
-                  </span>
-                )}
-              </motion.button>
-            );
-          })}
+
+                  {/* ── Activity rows inside the group ── */}
+                  <div className="flex flex-col">
+                    {groupActivities.map((activity, localIdx) => {
+                      const index = groupStartIndex + localIdx;
+                      const done = stageStatus.activitiesCompleted.includes(activity.id);
+                      const isNextToComplete =
+                        !done && stageStatus.activitiesCompleted.length === index;
+                      const activityLocked =
+                        stageStatus.status === "locked" ||
+                        (index > 0 &&
+                          !stageStatus.activitiesCompleted.includes(
+                            stage.activities[index - 1].id
+                          ));
+
+                      const cfg =
+                        TYPE_CONFIG[activity.type] ?? TYPE_CONFIG["multiple-choice"];
+                      const TypeIcon = cfg.icon;
+                      const isLast = localIdx === groupActivities.length - 1;
+
+                      return (
+                        <motion.button
+                          key={activity.id}
+                          whileTap={{ scale: activityLocked ? 1 : 0.98 }}
+                          onClick={() => handleActivityClick(index, activityLocked)}
+                          disabled={activityLocked}
+                          className="flex items-center gap-3 w-full text-left px-4 py-3"
+                          style={{
+                            background: done ? "#f0fdf4" : "transparent",
+                            borderBottom: isLast ? "none" : `1px solid ${stage.color}15`,
+                            opacity: activityLocked ? 0.5 : 1,
+                            cursor: activityLocked ? "not-allowed" : "pointer",
+                          }}
+                        >
+                          {/* Activity type icon */}
+                          <div
+                            className="flex-shrink-0 rounded-xl flex items-center justify-center"
+                            style={{
+                              width: 40,
+                              height: 40,
+                              background: done
+                                ? "#d1fae5"
+                                : activityLocked
+                                ? "#f1f5f9"
+                                : cfg.bg,
+                            }}
+                          >
+                            {done ? (
+                              <CheckCircle2 size={20} color="#10b981" />
+                            ) : activityLocked ? (
+                              <Lock size={16} color="#94a3b8" />
+                            ) : (
+                              <TypeIcon size={20} color={cfg.color} strokeWidth={1.75} />
+                            )}
+                          </div>
+
+                          {/* Text */}
+                          <div className="flex-1 min-w-0">
+                            <p
+                              style={{
+                                color: done
+                                  ? "#065f46"
+                                  : activityLocked
+                                  ? "#94a3b8"
+                                  : "#0f172a",
+                                fontSize: "13px",
+                                fontWeight: 600,
+                                lineHeight: 1.3,
+                              }}
+                            >
+                              {activity.title}
+                            </p>
+                            <p
+                              style={{
+                                color: done ? "#059669" : "#94a3b8",
+                                fontSize: "11px",
+                                marginTop: "1px",
+                              }}
+                            >
+                              {TYPE_LABELS[activity.type]} · +{activity.xp} XP
+                            </p>
+                            {isNextToComplete && (
+                              <div className="flex items-center gap-2 mt-1.5">
+                                <div
+                                  className="flex-1 h-1 rounded-full"
+                                  style={{ background: `${stage.color}25` }}
+                                />
+                                <Star size={10} color={stage.color} />
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Right state */}
+                          {done && (
+                            <div
+                              className="flex items-center gap-1 px-2 py-1 rounded-full flex-shrink-0"
+                              style={{
+                                background: "#d1fae5",
+                                border: "1px solid #a7f3d0",
+                              }}
+                            >
+                              <CheckCircle2 size={12} color="#10b981" />
+                              <span
+                                style={{
+                                  color: "#059669",
+                                  fontSize: "10px",
+                                  fontWeight: 600,
+                                }}
+                              >
+                                Completada
+                              </span>
+                            </div>
+                          )}
+                          {!done && !activityLocked && (
+                            <ChevronRight size={16} color={stage.color} className="flex-shrink-0" />
+                          )}
+                          {activityLocked && (
+                            <Lock size={14} color="#cbd5e1" className="flex-shrink-0" />
+                          )}
+                        </motion.button>
+                      );
+                    })}
+                  </div>
+                </motion.div>
+              );
+            }
+          )}
         </div>
 
         {/* ── Continuar etapa button ───────────────────────────────────────── */}

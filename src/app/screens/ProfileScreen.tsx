@@ -1,18 +1,24 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import { motion } from "motion/react";
-import { Zap, Flame, Target, BookOpen, ArrowRight, Trophy, CheckCircle, Star, Gamepad2, HelpCircle } from "lucide-react";
+import { Zap, Flame, Target, BookOpen, ArrowRight, Trophy, CheckCircle, Star, Gamepad2, HelpCircle, LogOut, Lock, Users } from "lucide-react";
 import { MobileLayout } from "../components/MobileLayout";
 import { BottomNav } from "../components/BottomNav";
 import { PixelTutorialModal } from "../components/PixelTutorialModal";
 import { useApp } from "../context/AppContext";
-import { stages, achievementsList } from "../data/gameData";
+import { stages, achievementsList, CHARACTERS, CHARACTER_UNLOCK_MILESTONES } from "../data/gameData";
 import { AppIcon } from "../components/ui/AppIcon";
 
 export function ProfileScreen() {
   const navigate = useNavigate();
-  const { state, getTotalProgress, getCompletedStages } = useApp();
+  const { state, getTotalProgress, getCompletedStages, logout, setCharacter } = useApp();
   const [showTutorial, setShowTutorial] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   const totalProgress = getTotalProgress();
   const completedStages = getCompletedStages();
@@ -68,15 +74,25 @@ export function ProfileScreen() {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: "spring", stiffness: 200 }}
-              className="rounded-full flex items-center justify-center"
+              className="rounded-full flex items-center justify-center overflow-hidden"
               style={{
                 width: "80px",
                 height: "80px",
-                background: "linear-gradient(135deg, #3b82f6, #8b5cf6)",
+                background: state.character
+                  ? "transparent"
+                  : "linear-gradient(135deg, #3b82f6, #8b5cf6)",
                 border: "3px solid rgba(255,255,255,0.2)",
               }}
             >
-              <Gamepad2 size={36} color="white" strokeWidth={1.5} />
+              {state.character ? (
+                <img
+                  src={`${import.meta.env.BASE_URL}personajes/${encodeURIComponent(state.character)}`}
+                  alt="personaje"
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+              ) : (
+                <Gamepad2 size={36} color="white" strokeWidth={1.5} />
+              )}
             </motion.div>
             <div className="text-center">
               <h1 style={{ color: "white", fontSize: "22px", fontWeight: 800 }}>
@@ -119,6 +135,55 @@ export function ProfileScreen() {
           </div>
 
           <div className="px-5 flex flex-col gap-5 pt-5">
+
+            {/* Logout button */}
+            {!showLogoutConfirm ? (
+              <button
+                onClick={() => setShowLogoutConfirm(true)}
+                className="rounded-2xl p-4 flex items-center gap-3 w-full"
+                style={{
+                  background: "white",
+                  border: "1.5px solid #fee2e2",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+                }}
+              >
+                <div
+                  className="rounded-xl flex items-center justify-center flex-shrink-0"
+                  style={{ width: "40px", height: "40px", background: "#fef2f2" }}
+                >
+                  <LogOut size={18} color="#ef4444" />
+                </div>
+                <div className="flex-1 text-left">
+                  <p style={{ color: "#ef4444", fontSize: "14px", fontWeight: 700 }}>Cerrar sesión</p>
+                  <p style={{ color: "#94a3b8", fontSize: "12px" }}>Volver a la pantalla de inicio</p>
+                </div>
+              </button>
+            ) : (
+              <div
+                className="rounded-2xl p-4 flex flex-col gap-3"
+                style={{ background: "#fef2f2", border: "1.5px solid #fecaca" }}
+              >
+                <p style={{ color: "#991b1b", fontSize: "14px", fontWeight: 600, textAlign: "center" }}>
+                  ¿Seguro que quieres cerrar sesión?
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setShowLogoutConfirm(false)}
+                    className="flex-1 py-2.5 rounded-xl"
+                    style={{ background: "white", color: "#64748b", fontSize: "13px", fontWeight: 600, border: "1.5px solid #e2e8f0" }}
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={handleLogout}
+                    className="flex-1 py-2.5 rounded-xl"
+                    style={{ background: "#ef4444", color: "white", fontSize: "13px", fontWeight: 700, border: "none" }}
+                  >
+                    Cerrar sesión
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* Botón para volver a ver el tutorial de Pixel */}
             <button
@@ -280,6 +345,117 @@ export function ProfileScreen() {
                 </div>
               </div>
             )}
+
+            {/* ── Character selector ──────────────────────────────────────── */}
+            {(() => {
+              const unlocked = state.unlockedCharacters ?? (state.character ? [state.character] : []);
+              const nextMilestone = CHARACTER_UNLOCK_MILESTONES.find(m => state.streak < m);
+              return (
+                <div
+                  className="rounded-3xl p-4"
+                  style={{ background: "white", boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}
+                >
+                  {/* Header */}
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center gap-2">
+                      <Users size={16} color="#8b5cf6" />
+                      <p style={{ color: "#0f172a", fontSize: "14px", fontWeight: 700 }}>
+                        Personajes
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <Flame size={13} color="#ef4444" fill="#ef4444" />
+                      <span style={{ color: "#ef4444", fontSize: "12px", fontWeight: 700 }}>
+                        {state.streak} días
+                      </span>
+                    </div>
+                  </div>
+                  {nextMilestone ? (
+                    <p style={{ color: "#94a3b8", fontSize: "11px", marginBottom: "12px" }}>
+                      Siguiente desbloqueo en <strong style={{ color: "#f97316" }}>{nextMilestone} días</strong> de racha
+                    </p>
+                  ) : (
+                    <p style={{ color: "#10b981", fontSize: "11px", fontWeight: 600, marginBottom: "12px" }}>
+                      ¡Todos los personajes desbloqueados!
+                    </p>
+                  )}
+
+                  {/* Grid */}
+                  <div className="grid grid-cols-4 gap-2">
+                    {CHARACTERS.map((char) => {
+                      const isUnlocked = unlocked.includes(char.file);
+                      const isActive = state.character === char.file;
+                      const lockedIdx = CHARACTERS.filter(c => !unlocked.includes(c.file)).indexOf(char);
+                      const milestoneDays = !isUnlocked
+                        ? CHARACTER_UNLOCK_MILESTONES[unlocked.length + lockedIdx] ?? CHARACTER_UNLOCK_MILESTONES[CHARACTER_UNLOCK_MILESTONES.length - 1]
+                        : null;
+
+                      return (
+                        <motion.button
+                          key={char.file}
+                          whileTap={isUnlocked ? { scale: 0.92 } : {}}
+                          onClick={() => {
+                            if (isUnlocked && !isActive) setCharacter(char.file);
+                          }}
+                          className="flex flex-col items-center gap-1 rounded-2xl p-2 relative"
+                          style={{
+                            background: isActive ? "#eff6ff" : isUnlocked ? "white" : "#f8fafc",
+                            border: isActive
+                              ? "2.5px solid #3b82f6"
+                              : isUnlocked
+                              ? "1.5px solid #e2e8f0"
+                              : "1.5px dashed #cbd5e1",
+                            cursor: isUnlocked && !isActive ? "pointer" : "default",
+                          }}
+                        >
+                          {isActive && (
+                            <div
+                              className="absolute rounded-full flex items-center justify-center"
+                              style={{ top: 3, right: 3, width: 16, height: 16, background: "#3b82f6" }}
+                            >
+                              <CheckCircle size={10} color="white" strokeWidth={3} />
+                            </div>
+                          )}
+                          <div style={{ position: "relative", width: "100%" }}>
+                            <img
+                              src={`${import.meta.env.BASE_URL}personajes/${encodeURIComponent(char.file)}`}
+                              alt={char.name}
+                              style={{
+                                width: "100%",
+                                aspectRatio: "1 / 1",
+                                objectFit: "contain",
+                                borderRadius: 8,
+                                opacity: isUnlocked ? 1 : 0.2,
+                                filter: isUnlocked ? "none" : "grayscale(1)",
+                              }}
+                            />
+                            {!isUnlocked && (
+                              <div className="absolute inset-0 flex flex-col items-center justify-center gap-0.5">
+                                <Lock size={14} color="#94a3b8" strokeWidth={2.5} />
+                                <span style={{ color: "#64748b", fontSize: "9px", fontWeight: 700 }}>
+                                  {milestoneDays}d
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                          <span
+                            style={{
+                              color: isActive ? "#1d4ed8" : isUnlocked ? "#475569" : "#94a3b8",
+                              fontSize: 9,
+                              fontWeight: isActive ? 700 : 500,
+                              textAlign: "center",
+                              lineHeight: 1.2,
+                            }}
+                          >
+                            {char.name}
+                          </span>
+                        </motion.button>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* Achievements */}
             <div>

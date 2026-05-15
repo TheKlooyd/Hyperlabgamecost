@@ -7,7 +7,7 @@ import { PixelCompanion } from "../components/PixelCompanion";
 import { QuestionIllustration } from "../components/QuestionIllustration";
 import { useApp } from "../context/AppContext";
 import { useChatbot } from "../context/ChatbotContext";
-import { stages, CrosswordData } from "../data/gameData";
+import { stages, CrosswordData, RiskOption, GraphNode, TeamMember } from "../data/gameData";
 import { playSelect, playClick, playCorrect, playWrong, playNavigate, playComplete, playBack } from "../utils/sounds";
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -25,7 +25,7 @@ const trueFalseStatements: Record<string, string> = {
 export function ActivityScreen() {
   const navigate = useNavigate();
   const { stageId, activityId } = useParams<{ stageId: string; activityId: string }>();
-  const { completeActivity } = useApp();
+  const { completeActivity, state, spendXP } = useApp();
   const { addNotification } = useChatbot();
 
   // ── Multiple choice ──────────────────────────────────────────────────────
@@ -64,8 +64,22 @@ export function ActivityScreen() {
   const [wordBuilderPool, setWordBuilderPool] = useState<string[]>([]);
   const [showWordBuilderExample, setShowWordBuilderExample] = useState(false);
 
+  // ── Budget allocation ────────────────────────────────────────────────────
+  const [budgetSelected, setBudgetSelected] = useState<string[]>([]);
+
+  // ── Risk event ────────────────────────────────────────────────────────────
+  const [riskEventSelected, setRiskEventSelected] = useState<string | null>(null);
+
+  // ── Dependency graph ───────────────────────────────────────────────
+  const [graphEdges, setGraphEdges] = useState<Array<{ from: string; to: string }>>([]);
+  const [graphSelected, setGraphSelected] = useState<string | null>(null);
+
+  // ── Team builder ────────────────────────────────────────────────────
+  const [selectedTeam, setSelectedTeam] = useState<string[]>([]);
+
   // ── Shared ────────────────────────────────────────────────────────────────
   const [showHint, setShowHint] = useState(false);
+  const [hintBought, setHintBought] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
   const stage = stages.find(s => s.id === Number(stageId));
@@ -141,14 +155,20 @@ export function ActivityScreen() {
   const isWordScramble = activity.type === "word-scramble";
   const isCrossword = activity.type === "crossword";
   const isWordBuilder = activity.type === "word-builder";
+  const isTimelineOrder = activity.type === "timeline-order";
+  const isBudgetAllocation = activity.type === "budget-allocation";
+  const isRiskEvent = activity.type === "risk-event";
+  const isDependencyGraph = activity.type === "dependency-graph";
+  const isTeamBuilder = activity.type === "team-builder";
   const activityIllustrationText = isTrueFalse
     ? (trueFalseStatements[activity.id] || activity.question)
     : activity.question;
 
-  // ── Order steps ──────────────────────────────────────────────────────────
+  // ── Order steps / Timeline order ─────────────────────────────────────────
   const [scrambled] = useState(() => {
-    if (!activity.items) return [];
-    const arr = activity.items.map((_, i) => i);
+    const items = activity.items || activity.timelineItems;
+    if (!items) return [];
+    const arr = items.map((_, i) => i);
     for (let i = arr.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [arr[i], arr[j]] = [arr[j], arr[i]];
@@ -162,6 +182,7 @@ export function ActivityScreen() {
   const canSubmit = (): boolean => {
     if (isMultipleChoice) return selectedOption !== null;
     if (isOrderSteps) return orderedItems.length === activity.items?.length;
+    if (isTimelineOrder) return orderedItems.length === activity.timelineItems?.length;
     if (isReflection) return reflectionText.trim().length > 20;
     if (isTrueFalse) return trueFalseAnswer !== null;
     if (isConnectConcepts) {
@@ -176,12 +197,16 @@ export function ActivityScreen() {
       return Object.keys(crosswordCorrect).length === wordCount && Object.values(crosswordCorrect).every(Boolean);
     }
     if (isWordBuilder) return wordBuilderSentence.length > 0;
+    if (isBudgetAllocation) return budgetSelected.length > 0;
+    if (isRiskEvent) return riskEventSelected !== null;
+    if (isDependencyGraph) return graphEdges.length === (activity.graphCorrectEdges?.length ?? 0);
+    if (isTeamBuilder) return selectedTeam.length === (activity.teamSize ?? 4);
     return false;
   };
 
   const checkCorrect = (): boolean => {
     if (isMultipleChoice) return selectedOption === activity.correctAnswer;
-    if (isOrderSteps) {
+    if (isOrderSteps || isTimelineOrder) {
       if (!activity.correctOrder) return true;
       return activity.correctOrder.every((val, idx) => val === orderedItems[idx]);
     }
@@ -209,6 +234,27 @@ export function ActivityScreen() {
       if (!activity.correctSentence) return true;
       if (wordBuilderSentence.length !== activity.correctSentence.length) return false;
       return activity.correctSentence.every((chip, i) => chip === wordBuilderSentence[i]);
+    }
+    if (isBudgetAllocation) {
+      const correct = activity.correctResources ?? [];
+      if (budgetSelected.length !== correct.length) return false;
+      return correct.every(id => budgetSelected.includes(id));
+    }
+    if (isRiskEvent) return true; // no single correct answer
+    if (isDependencyGraph) {
+      const correct = activity.graphCorrectEdges ?? [];
+      if (graphEdges.length !== correct.length) return false;
+      return correct.every(ce =>
+        graphEdges.some(ue =>
+          (ue.from === ce.from && ue.to === ce.to) ||
+          (ue.from === ce.to && ue.to === ce.from)
+        )
+      );
+    }
+    if (isTeamBuilder) {
+      const correct = activity.correctTeam ?? [];
+      if (selectedTeam.length !== correct.length) return false;
+      return correct.every(id => selectedTeam.includes(id));
     }
     return false;
   };
@@ -403,6 +449,30 @@ export function ActivityScreen() {
     }
   };
 
+  // ── Dependency graph handler ─────────────────────────────────────────────
+  const handleGraphNodeTap = (nodeId: string) => {
+    playSelect();
+    if (graphSelected === null) {
+      setGraphSelected(nodeId);
+      return;
+    }
+    if (graphSelected === nodeId) {
+      setGraphSelected(null);
+      return;
+    }
+    const existingIdx = graphEdges.findIndex(e =>
+      (e.from === graphSelected && e.to === nodeId) ||
+      (e.from === nodeId && e.to === graphSelected)
+    );
+    if (existingIdx !== -1) {
+      playClick();
+      setGraphEdges(prev => prev.filter((_, i) => i !== existingIdx));
+    } else {
+      setGraphEdges(prev => [...prev, { from: graphSelected, to: nodeId }]);
+    }
+    setGraphSelected(null);
+  };
+
   const typeLabel: Record<string, string> = {
     "multiple-choice": "Selección múltiple",
     "order-steps": "Ordenar pasos",
@@ -413,6 +483,11 @@ export function ActivityScreen() {
     "word-scramble": "Adivinar palabra",
     "crossword": "Crucigrama",
     "word-builder": "Mini Juego",
+    "timeline-order": "Mini Juego",
+    "budget-allocation": "Mini Juego",
+    "risk-event": "Mini Juego",
+    "dependency-graph": "Mini Juego",
+    "team-builder": "Mini Juego",
   };
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -455,7 +530,7 @@ export function ActivityScreen() {
             className="rounded-3xl p-5"
             style={{ background: "white", boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}
           >
-            <QuestionIllustration question={activityIllustrationText} stage={stage} />
+            {!isDependencyGraph && <QuestionIllustration question={activityIllustrationText} stage={stage} />}
             <p style={{ color: "#0f172a", fontSize: "16px", fontWeight: 600, lineHeight: 1.5 }}>
               {activity.question}
             </p>
@@ -556,6 +631,120 @@ export function ActivityScreen() {
                     ))}
                   </div>
                 </div>
+              )}
+            </div>
+          )}
+
+          {/* ── TIMELINE ORDER ────────────────────────────────────────────── */}
+          {isTimelineOrder && activity.timelineItems && (
+            <div className="flex flex-col gap-4">
+              {/* Placed items */}
+              <div>
+                <p style={{ color: "#64748b", fontSize: "12px", fontWeight: 600, marginBottom: "8px" }}>
+                  TU CRONOGRAMA ({selectedOrder.length}/{activity.timelineItems.length}):
+                </p>
+                <div className="flex flex-col gap-2 min-h-16">
+                  {selectedOrder.length === 0 ? (
+                    <div className="rounded-2xl p-4 flex items-center justify-center" style={{ border: "2px dashed #e2e8f0", minHeight: "60px" }}>
+                      <p style={{ color: "#94a3b8", fontSize: "13px" }}>Toca las tareas de abajo para ordenarlas</p>
+                    </div>
+                  ) : (
+                    selectedOrder.map((itemIndex, position) => {
+                      const item = activity.timelineItems![itemIndex];
+                      return (
+                        <motion.div
+                          key={`placed-${itemIndex}`}
+                          initial={{ opacity: 0, y: -8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="rounded-2xl flex items-center gap-3 overflow-hidden"
+                          style={{ background: "white", border: "1.5px solid #e2e8f0", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
+                        >
+                          {/* Number badge */}
+                          <div
+                            className="flex items-center justify-center flex-shrink-0"
+                            style={{ width: "40px", height: "52px", background: "#f1f5f9", borderRight: "1px solid #e2e8f0" }}
+                          >
+                            <span style={{ color: "#64748b", fontSize: "14px", fontWeight: 700 }}>{position + 1}</span>
+                          </div>
+                          {/* Colored task label */}
+                          <div
+                            className="flex-1 py-3 px-2 rounded-xl"
+                            style={{ background: `${item.color}20`, border: `1.5px solid ${item.color}60` }}
+                          >
+                            <p style={{ color: "#1e293b", fontSize: "13px", fontWeight: 600, lineHeight: 1.3 }}>{item.text}</p>
+                          </div>
+                          {/* Duration */}
+                          <div className="flex items-center gap-1 pr-2 flex-shrink-0">
+                            <span style={{ color: "#64748b", fontSize: "12px", fontWeight: 500 }}>{item.duration}</span>
+                            <button onClick={() => handleRemoveOrderItem(position)} style={{ marginLeft: "4px" }}>
+                              <X size={14} color="#cbd5e1" />
+                            </button>
+                          </div>
+                        </motion.div>
+                      );
+                    })
+                  )}
+                </div>
+              </div>
+
+              {/* Available items */}
+              {availableItems.length > 0 && (
+                <div>
+                  <p style={{ color: "#64748b", fontSize: "12px", fontWeight: 600, marginBottom: "8px" }}>TAREAS DISPONIBLES:</p>
+                  <div className="flex flex-col gap-2">
+                    {availableItems.map(itemIndex => {
+                      const item = activity.timelineItems![itemIndex];
+                      return (
+                        <motion.button
+                          key={`avail-${itemIndex}`}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => handleSelectOrderItem(itemIndex)}
+                          className="rounded-2xl flex items-center gap-3 overflow-hidden text-left w-full"
+                          style={{ background: "white", border: "1.5px solid #e2e8f0", boxShadow: "0 2px 6px rgba(0,0,0,0.04)" }}
+                        >
+                          <div
+                            className="flex items-center justify-center flex-shrink-0"
+                            style={{ width: "40px", height: "52px", background: "#f8fafc", borderRight: "1px solid #e2e8f0" }}
+                          >
+                            <span style={{ color: "#cbd5e1", fontSize: "16px", fontWeight: 700 }}>+</span>
+                          </div>
+                          <div
+                            className="flex-1 py-3 px-2 rounded-xl"
+                            style={{ background: `${item.color}15`, border: `1.5px solid ${item.color}40` }}
+                          >
+                            <p style={{ color: "#334155", fontSize: "13px", lineHeight: 1.3 }}>{item.text}</p>
+                          </div>
+                          <div className="pr-3 flex-shrink-0">
+                            <span style={{ color: "#94a3b8", fontSize: "12px" }}>{item.duration}</span>
+                          </div>
+                        </motion.button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Total time */}
+              {selectedOrder.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="rounded-2xl p-4 flex items-center justify-between"
+                  style={{ background: `${stage.color}08`, border: `1.5px solid ${stage.color}25` }}
+                >
+                  <span style={{ color: "#64748b", fontSize: "13px", fontWeight: 600 }}>Tiempo total estimado:</span>
+                  <span style={{ color: stage.color, fontSize: "15px", fontWeight: 700 }}>
+                    {(() => {
+                      let totalWeeks = 0;
+                      selectedOrder.forEach(idx => {
+                        const dur = activity.timelineItems![idx].duration;
+                        const match = dur.match(/(\d+)/);
+                        if (match) totalWeeks += parseInt(match[1]);
+                      });
+                      return `${totalWeeks} semana${totalWeeks !== 1 ? "s" : ""}`;
+                    })()}
+                  </span>
+                </motion.div>
               )}
             </div>
           )}
@@ -1256,6 +1445,551 @@ export function ActivityScreen() {
             </div>
           )}
 
+          {/* ── RISK EVENT ───────────────────────────────────────────────── */}
+          {isRiskEvent && activity.riskOptions && (
+            <div className="flex flex-col gap-4">
+
+              {/* Alert banner */}
+              <div
+                className="rounded-2xl px-4 py-3 flex items-center gap-3"
+                style={{ background: "#fef2f2", border: "2px solid #fca5a5" }}
+              >
+                <div
+                  className="rounded-xl flex items-center justify-center flex-shrink-0"
+                  style={{ width: "32px", height: "32px", background: "#ef4444" }}
+                >
+                  <span style={{ fontSize: "16px" }}>⚠️</span>
+                </div>
+                <p style={{ color: "#b91c1c", fontSize: "15px", fontWeight: 700 }}>
+                  {activity.riskScenario ?? "Evento inesperado"}
+                </p>
+              </div>
+
+              {/* Options */}
+              <div className="flex flex-col gap-3">
+                {activity.riskOptions.map((option: RiskOption, index: number) => {
+                  const isSelected = riskEventSelected === option.id;
+                  const letters = ["A", "B", "C", "D"];
+                  return (
+                    <motion.button
+                      key={option.id}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={() => { playSelect(); setRiskEventSelected(option.id); }}
+                      className="rounded-2xl p-4 flex items-center gap-3 w-full text-left"
+                      style={{
+                        background: isSelected ? `${option.badgeColor ?? stage.color}12` : "white",
+                        border: isSelected ? `2px solid ${option.badgeColor ?? stage.color}` : "1.5px solid #e2e8f0",
+                        boxShadow: isSelected ? `0 4px 16px ${option.badgeColor ?? stage.color}25` : "0 2px 8px rgba(0,0,0,0.04)",
+                        transition: "all 0.2s",
+                      }}
+                    >
+                      {/* Letter badge */}
+                      <div
+                        className="flex-shrink-0 rounded-full flex items-center justify-center"
+                        style={{
+                          width: "32px", height: "32px", minWidth: "32px",
+                          background: isSelected ? (option.badgeColor ?? stage.color) : "#f1f5f9",
+                          border: isSelected ? "none" : "1.5px solid #e2e8f0",
+                        }}
+                      >
+                        <span style={{ color: isSelected ? "white" : "#94a3b8", fontSize: "13px", fontWeight: 700 }}>
+                          {letters[index]}
+                        </span>
+                      </div>
+
+                      {/* Text + badge */}
+                      <div className="flex-1">
+                        <p style={{ color: isSelected ? "#0f172a" : "#1e293b", fontSize: "14px", fontWeight: isSelected ? 600 : 400, lineHeight: 1.4 }}>
+                          {option.text}
+                        </p>
+                        {option.badge && (
+                          <span
+                            className="inline-block mt-1 px-2 py-0.5 rounded-lg"
+                            style={{
+                              background: `${option.badgeColor ?? stage.color}18`,
+                              color: option.badgeColor ?? stage.color,
+                              fontSize: "11px",
+                              fontWeight: 700,
+                            }}
+                          >
+                            {option.badge}
+                          </span>
+                        )}
+                      </div>
+                    </motion.button>
+                  );
+                })}
+              </div>
+
+              {/* Impacto estimado */}
+              <AnimatePresence>
+                {riskEventSelected && (() => {
+                  const sel = activity.riskOptions!.find((o: RiskOption) => o.id === riskEventSelected);
+                  if (!sel) return null;
+                  const impactIcon = (dir?: "up" | "down" | "neutral") =>
+                    dir === "up" ? "↑" : dir === "down" ? "↓" : "–";
+                  const impactColor = (dir?: "up" | "down" | "neutral", isRisk = false) => {
+                    if (dir === "up") return isRisk ? "#ef4444" : "#10b981";
+                    if (dir === "down") return isRisk ? "#10b981" : "#ef4444";
+                    return "#94a3b8";
+                  };
+                  return (
+                    <motion.div
+                      key={riskEventSelected}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      className="rounded-2xl p-4"
+                      style={{ background: "white", border: "1.5px solid #e2e8f0", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
+                    >
+                      <p style={{ color: "#64748b", fontSize: "11px", fontWeight: 700, marginBottom: "12px" }}>IMPACTO ESTIMADO</p>
+                      <div className="grid grid-cols-2 gap-3">
+                        {/* Tiempo */}
+                        <div className="flex items-center gap-2">
+                          <span style={{ fontSize: "18px" }}>⏱</span>
+                          <span style={{ color: "#64748b", fontSize: "13px" }}>Tiempo</span>
+                          <span style={{ color: impactColor(sel.impacts.tiempo), fontSize: "15px", fontWeight: 700, marginLeft: "auto" }}>
+                            {impactIcon(sel.impacts.tiempo)}
+                          </span>
+                        </div>
+                        {/* Presupuesto */}
+                        <div className="flex items-center gap-2">
+                          <span style={{ fontSize: "18px" }}>💰</span>
+                          <span style={{ color: "#64748b", fontSize: "13px" }}>Presupuesto</span>
+                          <span style={{ color: impactColor(sel.impacts.presupuesto), fontSize: "15px", fontWeight: 700, marginLeft: "auto" }}>
+                            {impactIcon(sel.impacts.presupuesto)}
+                          </span>
+                        </div>
+                        {/* Calidad */}
+                        <div className="flex items-center gap-2">
+                          <span style={{ fontSize: "18px" }}>⭐</span>
+                          <span style={{ color: "#64748b", fontSize: "13px" }}>Calidad</span>
+                          <span style={{ color: impactColor(sel.impacts.calidad), fontSize: "15px", fontWeight: 700, marginLeft: "auto" }}>
+                            {impactIcon(sel.impacts.calidad)}
+                          </span>
+                        </div>
+                        {/* Riesgo */}
+                        <div className="flex items-center gap-2">
+                          <span style={{ fontSize: "18px" }}>🔴</span>
+                          <span style={{ color: "#64748b", fontSize: "13px" }}>Riesgo</span>
+                          <span style={{ color: impactColor(sel.impacts.riesgo, true), fontSize: "15px", fontWeight: 700, marginLeft: "auto" }}>
+                            {impactIcon(sel.impacts.riesgo)}
+                          </span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })()}
+              </AnimatePresence>
+
+              {/* Companion message */}
+              <div
+                className="rounded-2xl p-4 flex items-start gap-3"
+                style={{ background: "#f0f9ff", border: "1.5px solid #bae6fd" }}
+              >
+                <div
+                  className="flex-shrink-0 rounded-xl flex items-center justify-center"
+                  style={{ width: "36px", height: "36px", background: stage.color }}
+                >
+                  <span style={{ fontSize: "18px" }}>🤖</span>
+                </div>
+                <p style={{ color: "#0c4a6e", fontSize: "13px", lineHeight: 1.6 }}>
+                  {activity.riskCompanionMessage ?? "No existe una única respuesta correcta. Evalúa el impacto de cada decisión."}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* ── DEPENDENCY GRAPH ─────────────────────────────────────────── */}
+          {isDependencyGraph && activity.graphNodes && activity.graphCorrectEdges && (
+            <div className="flex flex-col gap-4">
+
+              {/* Split panel: task list + graph */}
+              <div
+                className="rounded-3xl overflow-hidden"
+                style={{ background: "white", boxShadow: "0 2px 12px rgba(0,0,0,0.06)", border: "1.5px solid #e2e8f0" }}
+              >
+                <div className="flex" style={{ minHeight: "270px" }}>
+
+                  {/* Left: task labels */}
+                  <div
+                    className="flex flex-col justify-around py-5 px-4"
+                    style={{ width: "44%", background: "#f8fafc", borderRight: "1.5px solid #e2e8f0" }}
+                  >
+                    {activity.graphNodes.map((node: GraphNode, i: number) => {
+                      const colors = ["#3b82f6", "#8b5cf6", "#14b8a6", "#f97316", "#ec4899"];
+                      const isLinked = graphEdges.some(e => e.from === node.id || e.to === node.id);
+                      return (
+                        <div key={node.id} className="flex items-center gap-2">
+                          <div
+                            className="rounded-full flex items-center justify-center flex-shrink-0"
+                            style={{
+                              width: "24px", height: "24px",
+                              background: isLinked ? colors[i] : "#e2e8f0",
+                              transition: "background 0.2s",
+                            }}
+                          >
+                            <span style={{ color: "white", fontSize: "10px", fontWeight: 700 }}>{node.label}</span>
+                          </div>
+                          <span style={{ color: "#334155", fontSize: "12px", lineHeight: 1.3 }}>{node.taskName}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Right: SVG graph */}
+                  <div className="flex-1 flex items-center justify-center p-2">
+                    <svg viewBox="0 0 160 220" style={{ width: "100%", maxWidth: "160px" }}>
+                      {/* Edges */}
+                      {graphEdges.map((edge, i) => {
+                        const fromNode = activity.graphNodes!.find((n: GraphNode) => n.id === edge.from)!;
+                        const toNode   = activity.graphNodes!.find((n: GraphNode) => n.id === edge.to)!;
+                        return (
+                          <line
+                            key={`edge-${i}`}
+                            x1={fromNode.x * 1.6} y1={fromNode.y * 2.2}
+                            x2={toNode.x * 1.6}   y2={toNode.y * 2.2}
+                            stroke="#22c55e"
+                            strokeWidth="3"
+                            strokeLinecap="round"
+                          />
+                        );
+                      })}
+
+                      {/* Nodes */}
+                      {activity.graphNodes.map((node: GraphNode, i: number) => {
+                        const colors = ["#3b82f6", "#8b5cf6", "#14b8a6", "#f97316", "#ec4899"];
+                        const cx = node.x * 1.6;
+                        const cy = node.y * 2.2;
+                        const isSelected = graphSelected === node.id;
+                        const color = colors[i];
+                        return (
+                          <g key={node.id} onClick={() => handleGraphNodeTap(node.id)} style={{ cursor: "pointer" }}>
+                            {isSelected && <circle cx={cx} cy={cy} r="24" fill={color} opacity="0.25" />}
+                            <circle cx={cx} cy={cy} r="18" fill={color} />
+                            {isSelected && <circle cx={cx} cy={cy} r="18" fill="none" stroke="white" strokeWidth="3" />}
+                            <text x={cx} y={cy} textAnchor="middle" dominantBaseline="central" fill="white" fontSize="13" fontWeight="bold">
+                              {node.label}
+                            </text>
+                          </g>
+                        );
+                      })}
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              {/* Status + reset */}
+              <div className="flex items-center justify-between px-1">
+                <span style={{ color: "#64748b", fontSize: "12px" }}>
+                  {graphSelected
+                    ? `"${activity.graphNodes.find((n: GraphNode) => n.id === graphSelected)?.label}" seleccionado — toca otro nodo`
+                    : `Conexiones: ${graphEdges.length} / ${activity.graphCorrectEdges!.length}`}
+                </span>
+                {graphEdges.length > 0 && (
+                  <button
+                    onClick={() => { setGraphEdges([]); setGraphSelected(null); }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl"
+                    style={{ background: "#f1f5f9", color: "#64748b", fontSize: "12px", fontWeight: 600, border: "1px solid #e2e8f0" }}
+                  >
+                    <RotateCcw size={12} />
+                    Reiniciar
+                  </button>
+                )}
+              </div>
+
+              {/* Companion message */}
+              <div className="rounded-2xl p-4 flex items-start gap-3" style={{ background: "#f0f9ff", border: "1.5px solid #bae6fd" }}>
+                <div className="flex-shrink-0 rounded-xl flex items-center justify-center" style={{ width: "36px", height: "36px", background: stage.color }}>
+                  <span style={{ fontSize: "18px" }}>🤖</span>
+                </div>
+                <p style={{ color: "#0c4a6e", fontSize: "13px", lineHeight: 1.6 }}>
+                  {activity.graphCompanionMessage ?? "Conecta los nodos en el orden correcto de dependencias."}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* ── TEAM BUILDER ─────────────────────────────────────────────── */}
+          {isTeamBuilder && activity.teamMembers && (
+            <div className="flex flex-col gap-4">
+
+              {/* Selection counter */}
+              <div className="flex items-center justify-between px-1">
+                <span style={{ color: "#64748b", fontSize: "12px", fontWeight: 600 }}>
+                  Seleccionados: {selectedTeam.length} / {activity.teamSize ?? 4}
+                </span>
+                {selectedTeam.length > 0 && (
+                  <button
+                    onClick={() => setSelectedTeam([])}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl"
+                    style={{ background: "#f1f5f9", color: "#64748b", fontSize: "12px", fontWeight: 600, border: "1px solid #e2e8f0" }}
+                  >
+                    <RotateCcw size={12} />
+                    Limpiar
+                  </button>
+                )}
+              </div>
+
+              {/* Member grid */}
+              <div className="grid grid-cols-3 gap-3">
+                {activity.teamMembers.map((member: TeamMember) => {
+                  const isSelected = selectedTeam.includes(member.id);
+                  const isFull = selectedTeam.length >= (activity.teamSize ?? 4);
+                  const disabled = !isSelected && isFull;
+                  return (
+                    <motion.button
+                      key={member.id}
+                      whileTap={{ scale: disabled ? 1 : 0.95 }}
+                      onClick={() => {
+                        if (disabled) return;
+                        if (isSelected) {
+                          playClick();
+                          setSelectedTeam(prev => prev.filter(id => id !== member.id));
+                        } else {
+                          playSelect();
+                          setSelectedTeam(prev => [...prev, member.id]);
+                        }
+                      }}
+                      className="rounded-2xl p-3 flex flex-col items-center gap-1.5 relative"
+                      style={{
+                        background: isSelected ? "#f0fdf4" : "white",
+                        border: isSelected ? "2px solid #22c55e" : "1.5px solid #e2e8f0",
+                        boxShadow: isSelected ? "0 4px 16px rgba(34,197,94,0.2)" : "0 2px 8px rgba(0,0,0,0.04)",
+                        opacity: disabled ? 0.45 : 1,
+                        cursor: disabled ? "not-allowed" : "pointer",
+                        transition: "all 0.2s",
+                      }}
+                    >
+                      {isSelected && (
+                        <div
+                          className="absolute top-1.5 right-1.5 rounded-full flex items-center justify-center"
+                          style={{ width: "18px", height: "18px", background: "#22c55e" }}
+                        >
+                          <Check size={10} color="white" strokeWidth={3} />
+                        </div>
+                      )}
+                      <div
+                        className="rounded-2xl flex items-center justify-center"
+                        style={{ width: "52px", height: "52px", background: isSelected ? "#dcfce7" : "#f1f5f9", fontSize: "28px" }}
+                      >
+                        {member.emoji}
+                      </div>
+                      <p style={{ color: isSelected ? "#166534" : "#0f172a", fontSize: "12px", fontWeight: 700, textAlign: "center", lineHeight: 1.2 }}>
+                        {member.name}
+                      </p>
+                      <p style={{ color: isSelected ? "#16a34a" : "#94a3b8", fontSize: "10px", textAlign: "center" }}>
+                        {member.role}
+                      </p>
+                    </motion.button>
+                  );
+                })}
+              </div>
+
+              {/* Skill bars */}
+              {selectedTeam.length > 0 && (() => {
+                const members = activity.teamMembers!.filter((m: TeamMember) => selectedTeam.includes(m.id));
+                const maxScore = (activity.teamSize ?? 4) * 4;
+                const bars = [
+                  { label: "Técnicas",     value: members.reduce((s: number, m: TeamMember) => s + m.skills.tecnicas,     0), color: "#3b82f6" },
+                  { label: "Gestión",      value: members.reduce((s: number, m: TeamMember) => s + m.skills.gestion,      0), color: "#8b5cf6" },
+                  { label: "Comunicación", value: members.reduce((s: number, m: TeamMember) => s + m.skills.comunicacion, 0), color: "#22c55e" },
+                ];
+                return (
+                  <motion.div
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="rounded-2xl p-4 flex flex-col gap-3"
+                    style={{ background: "white", border: "1.5px solid #e2e8f0", boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}
+                  >
+                    <p style={{ color: "#64748b", fontSize: "11px", fontWeight: 700 }}>HABILIDADES DEL EQUIPO</p>
+                    {bars.map(bar => (
+                      <div key={bar.label} className="flex flex-col gap-1">
+                        <div className="flex items-center justify-between">
+                          <span style={{ color: "#64748b", fontSize: "12px" }}>{bar.label}</span>
+                          <span style={{ color: bar.color, fontSize: "11px", fontWeight: 700 }}>{bar.value}/{maxScore}</span>
+                        </div>
+                        <div className="rounded-full overflow-hidden" style={{ height: "8px", background: "#f1f5f9" }}>
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${Math.min((bar.value / maxScore) * 100, 100)}%` }}
+                            transition={{ duration: 0.4 }}
+                            className="h-full rounded-full"
+                            style={{ background: bar.color }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </motion.div>
+                );
+              })()}
+
+              {/* Companion */}
+              <div className="rounded-2xl p-4 flex items-start gap-3" style={{ background: "#f0f9ff", border: "1.5px solid #bae6fd" }}>
+                <div className="flex-shrink-0 rounded-xl flex items-center justify-center" style={{ width: "36px", height: "36px", background: stage.color }}>
+                  <span style={{ fontSize: "18px" }}>🤖</span>
+                </div>
+                <p style={{ color: "#0c4a6e", fontSize: "13px", lineHeight: 1.6 }}>
+                  {activity.teamCompanionMessage ?? "Un equipo equilibrado tiene más posibilidades de éxito."}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* ── BUDGET ALLOCATION ────────────────────────────────────────── */}
+          {isBudgetAllocation && activity.resources && activity.budget !== undefined && (
+            <div className="flex flex-col gap-4">
+              {/* Budget bar */}
+              <div
+                className="rounded-2xl p-4 flex items-center justify-between"
+                style={{ background: "white", border: "1.5px solid #e2e8f0", boxShadow: "0 2px 8px rgba(0,0,0,0.05)" }}
+              >
+                <span style={{ color: "#64748b", fontSize: "13px", fontWeight: 600 }}>Presupuesto disponible</span>
+                <div className="flex items-center gap-1.5">
+                  <span style={{ fontSize: "16px" }}>🪙</span>
+                  <span style={{ color: "#f59e0b", fontSize: "18px", fontWeight: 800 }}>
+                    {activity.budget.toLocaleString()}
+                  </span>
+                </div>
+              </div>
+
+              {/* Resource grid */}
+              <div className="grid grid-cols-2 gap-3">
+                {activity.resources.map((resource) => {
+                  const isSelected = budgetSelected.includes(resource.id);
+                  const totalIfAdded = activity.resources!
+                    .filter(r => budgetSelected.includes(r.id))
+                    .reduce((sum, r) => sum + r.cost, 0) + (isSelected ? 0 : resource.cost);
+                  const wouldExceed = !isSelected && totalIfAdded > activity.budget!;
+                  return (
+                    <motion.button
+                      key={resource.id}
+                      whileTap={{ scale: 0.96 }}
+                      onClick={() => {
+                        if (wouldExceed) return;
+                        playSelect();
+                        setBudgetSelected(prev =>
+                          prev.includes(resource.id)
+                            ? prev.filter(id => id !== resource.id)
+                            : [...prev, resource.id]
+                        );
+                      }}
+                      className="rounded-2xl p-4 flex flex-col items-start gap-2 text-left relative"
+                      style={{
+                        background: isSelected ? `${stage.color}10` : wouldExceed ? "#f8fafc" : "white",
+                        border: isSelected
+                          ? `2px solid ${stage.color}`
+                          : wouldExceed
+                          ? "1.5px dashed #e2e8f0"
+                          : "1.5px solid #e2e8f0",
+                        boxShadow: isSelected ? `0 4px 16px ${stage.color}25` : "0 2px 8px rgba(0,0,0,0.04)",
+                        opacity: wouldExceed ? 0.5 : 1,
+                        cursor: wouldExceed ? "not-allowed" : "pointer",
+                        transition: "all 0.2s",
+                      }}
+                    >
+                      {/* Checkmark badge */}
+                      <div
+                        className="absolute top-3 right-3 rounded-full flex items-center justify-center"
+                        style={{
+                          width: "22px", height: "22px",
+                          background: isSelected ? stage.color : "#f1f5f9",
+                          border: isSelected ? "none" : "1.5px solid #e2e8f0",
+                          transition: "all 0.2s",
+                        }}
+                      >
+                        {isSelected && <Check size={12} color="white" strokeWidth={3} />}
+                      </div>
+
+                      {/* Icon */}
+                      <div
+                        className="rounded-xl flex items-center justify-center"
+                        style={{
+                          width: "44px", height: "44px",
+                          background: isSelected ? `${stage.color}20` : "#f1f5f9",
+                          fontSize: "22px",
+                          transition: "all 0.2s",
+                        }}
+                      >
+                        {resource.icon}
+                      </div>
+
+                      {/* Name */}
+                      <p style={{
+                        color: isSelected ? stage.color : "#1e293b",
+                        fontSize: "13px",
+                        fontWeight: isSelected ? 700 : 500,
+                        lineHeight: 1.3,
+                        paddingRight: "24px",
+                      }}>
+                        {resource.name}
+                      </p>
+
+                      {/* Cost */}
+                      <div className="flex items-center gap-1">
+                        <span style={{ fontSize: "13px" }}>🪙</span>
+                        <span style={{
+                          color: isSelected ? stage.color : "#64748b",
+                          fontSize: "13px",
+                          fontWeight: 700,
+                        }}>
+                          {resource.cost.toLocaleString()}
+                        </span>
+                      </div>
+                    </motion.button>
+                  );
+                })}
+              </div>
+
+              {/* Total selected */}
+              {(() => {
+                const total = activity.resources!
+                  .filter(r => budgetSelected.includes(r.id))
+                  .reduce((sum, r) => sum + r.cost, 0);
+                const overBudget = total > activity.budget!;
+                return (
+                  <motion.div
+                    key={total}
+                    initial={{ opacity: 0.7, scale: 0.99 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="rounded-2xl p-4 flex items-center justify-between"
+                    style={{
+                      background: overBudget ? "#fef2f2" : total === activity.budget! ? "#f0fdf4" : "white",
+                      border: overBudget ? "2px solid #fca5a5" : total === activity.budget! ? "2px solid #86efac" : "1.5px solid #e2e8f0",
+                      boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+                    }}
+                  >
+                    <span style={{ color: overBudget ? "#b91c1c" : total === activity.budget! ? "#15803d" : "#64748b", fontSize: "14px", fontWeight: 600 }}>
+                      Total seleccionado:
+                    </span>
+                    <span style={{
+                      color: overBudget ? "#ef4444" : total === activity.budget! ? "#10b981" : "#0f172a",
+                      fontSize: "18px", fontWeight: 800,
+                    }}>
+                      🪙 {total.toLocaleString()}
+                    </span>
+                  </motion.div>
+                );
+              })()}
+
+              {/* Chatbot tip */}
+              <div
+                className="rounded-2xl p-4 flex items-start gap-3"
+                style={{ background: "#f0f9ff", border: "1.5px solid #bae6fd" }}
+              >
+                <div
+                  className="flex-shrink-0 rounded-xl flex items-center justify-center"
+                  style={{ width: "36px", height: "36px", background: stage.color }}
+                >
+                  <span style={{ fontSize: "18px" }}>🤖</span>
+                </div>
+                <p style={{ color: "#0c4a6e", fontSize: "13px", lineHeight: 1.6 }}>
+                  Prioriza lo esencial para cumplir tus objetivos <strong>sin exceder el presupuesto</strong>.
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* ── HINT ─────────────────────────────────────────────────────── */}
           <AnimatePresence>
             {showHint && (
@@ -1286,15 +2020,28 @@ export function ActivityScreen() {
         >
           {!showHint && !isReflection && !isCrossword && (
             <button
-              onClick={() => setShowHint(true)}
-              className="flex items-center justify-center gap-2 py-2.5 rounded-xl"
+              onClick={() => {
+                if (hintBought) { setShowHint(true); return; }
+                if (state.xp >= 100) {
+                  spendXP(100);
+                  setHintBought(true);
+                  setShowHint(true);
+                }
+              }}
+              disabled={!hintBought && state.xp < 100}
+              className="flex items-center justify-center gap-2 py-2.5 rounded-xl transition-all active:scale-95"
               style={{
-                background: "#fffbeb", color: "#d97706", fontSize: "13px",
-                fontWeight: 600, border: "1.5px solid #fde68a",
+                background: !hintBought && state.xp < 100 ? "#f1f5f9" : "#fffbeb",
+                color: !hintBought && state.xp < 100 ? "#94a3b8" : "#d97706",
+                fontSize: "13px",
+                fontWeight: 600,
+                border: `1.5px solid ${!hintBought && state.xp < 100 ? "#e2e8f0" : "#fde68a"}`,
+                opacity: !hintBought && state.xp < 100 ? 0.6 : 1,
+                cursor: !hintBought && state.xp < 100 ? "not-allowed" : "pointer",
               }}
             >
               <Lightbulb size={15} />
-              Ver pista
+              {hintBought ? "Ver pista" : state.xp >= 100 ? "Comprar pista · 100 XP" : `Sin XP suficiente (necesitas 100)`}
             </button>
           )}
           <button
@@ -1312,7 +2059,7 @@ export function ActivityScreen() {
               transition: "all 0.2s",
             }}
           >
-            {isReflection ? "Guardar reflexión" : isCrossword ? "Verificar crucigrama" : isWordBuilder ? "Validar objetivo" : "Comprobar respuesta"}
+            {isReflection ? "Guardar reflexión" : isCrossword ? "Verificar crucigrama" : isWordBuilder ? "Validar objetivo" : isTimelineOrder ? "Validar orden" : isBudgetAllocation ? "Confirmar selección" : isRiskEvent ? "Confirmar decisión" : isDependencyGraph ? "Validar conexiones" : isTeamBuilder ? "Confirmar equipo" : "Comprobar respuesta"}
           </button>
         </div>
       </div>

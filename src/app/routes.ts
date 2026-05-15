@@ -1,6 +1,8 @@
 import { createHashRouter } from "react-router";
 import { SplashScreen } from "./screens/SplashScreen";
 import { OnboardingScreen } from "./screens/OnboardingScreen";
+import { LoginScreen } from "./screens/LoginScreen";
+import { RegisterScreen } from "./screens/RegisterScreen";
 import { HomeScreen } from "./screens/HomeScreen";
 import { StageDetailScreen } from "./screens/StageDetailScreen";
 import { StageIntroScreen } from "./screens/StageIntroScreen";
@@ -15,10 +17,13 @@ import PixelFlowDemo from "./screens/PixelFlowDemo";
 import { PixelChatScreen } from "./screens/PixelChatScreen";
 import { ActivitiesScreen } from "./screens/ActivitiesScreen";
 import { DiaryScreen } from "./screens/DiaryScreen";
+import { SeedScreen } from "./screens/SeedScreen";
 
 export const router = createHashRouter([
   { path: "/", Component: SplashScreen },
   { path: "/onboarding", Component: OnboardingScreen },
+  { path: "/login", Component: LoginScreen },
+  { path: "/register", Component: RegisterScreen },
   { path: "/home", Component: HomeScreen },
   { path: "/stages", Component: StagesListScreen },
   { path: "/stage/:id", Component: StageDetailScreen },
@@ -33,4 +38,5 @@ export const router = createHashRouter([
   { path: "/pixel-demo", Component: PixelFlowDemo },
   { path: "/activities", Component: ActivitiesScreen },
   { path: "/diary", Component: DiaryScreen },
+  { path: "/seed", Component: SeedScreen },
 ]);

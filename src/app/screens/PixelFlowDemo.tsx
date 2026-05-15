@@ -167,7 +167,7 @@ export default function PixelFlowDemo() {
     {
       id: "answer-correct",
       title: "3. Respuesta Correcta",
-      description: "Pixel celebra y refuerza el aprendizaje con energía positiva",
+      description: "Pixel celebra y refuerza el conocimiento con energía positiva",
       pixelState: "correct",
       pixelMessage: "¡Exacto! Identificaste perfectamente que el alcance define las características incluidas y excluidas. Esto es fundamental para gestionar expectativas.",
       backgroundColor: "#f0fdf4",
@@ -648,7 +648,7 @@ export default function PixelFlowDemo() {
                   marginLeft: "auto",
                   marginRight: "auto",
                 }}>
-                  Descubre cómo Pixel acompaña al usuario en cada momento clave del aprendizaje.
+                  Descubre cómo Pixel acompaña al usuario en cada momento clave del curso.
                   Aparece contextualmente, ofrece apoyo y celebra cada logro.
                 </p>
                 <button

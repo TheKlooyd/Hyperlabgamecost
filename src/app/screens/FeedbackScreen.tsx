@@ -47,7 +47,7 @@ export function FeedbackScreen() {
       // Pixel da apoyo
       addNotification({
         type: "error-support",
-        message: `No te preocupes, es parte del aprendizaje. ${state?.hint || "Revisa la explicación y vuelve a intentarlo."} Cada error te ayuda a mejorar.`,
+        message: `No te preocupes, es parte del proceso. ${state?.hint || "Revisa la explicación y vuelve a intentarlo."} Cada error te ayuda a mejorar.`,
         mood: "helping",
         pixelState: "encouraging",
         priority: "high",

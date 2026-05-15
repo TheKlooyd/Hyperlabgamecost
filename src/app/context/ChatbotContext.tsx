@@ -207,7 +207,7 @@ export const chatbotActions = {
     const messages = [
       `¡Etapa ${stageNumber} completada! Me siento muy orgulloso de tu esfuerzo. Sigamos adelante.`,
       `¡Lo lograste! Terminaste la Etapa ${stageNumber}. Cada vez estás más cerca del objetivo.`,
-      `¡Excelente trabajo! Etapa ${stageNumber} superada. Tu aprendizaje va genial.`,
+      `¡Excelente trabajo! Etapa ${stageNumber} superada. Tu progreso va genial.`,
     ];
 
     addNotification({
@@ -243,7 +243,7 @@ export const chatbotActions = {
   welcome: (addNotification: ChatbotContextValue["addNotification"], userName: string) => {
     addNotification({
       type: "welcome",
-      message: `¡Hola ${userName}! Soy Pixel y voy a acompañarte en todo este viaje de aprendizaje. Estoy aquí para ayudarte siempre que lo necesites.`,
+      message: `¡Hola ${userName}! Soy Pixel y voy a acompañarte en todo este viaje. Estoy aquí para ayudarte siempre que lo necesites.`,
       mood: "happy",
       pixelState: "welcome",
       priority: "high",
@@ -268,7 +268,7 @@ export const chatbotActions = {
   // Animar generalmente
   encourage: (addNotification: ChatbotContextValue["addNotification"]) => {
     const messages = [
-      "Vas muy bien. Cada paso cuenta en tu aprendizaje.",
+      "Vas muy bien. Cada paso cuenta en tu progreso.",
       "Tu progreso es notable. Sigue confiando en ti.",
       "Estás haciendo un gran trabajo. No lo olvides.",
     ];

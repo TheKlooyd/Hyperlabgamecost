@@ -4,17 +4,23 @@ import { motion } from "motion/react";
 import { Gamepad2, Zap, Target, ArrowRight } from "lucide-react";
 import { MobileLayout } from "../components/MobileLayout";
 import { playStart } from "../utils/sounds";
+import { getSession } from "../utils/auth";
 
 export function SplashScreen() {
   const navigate = useNavigate();
 
   const handleStart = () => {
     playStart();
-    const onboarded = localStorage.getItem("vgp-onboarded");
-    if (onboarded === "true") {
+    const session = getSession();
+    if (session) {
       navigate("/home");
     } else {
-      navigate("/onboarding");
+      const onboarded = localStorage.getItem("vgp-onboarded");
+      if (onboarded === "true") {
+        navigate("/login");
+      } else {
+        navigate("/onboarding");
+      }
     }
   };
 

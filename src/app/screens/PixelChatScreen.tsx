@@ -32,7 +32,7 @@ const KNOWLEDGE: Array<{
   {
     keywords: ["hola", "buenas", "hey", "hi", "ola", "buenos", "saludos", "qué tal", "que tal"],
     response:
-      "¡Hola! Soy Pixel, tu compañero de aprendizaje 🤖✨ Puedo ayudarte con cualquier duda del curso: las 6 etapas, conceptos de diseño de videojuegos, costos de producción, narrativa, mecánicas… ¡Lo que necesites!",
+      "¡Hola! Soy Pixel, tu compañero del curso 🤖✨ Puedo ayudarte con cualquier duda: las 6 etapas, conceptos de diseño de videojuegos, costos de producción, narrativa, mecánicas… ¡Lo que necesites!",
     mood: "happy",
   },
 
@@ -168,13 +168,13 @@ const KNOWLEDGE: Array<{
   {
     keywords: ["no entiendo", "está difícil", "difícil", "no puedo", "me trabo", "confundido", "confundida", "me perdí", "me perdi"],
     response:
-      "¡Tranquilo/a! El diseño de videojuegos tiene muchos conceptos pero se aprenden paso a paso 💙\n\nConsejo: cuando una actividad sea difícil, lee con calma la pregunta otra vez y busca la palabra clave. Después de responder, lee la explicación aunque hayas acertado: ahí está el aprendizaje real.\n\n¡Tú puedes! Cada duda que resuelves te hace mejor diseñador/a.",
+      "¡Tranquilo/a! El diseño de videojuegos tiene muchos conceptos pero se aprenden paso a paso 💙\n\nConsejo: cuando una actividad sea difícil, lee con calma la pregunta otra vez y busca la palabra clave. Después de responder, lee la explicación aunque hayas acertado: ahí está el valor real.\n\n¡Tú puedes! Cada duda que resuelves te hace mejor diseñador/a.",
     mood: "helping",
   },
   {
     keywords: ["gracias", "genial", "excelente", "perfecto", "muy bien", "chévere", "chevere", "buenísimo", "buenisimo"],
     response:
-      "¡Con mucho gusto! Para eso estoy aquí 🤖✨ Si tienes más preguntas sobre el curso o sobre diseño de videojuegos, solo escríbeme. ¡Sigue adelante con el aprendizaje!",
+      "¡Con mucho gusto! Para eso estoy aquí 🤖✨ Si tienes más preguntas sobre el curso o sobre diseño de videojuegos, solo escríbeme. ¡Sigue adelante con el curso!",
     mood: "celebrating",
   },
 ];
@@ -258,7 +258,7 @@ export function PixelChatScreen() {
     {
       id: "welcome",
       role: "pixel",
-      text: `¡Hola, ${state.userName || "estudiante"}! 👋 Soy **Pixel**, tu asistente de aprendizaje.\n\nPuedo responderte preguntas sobre las etapas del curso, conceptos de diseño de videojuegos, presupuestos, narrativa y más. ¿En qué puedo ayudarte hoy?`,
+      text: `¡Hola, ${state.userName || "estudiante"}! 👋 Soy **Pixel**, tu asistente del curso.\n\nPuedo responderte preguntas sobre las etapas del curso, conceptos de diseño de videojuegos, presupuestos, narrativa y más. ¿En qué puedo ayudarte hoy?`,
       mood: "happy",
       chips: WELCOME_CHIPS,
     },

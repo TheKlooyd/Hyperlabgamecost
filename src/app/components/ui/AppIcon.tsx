@@ -3,6 +3,7 @@ import {
   Lightbulb, Maximize2, Users, Banknote, BarChart2, TrendingUp,
   Star, Gem, Flame, Award, Target, Zap, Trophy, Gamepad2,
   FileText, PenLine, BookOpen, Bot, Map, Check, Lock, Unlock,
+  Footprints, FlaskConical, Compass, Scroll, Hammer, Crown, Shield,
   type LucideProps,
 } from "lucide-react";
 
@@ -29,6 +30,13 @@ const iconMap: Record<string, React.ComponentType<LucideProps>> = {
   check: Check,
   lock: Lock,
   unlock: Unlock,
+  footprints: Footprints,
+  "flask-conical": FlaskConical,
+  compass: Compass,
+  scroll: Scroll,
+  hammer: Hammer,
+  crown: Crown,
+  shield: Shield,
 };
 
 interface AppIconProps {

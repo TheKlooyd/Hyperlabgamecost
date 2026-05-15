@@ -5,6 +5,110 @@ import { MobileLayout } from "../components/MobileLayout";
 import { BottomNav } from "../components/BottomNav";
 import { playClick, playNavigate } from "../utils/sounds";
 
+/* ─── Week Calendar ──────────────────────────────────────────────────────── */
+const DAY_LABELS = ["L", "M", "M", "J", "V", "S", "D"];
+
+function getWeekDays(today: Date): Date[] {
+  // Monday-based week
+  const dow = today.getDay(); // 0=Sun … 6=Sat
+  const mondayOffset = dow === 0 ? -6 : 1 - dow;
+  const monday = new Date(today);
+  monday.setDate(today.getDate() + mondayOffset);
+  return Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    return d;
+  });
+}
+
+function WeekCalendar() {
+  const today = new Date();
+  const weekDays = getWeekDays(today);
+  const monthLabel = today.toLocaleDateString("es-ES", { month: "long", year: "numeric" });
+  const capitalMonth = monthLabel.charAt(0).toUpperCase() + monthLabel.slice(1);
+
+  return (
+    <div
+      className="mx-5 mt-4 mb-2 rounded-2xl"
+      style={{
+        background: "white",
+        border: "1.5px solid #e2e8f0",
+        boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+        padding: "14px 12px 12px",
+      }}
+    >
+      {/* Month & year */}
+      <p
+        style={{
+          textAlign: "center",
+          fontWeight: 700,
+          fontSize: "13px",
+          color: "#0f172a",
+          marginBottom: "10px",
+          letterSpacing: "0.2px",
+        }}
+      >
+        {capitalMonth}
+      </p>
+
+      {/* Day columns */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: "4px" }}>
+        {/* Day letter headers */}
+        {DAY_LABELS.map((label, i) => (
+          <div
+            key={i}
+            style={{
+              textAlign: "center",
+              fontSize: "11px",
+              fontWeight: 600,
+              color: "#94a3b8",
+              paddingBottom: "4px",
+            }}
+          >
+            {label}
+          </div>
+        ))}
+
+        {/* Date numbers */}
+        {weekDays.map((d, i) => {
+          const isToday =
+            d.getDate() === today.getDate() &&
+            d.getMonth() === today.getMonth() &&
+            d.getFullYear() === today.getFullYear();
+          return (
+            <div
+              key={i}
+              style={{
+                textAlign: "center",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <div
+                style={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: "50%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: isToday ? "#6366f1" : "transparent",
+                  color: isToday ? "white" : "#0f172a",
+                  fontSize: "13px",
+                  fontWeight: isToday ? 700 : 500,
+                }}
+              >
+                {d.getDate()}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 /* ─── Types ───────────────────────────────────────────────────────────────── */
 interface DiaryEntry {
   id: string;
@@ -151,6 +255,9 @@ export function DiaryScreen() {
             {showForm ? "Cancelar" : "Nueva nota"}
           </motion.button>
         </div>
+
+        {/* ── Week calendar ─────────────────────────────────────────────────── */}
+        <WeekCalendar />
 
         {/* ── New entry form ────────────────────────────────────────────────── */}
         <AnimatePresence>

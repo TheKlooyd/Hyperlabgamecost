@@ -14,7 +14,7 @@ type QuizPhase = "question" | "feedback" | "results";
 export function QuizScreen() {
   const navigate = useNavigate();
   const { stageId } = useParams<{ stageId: string }>();
-  const { passQuiz } = useApp();
+  const { passQuiz, state, spendXP } = useApp();
 
   const stage = stages.find(s => s.id === Number(stageId));
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -23,6 +23,8 @@ export function QuizScreen() {
   const [score, setScore] = useState(0);
   const [answers, setAnswers] = useState<Array<{ selected: number; correct: boolean }>>([]);
   const [confirmed, setConfirmed] = useState(false);
+  const [hintVisible, setHintVisible] = useState(false);
+  const [hintUsed, setHintUsed] = useState(false);
 
   if (!stage || stage.quiz.length === 0) {
     return (
@@ -66,6 +68,8 @@ export function QuizScreen() {
       setCurrentQuestion(prev => prev + 1);
       setSelectedAnswer(null);
       setConfirmed(false);
+      setHintVisible(false);
+      setHintUsed(false);
       setPhase("question");
     } else {
       const allAnswers = [...answers];
@@ -253,7 +257,7 @@ export function QuizScreen() {
                 className="rounded-3xl p-5"
                 style={{ background: "white", boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}
               >
-                <div className="flex items-center gap-2 mb-3">
+                <div className="flex items-center justify-between gap-2 mb-3">
                   <div
                     className="rounded-lg px-2 py-0.5"
                     style={{ background: stage.bgColor }}
@@ -262,7 +266,45 @@ export function QuizScreen() {
                       PREGUNTA {currentQuestion + 1}
                     </span>
                   </div>
+                  {!confirmed && (
+                    <button
+                      onClick={() => {
+                        if (hintUsed) { setHintVisible(v => !v); return; }
+                        if (state.xp >= 100) {
+                          spendXP(100);
+                          setHintUsed(true);
+                          setHintVisible(true);
+                        }
+                      }}
+                      disabled={!hintUsed && state.xp < 100}
+                      className="flex items-center gap-1.5 rounded-xl px-2.5 py-1 transition-all active:scale-95"
+                      style={{
+                        background: hintUsed ? "#fef9c3" : state.xp >= 100 ? "#fef9c3" : "#f1f5f9",
+                        border: `1.5px solid ${hintUsed ? "#fde047" : state.xp >= 100 ? "#fde047" : "#e2e8f0"}`,
+                        cursor: !hintUsed && state.xp < 100 ? "not-allowed" : "pointer",
+                        opacity: !hintUsed && state.xp < 100 ? 0.5 : 1,
+                      }}
+                    >
+                      <Lightbulb size={13} color={hintUsed ? "#ca8a04" : state.xp >= 100 ? "#ca8a04" : "#94a3b8"} />
+                      <span style={{ color: hintUsed ? "#ca8a04" : state.xp >= 100 ? "#ca8a04" : "#94a3b8", fontSize: "11px", fontWeight: 700 }}>
+                        {hintUsed ? (hintVisible ? "Ocultar pista" : "Ver pista") : `Comprar pista · 100 XP`}
+                      </span>
+                    </button>
+                  )}
                 </div>
+                {hintVisible && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="rounded-2xl p-3 mb-3 flex gap-2"
+                    style={{ background: "#fef9c3", border: "1.5px solid #fde047" }}
+                  >
+                    <Lightbulb size={15} color="#ca8a04" className="flex-shrink-0 mt-0.5" />
+                    <p style={{ color: "#78350f", fontSize: "13px", lineHeight: 1.5 }}>
+                      {question.hint}
+                    </p>
+                  </motion.div>
+                )}
                 <QuestionIllustration question={question.question} stage={stage} />
                 <p style={{ color: "#0f172a", fontSize: "16px", fontWeight: 600, lineHeight: 1.5 }}>
                   {question.question}

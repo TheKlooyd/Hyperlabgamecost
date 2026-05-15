@@ -7,6 +7,63 @@ import { useApp } from "../context/AppContext";
 import { stages } from "../data/gameData";
 import { AppIcon } from "../components/ui/AppIcon";
 
+const STAGE_ACHIEVEMENTS: Record<number, { title: string; description: string }> = {
+  1: { title: "Ideador", description: "Aprueba el quiz de Concepto e Idea" },
+  2: { title: "Diseñador de Mecánicas", description: "Completa la etapa de Diseño de Mecánicas" },
+  3: { title: "Narrador de Mundos", description: "Completa la etapa de Narrativa y Mundo" },
+  4: { title: "Planificador Maestro", description: "Completa la etapa de Planificación del Proyecto" },
+  5: { title: "Prototipador Ágil", description: "Completa la etapa de Prototipado y Pruebas" },
+  6: { title: "Game Presenter", description: "Completa todas las etapas del viaje" },
+};
+
+function TreasureChest() {
+  return (
+    <svg viewBox="0 0 100 90" width="90" height="82" xmlns="http://www.w3.org/2000/svg">
+      {/* Shadow */}
+      <ellipse cx="50" cy="87" rx="33" ry="5" fill="rgba(0,0,0,0.13)" />
+      {/* Chest body */}
+      <rect x="8" y="46" width="84" height="40" rx="5" fill="#8B5A2B" />
+      <rect x="8" y="46" width="84" height="11" rx="4" fill="#9C6535" />
+      {/* Lid */}
+      <rect x="8" y="17" width="84" height="32" rx="13" fill="#9C6535" />
+      <rect x="12" y="19" width="76" height="16" rx="10" fill="#B07945" />
+      {/* Shine on lid */}
+      <ellipse cx="38" cy="26" rx="15" ry="4.5" fill="rgba(255,255,255,0.17)" transform="rotate(-8 38 26)" />
+      {/* Gold band lid-body joint */}
+      <rect x="8" y="43" width="84" height="8" rx="0" fill="#D4A030" />
+      <rect x="8" y="43" width="84" height="3" rx="0" fill="#E8B840" />
+      {/* Mid band on body */}
+      <rect x="8" y="63" width="84" height="4" fill="#C89020" />
+      <rect x="8" y="63" width="84" height="2" fill="#E0AA30" />
+      {/* Lock plate */}
+      <rect x="37" y="49" width="26" height="17" rx="4" fill="#E8B840" />
+      <rect x="38.5" y="50.5" width="23" height="14" rx="3" fill="#D09828" />
+      {/* Keyhole */}
+      <circle cx="50" cy="55.5" r="3.5" fill="#6B3810" />
+      <rect x="48.5" y="57.5" width="3" height="5" rx="1" fill="#6B3810" />
+      {/* Corner rivets */}
+      <circle cx="19" cy="49" r="3.8" fill="#E8B840" />
+      <circle cx="81" cy="49" r="3.8" fill="#E8B840" />
+      <circle cx="19" cy="75" r="3.8" fill="#E8B840" />
+      <circle cx="81" cy="75" r="3.8" fill="#E8B840" />
+      {/* Lid corner rivets */}
+      <circle cx="19" cy="24" r="3" fill="#E8B840" />
+      <circle cx="81" cy="24" r="3" fill="#E8B840" />
+      {/* Sparkles */}
+      <g opacity="0.85">
+        <line x1="94" y1="10" x2="94" y2="18" stroke="#FFD700" strokeWidth="2" strokeLinecap="round" />
+        <line x1="90" y1="14" x2="98" y2="14" stroke="#FFD700" strokeWidth="2" strokeLinecap="round" />
+        <line x1="91.5" y1="11.5" x2="96.5" y2="16.5" stroke="#FFD700" strokeWidth="1.2" strokeLinecap="round" />
+        <line x1="96.5" y1="11.5" x2="91.5" y2="16.5" stroke="#FFD700" strokeWidth="1.2" strokeLinecap="round" />
+      </g>
+      <g opacity="0.65">
+        <line x1="5" y1="5" x2="5" y2="11" stroke="#FFD700" strokeWidth="1.5" strokeLinecap="round" />
+        <line x1="2" y1="8" x2="8" y2="8" stroke="#FFD700" strokeWidth="1.5" strokeLinecap="round" />
+      </g>
+    </svg>
+  );
+}
+
 const STAGE_AUDIOS: Record<number, string> = {
   1: `${import.meta.env.BASE_URL}Audios/primeraetapa.mp3`,
   2: `${import.meta.env.BASE_URL}Audios/segundaetapa.mp3`,
@@ -121,15 +178,19 @@ export function StageDetailScreen() {
 
           <div className="flex items-start gap-3" style={{ position: "relative", zIndex: 10 }}>
             <div
-              className="rounded-2xl flex items-center justify-center flex-shrink-0"
+              className="rounded-2xl flex items-center justify-center flex-shrink-0 overflow-hidden"
               style={{
-                width: "60px",
-                height: "60px",
+                width: "124px",
+                height: "124px",
                 background: stage.bgColor,
                 border: `1.5px solid ${stage.borderColor}`,
               }}
             >
-              <AppIcon iconKey={stage.icon} size={28} color={stage.color} strokeWidth={1.5} />
+              <img
+                src={`${import.meta.env.BASE_URL}imagenesetapas/Etapa ${stageId}.png`}
+                alt={`Etapa ${stageId}`}
+                style={{ width: "130%", height: "130%", objectFit: "cover", transform: "scale(1.3)" }}
+              />
             </div>
             <div className="flex-1">
               <p style={{ color: stage.color, fontSize: "11px", fontWeight: 700, letterSpacing: "0.5px" }}>
@@ -247,7 +308,7 @@ export function StageDetailScreen() {
           >
             <div className="flex items-center gap-2 mb-2">
               <Target size={16} color={stage.color} />
-              <p style={{ color: stage.color, fontSize: "12px", fontWeight: 700 }}>OBJETIVO DE APRENDIZAJE</p>
+              <p style={{ color: stage.color, fontSize: "12px", fontWeight: 700 }}>OBJETIVO</p>
             </div>
             <p style={{ color: "#1e293b", fontSize: "14px", lineHeight: 1.6 }}>
               {stage.objective}
@@ -281,6 +342,86 @@ export function StageDetailScreen() {
               ))}
             </div>
           </div>
+
+          {/* Rewards card */}
+          {(() => {
+            const achievement = STAGE_ACHIEVEMENTS[stageId];
+            const nextStage = stages.find(s => s.id === stageId + 1);
+            const totalActivitiesXp = stage.activities.reduce((sum, a) => sum + a.xp, 0);
+            const totalXp = totalActivitiesXp + stage.xpReward;
+            return (
+              <div
+                className="rounded-3xl overflow-hidden"
+                style={{
+                  background: "linear-gradient(135deg, #fffbeb 0%, #fef3c7 60%, #fde68a44 100%)",
+                  border: "1.5px solid #fde68a",
+                  boxShadow: "0 4px 16px rgba(234,179,8,0.12)",
+                }}
+              >
+                {/* Header strip */}
+                <div className="px-4 pt-4 pb-2">
+                  <p style={{ color: "#92400e", fontSize: "11px", fontWeight: 800, letterSpacing: "0.6px", textTransform: "uppercase" }}>
+                    Recompensa por superar
+                  </p>
+                </div>
+
+                {/* Body: rewards left, chest right */}
+                <div className="flex items-end px-4 pb-4 gap-2">
+                  {/* Reward rows */}
+                  <div className="flex-1 flex flex-col gap-2.5">
+
+                    {/* XP */}
+                    <div className="flex items-center gap-2.5">
+                      <div className="rounded-lg flex items-center justify-center flex-shrink-0"
+                        style={{ width: "30px", height: "30px", background: "#fef08a" }}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                          <path d="M13 2L4.09 12.5H11L10 22L19.91 11.5H13L13 2Z" fill="#f59e0b" stroke="#d97706" strokeWidth="1.4" strokeLinejoin="round"/>
+                        </svg>
+                      </div>
+                      <span style={{ color: "#78350f", fontSize: "15px", fontWeight: 800 }}>+{totalXp} XP</span>
+                    </div>
+
+                    {/* Achievement */}
+                    {achievement && (
+                      <div className="flex items-center gap-2.5">
+                        <div className="rounded-lg flex items-center justify-center flex-shrink-0"
+                          style={{ width: "30px", height: "30px", background: "#fef08a" }}>
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"
+                              fill="#f59e0b" stroke="#d97706" strokeWidth="1.4" strokeLinejoin="round"/>
+                          </svg>
+                        </div>
+                        <div className="min-w-0">
+                          <span style={{ color: "#78350f", fontSize: "14px", fontWeight: 700 }}>+1 Insignia</span>
+                          <span style={{ color: "#a16207", fontSize: "12px", fontWeight: 500 }}> · {achievement.title}</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Next stage */}
+                    <div className="flex items-center gap-2.5">
+                      <div className="rounded-lg flex items-center justify-center flex-shrink-0"
+                        style={{ width: "30px", height: "30px", background: "#fef08a" }}>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                          <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"
+                            fill="none" stroke="#d97706" strokeWidth="1.6" strokeLinejoin="round"/>
+                        </svg>
+                      </div>
+                      <span style={{ color: "#78350f", fontSize: "14px", fontWeight: 700 }}>
+                        {nextStage ? `Acceso a Etapa ${nextStage.id}` : "¡Juego Completado!"}
+                      </span>
+                    </div>
+
+                  </div>
+
+                  {/* Chest illustration */}
+                  <div className="flex-shrink-0" style={{ marginBottom: "-4px" }}>
+                    <TreasureChest />
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
 
           {/* Activities */}
           <div>

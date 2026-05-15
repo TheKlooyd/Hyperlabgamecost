@@ -120,8 +120,7 @@ export function OnboardingScreen() {
       setCurrent((c) => c + 1);
     } else {
       playStart();
-      localStorage.setItem("vgp-onboarded", "true");
-      navigate("/home");
+      navigate("/register");
     }
   };
 
@@ -174,8 +173,7 @@ export function OnboardingScreen() {
             <button
               onClick={() => {
                 playClick();
-                localStorage.setItem("vgp-onboarded", "true");
-                navigate("/home");
+                navigate("/register");
               }}
               style={{
                 color: "rgba(255,255,255,0.45)",
@@ -569,7 +567,7 @@ export function OnboardingScreen() {
                     >
                       <BookOpen size={18} color="rgba(255,255,255,0.4)" strokeWidth={1.75} />
                       <span style={{ color: "rgba(255,255,255,0.45)", fontSize: "12px", lineHeight: 1.5 }}>
-                        Cada error viene con una explicación detallada que refuerza el aprendizaje.
+                        Cada error viene con una explicación detallada que refuerza el conocimiento.
                       </span>
                     </motion.div>
                   </div>

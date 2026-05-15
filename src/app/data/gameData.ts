@@ -7,16 +7,74 @@ export type ActivityType =
   | "connect-concepts"
   | "word-scramble"
   | "crossword"
-  | "word-builder";
+  | "word-builder"
+  | "timeline-order"
+  | "budget-allocation"
+  | "risk-event"
+  | "dependency-graph"
+  | "team-builder";
+
+export interface RiskImpact {
+  tiempo?: "up" | "down" | "neutral";
+  presupuesto?: "up" | "down" | "neutral";
+  calidad?: "up" | "down" | "neutral";
+  riesgo?: "up" | "down" | "neutral";
+}
+
+export interface RiskOption {
+  id: string;
+  text: string;
+  badge?: string;
+  badgeColor?: string;
+  impacts: RiskImpact;
+}
+
+export interface GraphNode {
+  id: string;
+  label: string;
+  taskName: string;
+  x: number; // 0-100 percentage within SVG
+  y: number; // 0-100 percentage within SVG
+}
+
+export interface GraphEdge {
+  from: string;
+  to: string;
+}
+
+export interface TeamMember {
+  id: string;
+  name: string;
+  role: string;
+  emoji: string;
+  skills: {
+    tecnicas: number;     // 0-5
+    gestion: number;      // 0-5
+    comunicacion: number; // 0-5
+  };
+}
 
 export interface ActivityOption {
   id: string;
   text: string;
 }
 
+export interface BudgetResource {
+  id: string;
+  name: string;
+  icon: string;
+  cost: number;
+}
+
 export interface ConceptPair {
   left: string;
   right: string;
+}
+
+export interface TimelineItem {
+  text: string;
+  duration: string;
+  color: string;
 }
 
 export interface CrosswordWord {
@@ -68,6 +126,25 @@ export interface Activity {
   wordChips?: string[];
   correctSentence?: string[];
   exampleSentence?: string;
+  // timeline-order
+  timelineItems?: TimelineItem[];
+  // budget-allocation
+  budget?: number;
+  resources?: BudgetResource[];
+  correctResources?: string[];
+  // risk-event
+  riskScenario?: string;
+  riskOptions?: RiskOption[];
+  riskCompanionMessage?: string;
+  // dependency-graph
+  graphNodes?: GraphNode[];
+  graphCorrectEdges?: GraphEdge[];
+  graphCompanionMessage?: string;
+  // team-builder
+  teamMembers?: TeamMember[];
+  teamSize?: number;
+  correctTeam?: string[];
+  teamCompanionMessage?: string;
 }
 
 export interface QuizQuestion {
@@ -76,6 +153,7 @@ export interface QuizQuestion {
   options: string[];
   correctAnswer: number;
   explanation: string;
+  hint: string;
 }
 
 export interface Stage {
@@ -92,7 +170,26 @@ export interface Stage {
   intro: StageIntro;
   activities: Activity[];
   quiz: QuizQuestion[];
+  /** Optional titles for each group of 3 activities */
+  activityGroupTitles?: string[];
+  /** Optional image paths (from /public) for each activity group header */
+  activityGroupIcons?: string[];
 }
+
+/* ── Characters ──────────────────────────────────────────────────────────── */
+export const CHARACTERS: { file: string; name: string }[] = [
+  { file: "alchemist.png",             name: "Alchemist"  },
+  { file: "chica.png",                 name: "Chica"      },
+  { file: "chico.png",                 name: "Chico"      },
+  { file: "espectro.png",              name: "Espectro"   },
+  { file: "firegirl.png",              name: "Fire Girl"  },
+  { file: "mounstruo del pantano.png", name: "Monstruo"   },
+  { file: "mujer loba.png",            name: "Mujer Loba" },
+  { file: "robowowow.png",             name: "Robowow"    },
+];
+
+/** Streak days required to unlock each additional character (index 0 = 2nd character, etc.) */
+export const CHARACTER_UNLOCK_MILESTONES = [5, 10, 15, 20, 25, 30, 35];
 
 export const stages: Stage[] = [
   // ═══════════════════════════════════════════════════════
@@ -116,6 +213,16 @@ export const stages: Stage[] = [
       "Referente o inspiración"
     ],
     xpReward: 150,
+    activityGroupTitles: [
+      "Objetivo, público e ideación",
+      "Sinopsis, géneros y propuesta",
+      "Desafío del concepto",
+    ],
+    activityGroupIcons: [
+      "/iconos/diana.png",
+      "/iconos/mapa.png",
+      "/iconos/checklist.png",
+    ],
     intro: {
       summary: "Toda obra comienza con una idea. En el diseño de videojuegos, transformar esa chispa inicial en un concepto sólido y comunicable es el primer paso antes de escribir código o dibujar un pixel. Esta etapa te enseña a estructurar y articular la visión central de tu juego.",
       keyPoints: [
@@ -130,21 +237,44 @@ export const stages: Stage[] = [
     },
     activities: [
       {
+        id: "1-0b",
+        type: "dependency-graph",
+        title: "Diagrama de dependencias",
+        question: "Conecta las tareas según su dependencia correcta.",
+        graphNodes: [
+          { id: "a", label: "A", taskName: "Investigación",     x: 60, y: 8  },
+          { id: "b", label: "B", taskName: "Diseño del juego",  x: 40, y: 35 },
+          { id: "c", label: "C", taskName: "Desarrollo",        x: 75, y: 55 },
+          { id: "d", label: "D", taskName: "Pruebas",           x: 25, y: 72 },
+          { id: "e", label: "E", taskName: "Lanzamiento",       x: 58, y: 88 },
+        ],
+        graphCorrectEdges: [
+          { from: "a", to: "b" },
+          { from: "b", to: "c" },
+          { from: "c", to: "d" },
+          { from: "d", to: "e" },
+        ],
+        graphCompanionMessage: "Cada tarea depende de que la anterior esté completada.",
+        explanation: "El flujo correcto sigue un orden lógico de dependencias: primero se investiga, luego se diseña, después se desarrolla, se prueba y finalmente se lanza. Saltarse pasos genera retrabajo costoso y retrasos en el proyecto.",
+        hint: "Piensa en qué necesitas saber o tener listo ANTES de poder empezar cada tarea. La investigación es siempre el primer paso.",
+        xp: 40,
+      },
+      {
         id: "1-1",
         type: "word-builder",
         title: "Construye un objetivo general",
         question: "Presiona las palabras para construir un objetivo general correcto para un videojuego educativo.",
         wordChips: [
           "Desarrollar", "un videojuego", "educativo", "para",
-          "mejorar", "el aprendizaje", "en", "estudiantes", "universitarios",
+          "mejorar", "las habilidades", "en", "estudiantes", "universitarios",
           "que permita", "de matemáticas", "innovador", "en niños", "que enseñe"
         ],
         correctSentence: [
           "Desarrollar", "un videojuego", "educativo", "para",
-          "mejorar", "el aprendizaje", "en", "estudiantes", "universitarios"
+          "mejorar", "las habilidades", "en", "estudiantes", "universitarios"
         ],
         exampleSentence: "Crear un videojuego de rol para desarrollar habilidades de pensamiento crítico en jóvenes adolescentes.",
-        explanation: "Un buen objetivo general comienza con un verbo en infinitivo (Desarrollar), describe el producto (un videojuego educativo), su propósito (para mejorar el aprendizaje) y a quién va dirigido (en estudiantes universitarios). Las palabras distractoras introducen elementos que no corresponden al contexto universitario del proyecto.",
+        explanation: "Un buen objetivo general comienza con un verbo en infinitivo (Desarrollar), describe el producto (un videojuego educativo), su propósito (para mejorar las habilidades) y a quién va dirigido (en estudiantes universitarios). Las palabras distractoras introducen elementos que no corresponden al contexto universitario del proyecto.",
         hint: "Recuerda que un buen objetivo responde: ¿qué?, ¿para qué? y ¿a quién?. Usa solo las palabras que formen una oración coherente y contextualizada.",
         xp: 30
       },
@@ -267,7 +397,8 @@ export const stages: Stage[] = [
           "El número de jugadores que puede soportar simultáneamente"
         ],
         correctAnswer: 1,
-        explanation: "El género define la familia de mecánicas: RPG, plataformas, estrategia, etc. No se refiere al arte ni a aspectos técnicos o de distribución."
+        explanation: "El género define la familia de mecánicas: RPG, plataformas, estrategia, etc. No se refiere al arte ni a aspectos técnicos o de distribución.",
+        hint: "El género no tiene que ver con aspectos visuales ni técnicos, sino con el tipo de ACCIONES que realiza el jugador."
       },
       {
         id: "q1-2",
@@ -279,7 +410,8 @@ export const stages: Stage[] = [
           "El tema es el tutorial introductorio; la mecánica es el menú principal"
         ],
         correctAnswer: 1,
-        explanation: "Un juego de 'zombis' (tema) puede ser un FPS, estrategia por turnos o puzzle (mecánicas). Son capas independientes pero complementarias que deben cohesionarse."
+        explanation: "Un juego de 'zombis' (tema) puede ser un FPS, estrategia por turnos o puzzle (mecánicas). Son capas independientes pero complementarias que deben cohesionarse.",
+        hint: "Piensa en un juego de zombis: la historia de zombis es el tema, pero ¿el jugador dispara, salta o resuelve puzzles? Eso es la mecánica."
       },
       {
         id: "q1-3",
@@ -291,7 +423,8 @@ export const stages: Stage[] = [
           "No sirve de nada; cada juego debe ser completamente original desde cero"
         ],
         correctAnswer: 2,
-        explanation: "Estudiar referentes permite entender las convenciones del género, identificar oportunidades de diferenciación y establecer un estándar de calidad alcanzable y comparable."
+        explanation: "Estudiar referentes permite entender las convenciones del género, identificar oportunidades de diferenciación y establecer un estándar de calidad alcanzable y comparable.",
+        hint: "No se trata de copiar, sino de APRENDER. ¿Qué puedes descubrir estudiando juegos que ya existen en tu género?"
       },
       {
         id: "q1-4",
@@ -303,7 +436,8 @@ export const stages: Stage[] = [
           "Que incluya el precio de venta y las plataformas de lanzamiento previstas"
         ],
         correctAnswer: 2,
-        explanation: "Una buena sinopsis captura la esencia del juego: protagonista, conflicto y el 'gancho' que define la experiencia diferencial. Es concisa, evocadora y convincente."
+        explanation: "Una buena sinopsis captura la esencia del juego: protagonista, conflicto y el 'gancho' que define la experiencia diferencial. Es concisa, evocadora y convincente.",
+        hint: "Una buena sinopsis es como el trailer de una película: en pocos segundos te hace querer verla completa."
       },
       {
         id: "q1-5",
@@ -315,7 +449,8 @@ export const stages: Stage[] = [
           "El presupuesto total necesario para terminar el desarrollo del proyecto"
         ],
         correctAnswer: 1,
-        explanation: "Todo producto, incluido un videojuego, responde a una necesidad humana: escapar, socializar, competir, explorar o aprender. Identificarla alinea el diseño con el usuario real."
+        explanation: "Todo producto, incluido un videojuego, responde a una necesidad humana: escapar, socializar, competir, explorar o aprender. Identificarla alinea el diseño con el usuario real.",
+        hint: "Piensa en por qué la gente juega videojuegos: ¿qué necesidad humana satisface el juego, más allá de sus características técnicas?"
       }
     ]
   },
@@ -341,6 +476,16 @@ export const stages: Stage[] = [
       "Equilibrio y curva de dificultad"
     ],
     xpReward: 175,
+    activityGroupTitles: [
+      "Equipo, ruta y retroalimentación",
+      "Bucle, mecánicas y vocabulario",
+      "Retos de mecánicas",
+    ],
+    activityGroupIcons: [
+      "/iconos/diana.png",
+      "/iconos/mapa.png",
+      "/iconos/checklist.png",
+    ],
     intro: {
       summary: "Las mecánicas son el corazón de cualquier videojuego: son las acciones que el jugador puede realizar y las reglas que gobiernan el sistema. Un diseño de mecánicas claro define qué hace el jugador en cada momento, por qué lo hace y qué consecuencias tiene. Sin mecánicas bien pensadas, no hay experiencia de juego.",
       keyPoints: [
@@ -355,20 +500,43 @@ export const stages: Stage[] = [
     },
     activities: [
       {
-        id: "2-1",
-        type: "multiple-choice",
-        title: "¿Cuál es la mecánica principal?",
-        question: "Un equipo diseña un juego donde el jugador resuelve acertijos moviendo cajas para abrir puertas, evitar enemigos y activar interruptores. ¿Cuál es la mecánica principal?",
-        options: [
-          { id: "a", text: "Evitar a los enemigos que persiguen al personaje" },
-          { id: "b", text: "Mover objetos del escenario para modificar el estado del nivel" },
-          { id: "c", text: "Activar interruptores en el orden correcto" },
-          { id: "d", text: "Abrir puertas para llegar a la salida del nivel" }
+        id: "2-0b",
+        type: "team-builder",
+        title: "Formar la tripulación",
+        question: "Elige a 4 integrantes que complementen las habilidades necesarias.",
+        teamSize: 4,
+        teamMembers: [
+          { id: "ana",    name: "Ana",    role: "Diseñadora",   emoji: "👩‍🎨", skills: { tecnicas: 2, gestion: 2, comunicacion: 3 } },
+          { id: "luis",   name: "Luis",   role: "Programador",  emoji: "👨‍💻", skills: { tecnicas: 4, gestion: 1, comunicacion: 1 } },
+          { id: "marta",  name: "Marta",  role: "Productora",   emoji: "👩‍💼", skills: { tecnicas: 1, gestion: 4, comunicacion: 2 } },
+          { id: "carlos", name: "Carlos", role: "Animador",     emoji: "🎬", skills: { tecnicas: 3, gestion: 1, comunicacion: 2 } },
+          { id: "diego",  name: "Diego",  role: "Tester",       emoji: "🧪", skills: { tecnicas: 3, gestion: 2, comunicacion: 2 } },
+          { id: "sofia",  name: "Sofía",  role: "Guionista",    emoji: "✍️", skills: { tecnicas: 1, gestion: 2, comunicacion: 4 } },
+          { id: "jorge",  name: "Jorge",  role: "Artista",      emoji: "🎭", skills: { tecnicas: 2, gestion: 1, comunicacion: 3 } },
         ],
-        correctAnswer: 1,
-        explanation: "Mover objetos es la acción central de la que derivan todas las demás interacciones: los interruptores se activan moviéndolos, las puertas se abren como consecuencia, y los enemigos se evitan reubicando cajas. La mecánica principal es el verbo del que dependen los demás.",
-        hint: "La mecánica principal es la acción más fundamental del juego. Las demás acciones son consecuencias o aplicaciones de esa acción base.",
-        xp: 35
+        correctTeam: ["ana", "luis", "marta", "diego"],
+        teamCompanionMessage: "Un equipo equilibrado tiene más posibilidades de éxito.",
+        explanation: "El equipo ideal cubre las tres áreas clave: técnicas (Ana + Luis + Diego), gestión (Marta) y comunicación (Ana + Marta). Un equipo sin Productora carece de gestión; sin Programador, no hay desarrollo técnico. Equilibrar habilidades es tan importante como elegir talento individual.",
+        hint: "Busca cubrir las tres habilidades: técnicas, gestión y comunicación. ¿Quién aporta liderazgo y organización al equipo?",
+        xp: 40,
+      },
+      {
+        id: "2-1",
+        type: "timeline-order",
+        title: "Mini Juego: Trazar la ruta",
+        question: "Ordena las fases del diseño de mecánicas en la línea de tiempo según su secuencia lógica.",
+        timelineItems: [
+          { text: "Investigar referentes y mecánicas similares", duration: "1 semana", color: "#fbbf24" },
+          { text: "Definir la mecánica principal del juego", duration: "1 semana", color: "#a78bfa" },
+          { text: "Diseñar los verbos del jugador y reglas", duration: "2 semanas", color: "#34d399" },
+          { text: "Crear el bucle de juego (game loop)", duration: "2 semanas", color: "#60a5fa" },
+          { text: "Probar balance y retroalimentación", duration: "2 semanas", color: "#fb923c" },
+          { text: "Documentar reglas del sistema", duration: "1 semana", color: "#f87171" },
+        ],
+        correctOrder: [0, 1, 2, 3, 4, 5],
+        explanation: "El diseño de mecánicas sigue una secuencia lógica: primero investigas referentes para no reinventar la rueda, luego defines qué hace el jugador, diseñas las reglas, construyes el game loop, pruebas y balanceas, y finalmente documentas todo. Sin documentación final, el equipo pierde contexto al implementar.",
+        hint: "Piensa en la secuencia natural de trabajo: primero entender el problema, luego diseñar, implementar, probar y documentar.",
+        xp: 40
       },
       {
         id: "2-2",
@@ -461,7 +629,8 @@ export const stages: Stage[] = [
           "La historia principal que el jugador sigue a lo largo de la campaña"
         ],
         correctAnswer: 1,
-        explanation: "La mecánica principal es el verbo central del juego: la acción que el jugador realiza más veces y que define la identidad del diseño. En plataformas es saltar, en shooters es apuntar y disparar, en puzzle es resolver. Todo el diseño de niveles y sistemas gira en torno a esta mecánica base."
+        explanation: "La mecánica principal es el verbo central del juego: la acción que el jugador realiza más veces y que define la identidad del diseño. En plataformas es saltar, en shooters es apuntar y disparar, en puzzle es resolver. Todo el diseño de niveles y sistemas gira en torno a esta mecánica base.",
+        hint: "Piensa en el VERBO principal del juego: en plataformas el jugador SALTA, en shooter DISPARA. ¿Qué acción repite más el jugador?"
       },
       {
         id: "q2-2",
@@ -473,7 +642,8 @@ export const stages: Stage[] = [
           "Para sincronizar los controles del jugador con la animación del personaje"
         ],
         correctAnswer: 1,
-        explanation: "El game loop es la estructura fundamental de toda experiencia de juego: el jugador recibe un desafío, decide una acción, el sistema la evalúa y responde con feedback, y presenta el siguiente desafío. Este ciclo se repite cientos de veces por sesión y es lo que genera el ritmo y el engagement del juego."
+        explanation: "El game loop es la estructura fundamental de toda experiencia de juego: el jugador recibe un desafío, decide una acción, el sistema la evalúa y responde con feedback, y presenta el siguiente desafío. Este ciclo se repite cientos de veces por sesión y es lo que genera el ritmo y el engagement del juego.",
+        hint: "El game loop no es técnico: es el ciclo EMOCIONAL del jugador. Desafío → Acción → Respuesta del sistema → Nuevo desafío."
       },
       {
         id: "q2-3",
@@ -485,7 +655,8 @@ export const stages: Stage[] = [
           "Porque el feedback es un requisito técnico del motor para mantener el juego sincronizado"
         ],
         correctAnswer: 1,
-        explanation: "El feedback conecta causa (acción del jugador) con efecto (respuesta del sistema). Sin esa conexión inmediata, el jugador no puede aprender, no puede mejorar y no siente agencia sobre lo que ocurre. Un buen feedback es inmediato, proporcional a la acción y usa múltiples canales (visual + sonido)."
+        explanation: "El feedback conecta causa (acción del jugador) con efecto (respuesta del sistema). Sin esa conexión inmediata, el jugador no puede aprender, no puede mejorar y no siente agencia sobre lo que ocurre. Un buen feedback es inmediato, proporcional a la acción y usa múltiples canales (visual + sonido).",
+        hint: "Imagina que presionas un botón y no pasa absolutamente nada. ¿Sabrías si lo hiciste bien? El feedback es esa respuesta inmediata del sistema."
       },
       {
         id: "q2-4",
@@ -497,7 +668,8 @@ export const stages: Stage[] = [
           "Incluir un modo tutorial obligatorio antes de acceder al juego principal"
         ],
         correctAnswer: 1,
-        explanation: "La curva de dificultad progresiva introduce primero los conceptos básicos y luego los combina y complejiza gradualmente. Esto permite que el jugador nuevo aprenda sin frustrarse y que el veterano encuentre desafíos crecientes. Es el principio de diseño que mantiene al jugador en 'estado de flujo'."
+        explanation: "La curva de dificultad progresiva introduce primero los conceptos básicos y luego los combina y complejiza gradualmente. Esto permite que el jugador nuevo aprenda sin frustrarse y que el veterano encuentre desafíos crecientes. Es el principio de diseño que mantiene al jugador en 'estado de flujo'.",
+        hint: "Piensa en cómo los videojuegos enseñan: primero un enemigo simple, luego dos, luego un obstáculo... ¿Cómo se llama ese incremento gradual?"
       },
       {
         id: "q2-5",
@@ -509,7 +681,8 @@ export const stages: Stage[] = [
           "Limitar las mecánicas al mínimo para terminar el desarrollo más rápidamente"
         ],
         correctAnswer: 1,
-        explanation: "Una mecánica profunda tiene muchas implicaciones a partir de una sola regla simple. En ajedrez, cada pieza tiene una regla de movimiento simple, pero sus combinaciones generan complejidad infinita. Diseñar pocas mecánicas con profundidad crea juegos más elegantes, más fáciles de aprender y más difíciles de dominar."
+        explanation: "Una mecánica profunda tiene muchas implicaciones a partir de una sola regla simple. En ajedrez, cada pieza tiene una regla de movimiento simple, pero sus combinaciones generan complejidad infinita. Diseñar pocas mecánicas con profundidad crea juegos más elegantes, más fáciles de aprender y más difíciles de dominar.",
+        hint: "Piensa en el ajedrez: cada pieza tiene UNA regla simple, pero sus combinaciones son casi infinitas. ¿Tiene pocas o muchas mecánicas?"
       }
     ]
   },
@@ -535,6 +708,16 @@ export const stages: Stage[] = [
       "Tono y atmósfera del juego"
     ],
     xpReward: 175,
+    activityGroupTitles: [
+      "Historia, mundo y personajes",
+      "Tono, coherencia y vocabulario",
+      "Retos de narrativa",
+    ],
+    activityGroupIcons: [
+      "/iconos/diana.png",
+      "/iconos/mapa.png",
+      "/iconos/checklist.png",
+    ],
     intro: {
       summary: "La narrativa de un videojuego no es solo la historia que se cuenta: es el conjunto de historia, mundo, personajes, tono y atmósfera que le dan sentido a las mecánicas. El mejor diseño narrativo hace que las mecánicas sean una extensión natural de la historia y el mundo que habita el jugador.",
       keyPoints: [
@@ -550,19 +733,22 @@ export const stages: Stage[] = [
     activities: [
       {
         id: "3-1",
-        type: "multiple-choice",
-        title: "Coherencia narrativa y mecánicas",
-        question: "Un juego tiene como tema central 'la soledad del último ser humano en la Tierra'. ¿Qué mecánica es MÁS coherente con ese tema?",
-        options: [
-          { id: "a", text: "Modo multijugador cooperativo en línea con hasta 4 jugadores simultáneos" },
-          { id: "b", text: "Un sistema de exploración en solitario donde el silencio y el aislamiento son parte del gameplay" },
-          { id: "c", text: "Una tienda donde el jugador puede comprar aliados para que lo acompañen" },
-          { id: "d", text: "Misiones de rescate de otros supervivientes para construir una comunidad" }
+        type: "budget-allocation",
+        title: "Arma tu equipo narrativo",
+        question: "Selecciona los recursos que necesitas para producir la narrativa de tu videojuego.",
+        budget: 1500,
+        resources: [
+          { id: "guionista",    name: "Guionista",             icon: "✏️",  cost: 500 },
+          { id: "concept-art",  name: "Artista Concept Art",   icon: "🎨",  cost: 600 },
+          { id: "dialogos",     name: "Diseñador de Diálogos", icon: "💬",  cost: 200 },
+          { id: "doblaje",      name: "Actor de Doblaje",      icon: "🎙️", cost: 400 },
+          { id: "compositor",   name: "Compositor",            icon: "🎵",  cost: 200 },
+          { id: "lore",         name: "Consultor de Lore",     icon: "📚",  cost: 350 },
         ],
-        correctAnswer: 1,
-        explanation: "La coherencia entre narrativa y mecánica es fundamental. Si el tema es la soledad, el gameplay debe hacer sentir esa soledad al jugador. Las opciones A, C y D contradicen el tema añadiendo compañía y comunidad. La opción B convierte el tema en una experiencia mecánica, que es el objetivo del diseño narrativo-mecánico.",
-        hint: "La mecánica debe ser una expresión física del tema. Pregúntate: ¿qué mecánica haría que el jugador SIENTA el tema central?",
-        xp: 35
+        correctResources: ["guionista", "concept-art", "dialogos", "compositor"],
+        explanation: "El equipo narrativo esencial incluye: Guionista (historia), Artista de Concept Art (worldbuilding visual), Diseñador de Diálogos (interacción) y Compositor (atmósfera tonal). Juntos suman exactamente 1,500 monedas. El actor de doblaje y el consultor de lore son complementos valiosos, pero no esenciales en la fase inicial de producción narrativa.",
+        hint: "Prioriza los recursos que definen los pilares de la narrativa: historia, visuales del mundo, interacción y atmósfera. ¡No excedas el presupuesto!",
+        xp: 45,
       },
       {
         id: "3-2",
@@ -683,7 +869,8 @@ export const stages: Stage[] = [
           "La generación procedural de mundos infinitos como en Minecraft o No Man's Sky"
         ],
         correctAnswer: 1,
-        explanation: "El worldbuilding es la construcción del universo narrativo del juego: las leyes que lo rigen, su historia, las civilizaciones que lo habitan, su geografía y cultura. Un worldbuilding sólido hace que el mundo se sienta real y que cada elemento del diseño (arquitectura, enemigos, objetos) tenga coherencia interna."
+        explanation: "El worldbuilding es la construcción del universo narrativo del juego: las leyes que lo rigen, su historia, las civilizaciones que lo habitan, su geografía y cultura. Un worldbuilding sólido hace que el mundo se sienta real y que cada elemento del diseño (arquitectura, enemigos, objetos) tenga coherencia interna.",
+        hint: "Worldbuilding no es construir el mapa 3D ni el motor gráfico: es construir el universo FICTICIO con su propia historia, cultura y reglas."
       },
       {
         id: "q3-2",
@@ -695,7 +882,8 @@ export const stages: Stage[] = [
           "Porque sin motivación el personaje no puede tener diálogos ni cinemáticas en el juego"
         ],
         correctAnswer: 1,
-        explanation: "La motivación del personaje es el motor emocional de la historia: explica por qué hace lo que hace y qué tiene que perder. Sin motivación, el jugador no se conecta emocionalmente y la historia se siente vacía. Una motivación clara ('quiero salvar a mi hermana', 'quiero entender mi origen') da dirección a toda la narrativa."
+        explanation: "La motivación del personaje es el motor emocional de la historia: explica por qué hace lo que hace y qué tiene que perder. Sin motivación, el jugador no se conecta emocionalmente y la historia se siente vacía. Una motivación clara ('quiero salvar a mi hermana', 'quiero entender mi origen') da dirección a toda la narrativa.",
+        hint: "Imagina a un personaje que simplemente actúa sin ninguna razón ni deseo. ¿Podrías conectar emocionalmente con él?"
       },
       {
         id: "q3-3",
@@ -707,7 +895,8 @@ export const stages: Stage[] = [
           "Que los jugadores modernos prefieren leer carteles en el juego que ver cinemáticas"
         ],
         correctAnswer: 1,
-        explanation: "La narrativa ambiental es no intrusiva: el jugador descubre la historia mientras juega, sin pausas forzadas. Dark Souls, Hollow Knight y Portal 2 usan este enfoque para construir mundos ricos sin cortar el flujo del gameplay. La historia se convierte en parte de la exploración, no un obstáculo entre sesiones de juego."
+        explanation: "La narrativa ambiental es no intrusiva: el jugador descubre la historia mientras juega, sin pausas forzadas. Dark Souls, Hollow Knight y Portal 2 usan este enfoque para construir mundos ricos sin cortar el flujo del gameplay. La historia se convierte en parte de la exploración, no un obstáculo entre sesiones de juego.",
+        hint: "En Dark Souls descubres la historia explorando el mundo, sin cinemáticas largas. ¿Eso interrumpe el gameplay o forma parte de él?"
       },
       {
         id: "q3-4",
@@ -719,7 +908,8 @@ export const stages: Stage[] = [
           "Un final múltiple donde todas las opciones llevan al mismo resultado positivo"
         ],
         correctAnswer: 1,
-        explanation: "Un sistema de progresión donde el poder tiene un costo hace que el jugador EXPERIMENTE el tema en lugar de solo verlo. El jugador toma la decisión de ambicionar más poder y paga las consecuencias mecánicamente. Esto es 'ludonarrativa coherente': la mecánica y la narrativa cuentan la misma historia."
+        explanation: "Un sistema de progresión donde el poder tiene un costo hace que el jugador EXPERIMENTE el tema en lugar de solo verlo. El jugador toma la decisión de ambicionar más poder y paga las consecuencias mecánicamente. Esto es 'ludonarrativa coherente': la mecánica y la narrativa cuentan la misma historia.",
+        hint: "'El costo de la ambición' es un tema. ¿Cómo puede el JUGADOR sentirlo mecánicamente, no solo verlo en la historia?"
       },
       {
         id: "q3-5",
@@ -731,7 +921,8 @@ export const stages: Stage[] = [
           "Cuando los diálogos del juego no están sincronizados con las animaciones de los personajes"
         ],
         correctAnswer: 1,
-        explanation: "La disonancia ludonarrativa ocurre cuando lo que haces (mecánica) contradice lo que se cuenta (narrativa). El ejemplo clásico es Nathan Drake en Uncharted: es descrito como una persona buena y graciosa, pero el jugador mata a cientos de enemigos por nivel. Esa contradicción crea una ruptura inmersiva que debilita la credibilidad de la historia."
+        explanation: "La disonancia ludonarrativa ocurre cuando lo que haces (mecánica) contradice lo que se cuenta (narrativa). El ejemplo clásico es Nathan Drake en Uncharted: es descrito como una persona buena y graciosa, pero el jugador mata a cientos de enemigos por nivel. Esa contradicción crea una ruptura inmersiva que debilita la credibilidad de la historia.",
+        hint: "Nathan Drake en Uncharted es presentado como buen tipo, pero el jugador mata a cientos de personas. ¿Hay contradicción entre la narrativa y lo que haces?"
       }
     ]
   },
@@ -757,6 +948,16 @@ export const stages: Stage[] = [
       "Control del alcance del proyecto"
     ],
     xpReward: 200,
+    activityGroupTitles: [
+      "Riesgo, inicio y fases",
+      "MVP, planificación y vocabulario",
+      "Retos de planificación",
+    ],
+    activityGroupIcons: [
+      "/iconos/diana.png",
+      "/iconos/mapa.png",
+      "/iconos/checklist.png",
+    ],
     intro: {
       summary: "Un proyecto de videojuego sin planificación es un proyecto que se abandona. Planificar significa dividir el trabajo en etapas, definir qué se hace primero, establecer metas intermedias y saber exactamente cuándo el proyecto está 'terminado'. Esta etapa enseña a organizar el desarrollo de forma que el equipo sepa siempre qué hacer y qué viene después.",
       keyPoints: [
@@ -770,6 +971,47 @@ export const stages: Stage[] = [
       estimatedMinutes: 18,
     },
     activities: [
+      {
+        id: "4-0",
+        type: "risk-event",
+        title: "Evento de riesgo",
+        question: "El artista del equipo se enfermó y no podrá trabajar durante 1 semana. ¿Qué decisión tomas?",
+        riskScenario: "Evento inesperado",
+        riskOptions: [
+          {
+            id: "a",
+            text: "Reasignar tareas al equipo",
+            badge: "+carga de trabajo",
+            badgeColor: "#3b82f6",
+            impacts: { tiempo: "neutral", presupuesto: "neutral", calidad: "down", riesgo: "up" },
+          },
+          {
+            id: "b",
+            text: "Contratar apoyo temporal",
+            badge: "-presupuesto",
+            badgeColor: "#22c55e",
+            impacts: { tiempo: "neutral", presupuesto: "down", calidad: "neutral", riesgo: "neutral" },
+          },
+          {
+            id: "c",
+            text: "Ajustar cronograma",
+            badge: "+1 semana",
+            badgeColor: "#22c55e",
+            impacts: { tiempo: "up", presupuesto: "neutral", calidad: "up", riesgo: "down" },
+          },
+          {
+            id: "d",
+            text: "Continuar sin cambios",
+            badge: "riesgo alto",
+            badgeColor: "#ef4444",
+            impacts: { tiempo: "neutral", presupuesto: "neutral", calidad: "down", riesgo: "up" },
+          },
+        ],
+        riskCompanionMessage: "No existe una única respuesta correcta. Evalúa el impacto de cada decisión.",
+        explanation: "En proyectos reales, eventos inesperados son inevitables. Reasignar tareas sobrecarga al equipo, contratar reduce presupuesto, ajustar el cronograma es la opción más sostenible aunque demora el proyecto, y continuar sin cambios incrementa el riesgo de calidad. No hay una respuesta perfecta: todo depende del contexto del proyecto.",
+        hint: "Considera el impacto en tiempo, presupuesto, calidad y riesgo antes de decidir. En gestión de proyectos, ajustar el cronograma suele ser la decisión más realista.",
+        xp: 40,
+      },
       {
         id: "4-1",
         type: "multiple-choice",
@@ -877,7 +1119,8 @@ export const stages: Stage[] = [
           "Crear todos los assets de arte e ilustraciones que se usarán en el juego final"
         ],
         correctAnswer: 1,
-        explanation: "La pre-producción es la fase de diseño y planificación: se define QUÉ se va a construir, CÓMO funcionará y en QUÉ orden se hará. Tomar estas decisiones antes de empezar a construir evita retrabajos costosos. Un equipo que salta la pre-producción generalmente termina rehaciendo trabajo varias veces."
+        explanation: "La pre-producción es la fase de diseño y planificación: se define QUÉ se va a construir, CÓMO funcionará y en QUÉ orden se hará. Tomar estas decisiones antes de empezar a construir evita retrabajos costosos. Un equipo que salta la pre-producción generalmente termina rehaciendo trabajo varias veces.",
+        hint: "Pre-producción es la fase ANTES de construir. ¿Qué se define en esa fase para que la construcción sea ordenada y eficiente?"
       },
       {
         id: "q4-2",
@@ -889,7 +1132,8 @@ export const stages: Stage[] = [
           "Porque el MVP sirve como documentación técnica del proyecto para el equipo"
         ],
         correctAnswer: 1,
-        explanation: "El MVP responde la pregunta más importante: ¿es divertida la idea central? Si el prototipo de la mecánica no es divertido, construir 10 niveles y un sistema de historia completo sobre esa mecánica sería un error. El MVP reduce el riesgo de gastar tiempo en una dirección equivocada."
+        explanation: "El MVP responde la pregunta más importante: ¿es divertida la idea central? Si el prototipo de la mecánica no es divertido, construir 10 niveles y un sistema de historia completo sobre esa mecánica sería un error. El MVP reduce el riesgo de gastar tiempo en una dirección equivocada.",
+        hint: "MVP = versión MÁS PEQUEÑA posible que se puede probar. ¿Para qué sirve probar la idea antes de construir todo el juego?"
       },
       {
         id: "q4-3",
@@ -901,7 +1145,8 @@ export const stages: Stage[] = [
           "Revisar cuántas líneas de código se han escrito hasta ese momento"
         ],
         correctAnswer: 1,
-        explanation: "Los milestones son los puntos de verificación del proyecto. Si al final de la semana 3 el equipo planificó tener el movimiento del personaje funcionando y lo tiene, el proyecto va bien. Si no lo tiene, hay un retraso que debe gestionarse. Sin milestones definidos, la evaluación del avance es subjetiva e imprecisa."
+        explanation: "Los milestones son los puntos de verificación del proyecto. Si al final de la semana 3 el equipo planificó tener el movimiento del personaje funcionando y lo tiene, el proyecto va bien. Si no lo tiene, hay un retraso que debe gestionarse. Sin milestones definidos, la evaluación del avance es subjetiva e imprecisa.",
+        hint: "Para saber si avanzas bien, necesitas un punto de referencia objetivo. ¿Qué son los milestones en la planificación de proyectos?"
       },
       {
         id: "q4-4",
@@ -913,7 +1158,8 @@ export const stages: Stage[] = [
           "Hace que el motor del juego sea más lento porque tiene que procesar más elementos simultáneamente"
         ],
         correctAnswer: 1,
-        explanation: "El scope creep es el crecimiento no controlado del proyecto: 'ya que estamos, añadamos también esto'. Cada adición parece pequeña pero suma tiempo, complejidad y decisiones de diseño no planificadas. La suma de muchos 'pequeños extras' es frecuentemente la razón por la que proyectos no se terminan en el tiempo previsto."
+        explanation: "El scope creep es el crecimiento no controlado del proyecto: 'ya que estamos, añadamos también esto'. Cada adición parece pequeña pero suma tiempo, complejidad y decisiones de diseño no planificadas. La suma de muchos 'pequeños extras' es frecuentemente la razón por la que proyectos no se terminan en el tiempo previsto.",
+        hint: "Scope creep: 'ya que estamos, añadamos esto también'. Si el equipo añade 5 cosas pequeñas cada semana... ¿qué pasa con el tiempo de desarrollo?"
       },
       {
         id: "q4-5",
@@ -925,7 +1171,8 @@ export const stages: Stage[] = [
           "Justo antes del lanzamiento, cuando se sabe exactamente qué está terminado y qué no"
         ],
         correctAnswer: 1,
-        explanation: "La cantidad de niveles debe definirse en pre-producción porque condiciona toda la planificación: cuánto tiempo tomará, qué assets se necesitan, cuántas mecánicas deben funcionar. Decidirlo al final es como empezar a construir una casa sin saber cuántos pisos tendrá."
+        explanation: "La cantidad de niveles debe definirse en pre-producción porque condiciona toda la planificación: cuánto tiempo tomará, qué assets se necesitan, cuántas mecánicas deben funcionar. Decidirlo al final es como empezar a construir una casa sin saber cuántos pisos tendrá.",
+        hint: "La cantidad de niveles afecta tiempo, recursos y tareas. Para planificar bien, ¿cuándo necesitas conocer ese dato?"
       }
     ]
   },
@@ -951,8 +1198,18 @@ export const stages: Stage[] = [
       "Criterios para tomar decisiones de diseño"
     ],
     xpReward: 200,
+    activityGroupTitles: [
+      "Prototipado y feedback",
+      "Iteración y mejora",
+      "Retos de pruebas",
+    ],
+    activityGroupIcons: [
+      "/iconos/diana.png",
+      "/iconos/mapa.png",
+      "/iconos/checklist.png",
+    ],
     intro: {
-      summary: "Ningún juego sale bien en el primer intento. El prototipado y las pruebas son el proceso mediante el cual una idea se transforma en una experiencia real y disfrutable. Prototipar es construir versiones rápidas para aprender; testear es jugar para descubrir problemas; iterar es usar ese aprendizaje para mejorar. Este ciclo es el núcleo del diseño de juegos.",
+      summary: "Ningún juego sale bien en el primer intento. El prototipado y las pruebas son el proceso mediante el cual una idea se transforma en una experiencia real y disfrutable. Prototipar es construir versiones rápidas para aprender; testear es jugar para descubrir problemas; iterar es usar esa experiencia para mejorar. Este ciclo es el núcleo del diseño de juegos.",
       keyPoints: [
         "Un prototipo no necesita verse bien: necesita ser rápido de construir y fácil de probar. El objetivo es aprender, no impresionar.",
         "El playtesting con personas reales revela problemas que el equipo no puede ver porque conoce demasiado bien su propio juego.",
@@ -1035,7 +1292,8 @@ export const stages: Stage[] = [
           "Producir una versión del juego que pueda publicarse en tiendas digitales para probar el mercado"
         ],
         correctAnswer: 1,
-        explanation: "Un prototipo es una herramienta de aprendizaje rápido, no un producto terminado. Su propósito es responder una pregunta de diseño específica ('¿es divertida esta mecánica?') con el menor esfuerzo posible. Un buen prototipo puede ser feo, incompleto y lleno de placeholders; lo que importa es que permita evaluar la idea central."
+        explanation: "Un prototipo es una herramienta de evaluación rápida, no un producto terminado. Su propósito es responder una pregunta de diseño específica ('¿es divertida esta mecánica?') con el menor esfuerzo posible. Un buen prototipo puede ser feo, incompleto y lleno de placeholders; lo que importa es que permita evaluar la idea central.",
+        hint: "Un prototipo es una herramienta para APRENDER, no para impresionar. ¿Qué pregunta específica de diseño necesita responder?"
       },
       {
         id: "q5-2",
@@ -1047,7 +1305,8 @@ export const stages: Stage[] = [
           "Porque los usuarios externos pueden ayudar a programar las correcciones identificadas"
         ],
         correctAnswer: 0,
-        explanation: "El equipo tiene 'ceguera de diseñador': conoce tan bien el juego que no puede ver lo que confunde a alguien que lo juega por primera vez. Los problemas más obvios para un nuevo jugador son invisibles para quien diseñó el sistema. Los testers externos aportan la perspectiva del jugador real que el equipo ha perdido."
+        explanation: "El equipo tiene 'ceguera de diseñador': conoce tan bien el juego que no puede ver lo que confunde a alguien que lo juega por primera vez. Los problemas más obvios para un nuevo jugador son invisibles para quien diseñó el sistema. Los testers externos aportan la perspectiva del jugador real que el equipo ha perdido.",
+        hint: "El equipo conoce su juego demasiado bien. ¿Cómo puede un jugador externo ver lo que el equipo ya no puede ver?"
       },
       {
         id: "q5-3",
@@ -1059,7 +1318,8 @@ export const stages: Stage[] = [
           "Crear múltiples versiones del juego en paralelo y elegir la mejor al final"
         ],
         correctAnswer: 1,
-        explanation: "La iteración es el ciclo diseñar → construir → probar → aprender → mejorar → volver a probar. No es repetición sin cambio: es refinamiento progresivo. Cada ciclo de iteración produce un diseño mejor porque incorpora lo aprendido en la prueba anterior. Los mejores juegos del mundo son el resultado de decenas de ciclos de iteración."
+        explanation: "La iteración es el ciclo diseñar → construir → probar → aprender → mejorar → volver a probar. No es repetición sin cambio: es refinamiento progresivo. Cada ciclo de iteración produce un diseño mejor porque incorpora lo aprendido en la prueba anterior. Los mejores juegos del mundo son el resultado de decenas de ciclos de iteración.",
+        hint: "Iterar no es repetir lo mismo: es hacer un cambio basado en lo aprendido y volver a probar. ¿Es un ciclo o una línea recta?"
       },
       {
         id: "q5-4",
@@ -1071,7 +1331,8 @@ export const stages: Stage[] = [
           "El nivel es demasiado largo y debe dividirse en partes más cortas"
         ],
         correctAnswer: 1,
-        explanation: "Si un jugador abandona temprano, la hipótesis de diseño más probable es que algo en esos primeros minutos no funcionó: la curva de aprendizaje fue muy empinada, la mecánica no se comunicó bien, el desafío inicial fue frustrante o el objetivo no estaba claro. Ese dato es valioso y debe investigarse, no descartarse."
+        explanation: "Si un jugador abandona temprano, la hipótesis de diseño más probable es que algo en esos primeros minutos no funcionó: la curva de dificultad fue muy empinada, la mecánica no se comunicó bien, el desafío inicial fue frustrante o el objetivo no estaba claro. Ese dato es valioso y debe investigarse, no descartarse.",
+        hint: "Si un jugador se va a los 2 minutos, ¿el problema está en el jugador o en el diseño? ¿Qué pregunta deberías hacerte primero?"
       },
       {
         id: "q5-5",
@@ -1083,7 +1344,8 @@ export const stages: Stage[] = [
           "Un buen prototipo tarda semanas en construirse; un mal prototipo se hace en horas"
         ],
         correctAnswer: 1,
-        explanation: "Un buen prototipo tiene un objetivo específico: probar si la mecánica de sigilo funciona, si la curva de dificultad del primer nivel es correcta, si el sistema de diálogos es claro. Un prototipo que intenta mostrar todo el juego al mismo tiempo no puede evaluar ninguna cosa bien. La especificidad es la clave de un prototipo útil."
+        explanation: "Un buen prototipo tiene un objetivo específico: probar si la mecánica de sigilo funciona, si la curva de dificultad del primer nivel es correcta, si el sistema de diálogos es claro. Un prototipo que intenta mostrar todo el juego al mismo tiempo no puede evaluar ninguna cosa bien. La especificidad es la clave de un prototipo útil.",
+        hint: "Un buen prototipo responde UNA pregunta de diseño específica. Un mal prototipo intenta responder TODAS a la vez. ¿Cuál es más útil?"
       }
     ]
   },
@@ -1109,8 +1371,18 @@ export const stages: Stage[] = [
       "Documentación del proyecto (GDD)"
     ],
     xpReward: 225,
+    activityGroupTitles: [
+      "Pitch y documentación",
+      "Defensa y crítica",
+      "Retos de presentación",
+    ],
+    activityGroupIcons: [
+      "/iconos/diana.png",
+      "/iconos/mapa.png",
+      "/iconos/checklist.png",
+    ],
     intro: {
-      summary: "Un videojuego que no puede comunicarse es un videojuego que no puede crecer. La presentación del proyecto es la habilidad de traducir meses de trabajo, decisiones y aprendizajes en una narrativa clara y convincente para cualquier audiencia: compañeros, evaluadores, colaboradores potenciales. Esta etapa te prepara para esa presentación.",
+      summary: "Un videojuego que no puede comunicarse es un videojuego que no puede crecer. La presentación del proyecto es la habilidad de traducir meses de trabajo, decisiones y experiencias en una narrativa clara y convincente para cualquier audiencia: compañeros, evaluadores, colaboradores potenciales. Esta etapa te prepara para esa presentación.",
       keyPoints: [
         "Una buena presentación de videojuego sigue una estructura: qué es el juego, quién es el jugador ideal, cuál es la mecánica central, cuál es la narrativa, qué se ha construido hasta ahora y cuáles son los próximos pasos.",
         "Justificar una decisión de diseño significa conectar esa decisión con la visión del juego y la experiencia del jugador, no solo decir 'nos pareció bien'.",
@@ -1147,7 +1419,7 @@ export const stages: Stage[] = [
           "Apertura: qué es el juego y por qué alguien querría jugarlo",
           "Mecánica principal: qué hace el jugador y cómo funciona el sistema",
           "Narrativa y mundo: la historia y el universo del juego",
-          "Proceso y aprendizajes: qué se construyó, qué se aprendió y cómo se iteró",
+          "Proceso y decisiones: qué se construyó, qué se descubrió y cómo se iteró",
           "Demo o prototipo: mostrar el juego funcionando en tiempo real"
         ],
         correctOrder: [0, 1, 2, 3, 4],
@@ -1163,7 +1435,7 @@ export const stages: Stage[] = [
         options: [
           { id: "a", text: "'Porque era más fácil de programar sin el sistema de vidas'" },
           { id: "b", text: "'Porque nos pareció más moderno y los juegos actuales no usan vidas'" },
-          { id: "c", text: "'Porque nuestro diseño prioriza el aprendizaje sobre el castigo: el juego es un puzzle de exploración y las vidas generarían frustración que interrumpiría el proceso de descubrimiento'" },
+          { id: "c", text: "'Porque nuestro diseño prioriza la exploración sobre el castigo: el juego es un puzzle de exploración y las vidas generarían frustración que interrumpiría el proceso de descubrimiento'" },
           { id: "d", text: "'Podemos añadir vidas si el evaluador lo considera necesario para el proyecto'" }
         ],
         correctAnswer: 2,
@@ -1176,7 +1448,7 @@ export const stages: Stage[] = [
         type: "reflection",
         title: "Escribe tu presentación del proyecto",
         question: "Redacta la presentación de tu videojuego cubriendo: apertura que capture la esencia del juego, descripción de la mecánica principal, resumen de la narrativa, una decisión de diseño que tomaste y cómo la justificas, y qué aprendiste durante el proceso de desarrollo.",
-        placeholder: "Ejemplo:\nAPERTURA: Un robot olvidado que reconstruye su memoria resolviendo los acertijos que él mismo diseñó antes de perderla.\nMECÁNICA: El jugador reorganiza fragmentos de circuitos para crear rutas lógicas. Cada puzzle cambia la historia que el robot recuerda.\nNARRATIVA: Estación espacial abandonada. El robot es el único ser consciente. La historia se descubre resolviendo los puzzles, no a través de diálogos.\nDECISIÓN DE DISEÑO: Eliminamos el sistema de pistas. Justificación: el juego es sobre descubrimiento; las pistas habrían reducido la satisfacción de resolver el puzzle por cuenta propia.\nAPRENDIZAJE: En el primer playtesting descubrimos que el primer nivel era demasiado críptico. Lo rediseñamos para enseñar la mecánica básica antes de complicarla.",
+        placeholder: "Ejemplo:\nAPERTURA: Un robot olvidado que reconstruye su memoria resolviendo los acertijos que él mismo diseñó antes de perderla.\nMECÁNICA: El jugador reorganiza fragmentos de circuitos para crear rutas lógicas. Cada puzzle cambia la historia que el robot recuerda.\nNARRATIVA: Estación espacial abandonada. El robot es el único ser consciente. La historia se descubre resolviendo los puzzles, no a través de diálogos.\nDECISIÓN DE DISEÑO: Eliminamos el sistema de pistas. Justificación: el juego es sobre descubrimiento; las pistas habrían reducido la satisfacción de resolver el puzzle por cuenta propia.\nREFLEXIÓN: En el primer playtesting descubrimos que el primer nivel era demasiado críptico. Lo rediseñamos para enseñar la mecánica básica antes de complicarla.",
         explanation: "Una presentación bien estructurada demuestra que el equipo tiene claridad sobre qué construyó, por qué tomó las decisiones que tomó y qué aprendió. Eso genera confianza. La confianza de un evaluador no viene de un juego perfecto: viene de un equipo que puede reflexionar honestamente sobre su proceso.",
         hint: "Sé específico en la decisión de diseño que justificas: no digas 'tomamos buenas decisiones', describe una decisión concreta y su impacto en la experiencia del jugador.",
         xp: 70
@@ -1193,7 +1465,8 @@ export const stages: Stage[] = [
           "Un formulario requerido por las tiendas digitales para publicar el juego comercialmente"
         ],
         correctAnswer: 1,
-        explanation: "El GDD es la referencia central del equipo: describe qué es el juego, cómo funcionan sus mecánicas, cómo está estructurada su narrativa, qué contiene cada nivel y cuáles son las reglas del universo. No necesita ser perfecto desde el inicio: es un documento vivo que evoluciona con el proyecto."
+        explanation: "El GDD es la referencia central del equipo: describe qué es el juego, cómo funcionan sus mecánicas, cómo está estructurada su narrativa, qué contiene cada nivel y cuáles son las reglas del universo. No necesita ser perfecto desde el inicio: es un documento vivo que evoluciona con el proyecto.",
+        hint: "El GDD no es para jugadores ni un contrato legal. Es la referencia interna del EQUIPO de desarrollo sobre cómo funciona el juego."
       },
       {
         id: "q6-2",
@@ -1205,7 +1478,8 @@ export const stages: Stage[] = [
           "Que incluya comparaciones con juegos comerciales exitosos para demostrar el potencial del proyecto"
         ],
         correctAnswer: 2,
-        explanation: "Una buena presentación responde tres preguntas: ¿qué es el juego?, ¿qué hace el jugador? y ¿por qué vale la pena jugarlo? Si la audiencia puede responder esas tres preguntas al final de la presentación, fue exitosa. La longitud, la terminología técnica y las comparaciones son secundarias a la claridad."
+        explanation: "Una buena presentación responde tres preguntas: ¿qué es el juego?, ¿qué hace el jugador? y ¿por qué vale la pena jugarlo? Si la audiencia puede responder esas tres preguntas al final de la presentación, fue exitosa. La longitud, la terminología técnica y las comparaciones son secundarias a la claridad.",
+        hint: "Una presentación exitosa responde 3 preguntas clave. ¿Qué necesita saber la audiencia al terminar de escucharte?"
       },
       {
         id: "q6-3",
@@ -1217,7 +1491,8 @@ export const stages: Stage[] = [
           "Describiendo el tiempo que el equipo invirtió en evaluar las alternativas antes de decidir"
         ],
         correctAnswer: 1,
-        explanation: "Justificar una decisión de diseño es conectar causa (la elección) con efecto (la experiencia del jugador). 'Decidimos X porque produce Y en el jugador, y eso es coherente con la visión del juego'. Una justificación que no menciona al jugador o la visión del proyecto no es una justificación de diseño."
+        explanation: "Justificar una decisión de diseño es conectar causa (la elección) con efecto (la experiencia del jugador). 'Decidimos X porque produce Y en el jugador, y eso es coherente con la visión del juego'. Una justificación que no menciona al jugador o la visión del proyecto no es una justificación de diseño.",
+        hint: "Justificar en diseño no es decir 'nos pareció bien'. Es conectar la decisión con su IMPACTO en la experiencia del jugador."
       },
       {
         id: "q6-4",
@@ -1229,7 +1504,8 @@ export const stages: Stage[] = [
           "'Podemos reescribir la narrativa completamente si el evaluador lo considera necesario'"
         ],
         correctAnswer: 1,
-        explanation: "La respuesta constructiva reconoce el feedback, pide información específica para poder actuar sobre él y lo enmarca como una oportunidad de mejora. Ni defensa a ultranza ni capitulación inmediata: investigación para entender la causa del problema y actuar desde esa comprensión."
+        explanation: "La respuesta constructiva reconoce el feedback, pide información específica para poder actuar sobre él y lo enmarca como una oportunidad de mejora. Ni defensa a ultranza ni capitulación inmediata: investigación para entender la causa del problema y actuar desde esa comprensión.",
+        hint: "Ante una crítica, hay dos extremos incorrectos: defensa total y aceptación ciega. ¿Cuál es el camino más constructivo?"
       },
       {
         id: "q6-5",
@@ -1241,20 +1517,21 @@ export const stages: Stage[] = [
           "Que el equipo tiene experiencia previa en proyectos similares de videojuegos"
         ],
         correctAnswer: 1,
-        explanation: "La capacidad de reflexionar sobre el proceso propio es la señal más clara de madurez en un diseñador de videojuegos. Los evaluadores buscan equipos que pueden aprender de sus errores, ajustar su dirección y mejorar iterativamente. Esas habilidades son más valiosas que un resultado perfecto obtenido sin dificultades."
+        explanation: "La capacidad de reflexionar sobre el proceso propio es la señal más clara de madurez en un diseñador de videojuegos. Los evaluadores buscan equipos que pueden aprender de sus errores, ajustar su dirección y mejorar iterativamente. Esas habilidades son más valiosas que un resultado perfecto obtenido sin dificultades.",
+        hint: "¿Qué dice de un diseñador que puede reflexionar sobre lo que APRENDIÓ, no solo sobre lo que construyó?"
       }
     ]
   }
 ];
 
 export const achievementsList = [
-  { id: "first-step", title: "Primer Paso", description: "Completa tu primera actividad", icon: "star" },
-  { id: "concept-master", title: "Ideador", description: "Aprueba el quiz de Concepto e Idea", icon: "lightbulb" },
-  { id: "mechanics-pro", title: "Diseñador de Mecánicas", description: "Completa la etapa de Diseño de Mecánicas", icon: "gamepad-2" },
-  { id: "storyteller", title: "Narrador de Mundos", description: "Completa la etapa de Narrativa y Mundo", icon: "book-open" },
-  { id: "planner", title: "Planificador Maestro", description: "Completa la etapa de Planificación del Proyecto", icon: "clipboard-list" },
-  { id: "prototyper", title: "Prototipador Ágil", description: "Completa la etapa de Prototipado y Pruebas", icon: "flask-conical" },
-  { id: "pitcher", title: "Game Presenter", description: "Completa todas las etapas del viaje", icon: "presentation" },
-  { id: "perfect-quiz", title: "Sin Errores", description: "Pasa un quiz completo sin fallar ninguna pregunta", icon: "gem" },
-  { id: "streak-3", title: "En Racha", description: "3 respuestas correctas consecutivas", icon: "flame" },
+  { id: "first-step", title: "Botas del Viajero", description: "Da tu primer paso en el camino", icon: "footprints" },
+  { id: "concept-master", title: "Poción de Conocimiento", description: "Bebe del saber y aprueba el quiz de Concepto e Idea", icon: "flask-conical" },
+  { id: "mechanics-pro", title: "Brújula del Explorador", description: "Navega con precisión la etapa de Diseño de Mecánicas", icon: "compass" },
+  { id: "storyteller", title: "Pergamino de Mundos", description: "Descifra los secretos de la etapa de Narrativa y Mundo", icon: "scroll" },
+  { id: "planner", title: "Mapa del Tesoro", description: "Traza el rumbo en la etapa de Planificación del Proyecto", icon: "map" },
+  { id: "prototyper", title: "Martillo del Gremio", description: "Forja tus ideas en la etapa de Prototipado y Pruebas", icon: "hammer" },
+  { id: "pitcher", title: "Corona del Aventurero", description: "Completa todas las etapas del gran viaje", icon: "crown" },
+  { id: "perfect-quiz", title: "Escudo de Cristal", description: "Supera un quiz completo sin cometer ningún error", icon: "shield" },
+  { id: "streak-3", title: "Llama Sagrada", description: "3 respuestas correctas consecutivas en el camino", icon: "flame" },
 ];

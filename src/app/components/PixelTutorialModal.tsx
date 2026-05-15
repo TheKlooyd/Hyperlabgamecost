@@ -39,7 +39,7 @@ export function PixelTutorialModal({ isOpen, onClose }: PixelTutorialModalProps)
       id: "welcome",
       title: "¡Hola! Soy Pixel",
       pixelState: "welcome",
-      message: "Soy tu compañero guía en este viaje de aprendizaje sobre presupuestación de videojuegos.",
+      message: "Soy tu compañero guía en este viaje sobre presupuestación de videojuegos.",
       submessage: "Estaré contigo en cada paso del camino.",
     },
     {
